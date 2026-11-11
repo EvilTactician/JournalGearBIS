@@ -109,6 +109,9 @@ end
 -----------------------------------------
 -- profiles
 
+-- The tree a class's list uses before any talent points are spent.
+G.DEFAULT_TREE = { ROGUE = 2 }
+
 -- The profile for a talent group (1 or 2): the tree with the most points.
 function G.TalentProfile(group)
 	local _, class = UnitClass("player")
@@ -119,7 +122,9 @@ function G.TalentProfile(group)
 		local tabName, _, points = GetTalentTabInfo(tab, false, false, group)
 		if (points or 0) > bestPoints then best, bestPoints, name = tab, points or 0, tabName end
 	end
-	return trees[best], (bestPoints > 0) and name or nil
+	-- No points spent yet: the class's usual pick (a rogue's is Combat).
+	if bestPoints <= 0 then return trees[G.DEFAULT_TREE[class] or 1], nil end
+	return trees[best], name
 end
 
 -----------------------------------------
@@ -269,23 +274,33 @@ end
 -----------------------------------------
 -- stages: what's open to you
 
--- The stage an instance opens at: the realm's word (the Journal's instance list) when it has one.
+-- From the Journal's instance list: each instance's page, whether the realm calls it a raid, its group
+-- size and the stage that opens it. A map can hold two of the Journal's instances (Lower Blackrock Spire, a
+-- dungeon, and Upper Blackrock Spire, a raid): those are matched by name.
 local realmStage = {}
 function G.LearnInstances()
 	local J = Journal
 	if not (J and J.LoadInstances) then return end
 	J.LoadInstances(function (_, list)
 		if not list then return end
+		local perMap = {}
 		for _, inst in ipairs(list) do
-			local need
+			perMap[inst.map] = (perMap[inst.map] or 0) + 1
+		end
+		for _, inst in ipairs(list) do
+			local need, players
 			for _, v in ipairs(inst.variants or {}) do
 				if (v.expansion or 0) == 0 then
 					need = need and math.min(need, v.reqState or 0) or (v.reqState or 0)
+					players = math.max(players or 0, v.players or 0)
 				end
 			end
-			if need then realmStage[inst.map] = need end
 			for key, g in pairs(G.instances) do
-				if g.map == inst.map then g.journalId = inst.id end
+				if g.map == inst.map and (perMap[inst.map] == 1 or g.name == inst.name) then
+					g.journalId, g.journalRaid = inst.id, inst.raid
+					if players and players > 0 then g.journalPlayers = players end
+					if need then realmStage[key] = need end
+				end
 			end
 		end
 	end)
@@ -294,7 +309,14 @@ end
 function G.InstanceStage(key)
 	local g = G.instances[key]
 	if not g then return 99 end
-	return math.max(g.stage, realmStage[g.map] or 0)
+	return math.max(g.stage, realmStage[key] or 0)
+end
+
+-- An instance's group size and kind as the realm has them.
+function G.Players(g) return g.journalPlayers or g.players end
+function G.IsRaid(g)
+	if g.journalRaid ~= nil then return g.journalRaid end
+	return g.raid
 end
 
 -- One way to get an item: { kind, inst, chance, who, quest, stage, tier, order, open, why, ... }
@@ -597,41 +619,130 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	}
 end
 
--- Where to go next: the dungeons (and the raid) with the most for you, weighted by how likely each
--- upgrade is to drop and how big it is.
+-- Rings and trinkets: two of them, each unique. Up to two you can get now (better than the weaker one you
+-- wear), the one that opens next, and the two best in slot.
+function G.BuildPairRow(row, prof, profileKey)
+	local curated = curatedFor(profileKey)
+	local owned = ownedFor(row, prof, curated)
+	local cands = candidates(row, prof, curated)
+	local mine = {}
+	if not P.preview then
+		for _, o in ipairs(owned.all) do mine[o.id] = true end
+	end
+	local pool = {}
+	for _, c in ipairs(cands) do
+		if not mine[c.item.id] and c.value > owned.value * MIN_GAIN + 0.5 then table.insert(pool, c) end
+	end
+	table.sort(pool, function (a, b) return a.value > b.value end)
+
+	-- the two best in slot, and the two best you can get now
+	local finals, now = {}, {}
+	for _, c in ipairs(pool) do
+		if #finals < 2 then table.insert(finals, c) end
+		if c.open and #now < 2 then table.insert(now, c) end
+	end
+	local isFinal = {}
+	for _, c in ipairs(finals) do isFinal[c] = true end
+
+	-- what opens next: the soonest locked one better than the weaker of what you'd have then
+	-- (the second best of what you'd wear: your better one and the ones you can get now)
+	local values = {}
+	if owned.strong and not P.preview then table.insert(values, owned.strong.value) end
+	for _, c in ipairs(now) do table.insert(values, c.value) end
+	table.sort(values, function (a, b) return a > b end)
+	local floor = values[2] or owned.value
+	local nextLocked
+	local locked = {}
+	for _, c in ipairs(pool) do
+		if not c.open and not isFinal[c] and c.value > floor * STEP_GAIN + 0.5 then table.insert(locked, c) end
+	end
+	table.sort(locked, function (a, b)
+		if a.stage ~= b.stage then return a.stage < b.stage end
+		if a.need ~= b.need then return a.need < b.need end
+		return a.value > b.value
+	end)
+	nextLocked = locked[1]
+	-- No Next when one of the best in slot opens as soon: that one is what's next.
+	for _, c in ipairs(finals) do
+		if nextLocked and not c.open and c.stage <= nextLocked.stage then nextLocked = nil end
+	end
+
+	local shown = {}
+	for _, c in ipairs(now) do
+		if not isFinal[c] then table.insert(shown, c) end
+	end
+	if nextLocked then table.insert(shown, nextLocked) end
+	for _, c in ipairs(finals) do table.insert(shown, c) end
+
+	local wearing = {}
+	for _, o in ipairs(owned.all) do wearing[o.id] = true end
+	for _, c in ipairs(shown) do
+		c.role = isFinal[c] and "bis" or (c.open and "get" or "next")
+		c.equipped = wearing[c.item.id] == true
+		c.inBags = not c.equipped and P.bags[c.item.id] ~= nil
+	end
+	local upgrades = {}
+	for _, c in ipairs(pool) do
+		if c.open then table.insert(upgrades, c) end
+	end
+	return {
+		row = row, owned = owned, steps = shown, upgrades = upgrades, final = finals[1],
+		best = #finals == 0, openSteps = #now, candidates = cands,
+	}
+end
+
+-- Where to go next: the five-player dungeons with the most for you, and the best larger instance (a raid,
+-- or Upper Blackrock Spire). Each upgrade counts by how likely it is to drop and how big it is; the items
+-- your list shows as steps count fully, other upgrades a third.
+local OTHER_UPGRADE = 0.35
 function G.Recommend(rows)
-	local score, count, names = {}, {}, {}
+	local score, items, steps, stepItem = {}, {}, {}, {}
 	for _, r in ipairs(rows) do
-		local perInst = {}
-		local base = math.max(r.owned.value, 1)
-		for _, c in ipairs(r.upgrades) do
-			for _, src in ipairs(c.sources) do
-				if src.open and (src.kind == "D" or src.kind == "C") then
-					local gain = math.min(1, (c.value - r.owned.value) / base)
-					local v = gain * (src.chance or 0)
-					local cur = perInst[src.inst]
-					if not cur or v > cur.v then perInst[src.inst] = { v = v, c = c } end
+		if not r.hidden then
+			local isStep = {}
+			for _, c in ipairs(r.steps) do isStep[c] = true end
+			local perInst = {}
+			local base = math.max(r.owned.value, 1)
+			for _, c in ipairs(r.upgrades) do
+				for _, src in ipairs(c.sources) do
+					if src.open and (src.kind == "D" or src.kind == "C") then
+						local gain = math.min(1, (c.value - r.owned.value) / base)
+						local v = gain * (src.chance or 0) * (isStep[c] and 1 or OTHER_UPGRADE)
+						local cur = perInst[src.inst]
+						if not cur or v > cur.v then perInst[src.inst] = { v = v, c = c, step = isStep[c] } end
+					end
 				end
 			end
-		end
-		for inst, e in pairs(perInst) do
-			score[inst] = (score[inst] or 0) + e.v
-			count[inst] = (count[inst] or 0) + 1
-			names[inst] = names[inst] or {}
-			local seen = false
-			for _, c in ipairs(names[inst]) do
-				if c.item.id == e.c.item.id then seen = true end
+			for inst, e in pairs(perInst) do
+				score[inst] = (score[inst] or 0) + e.v
+				items[inst] = items[inst] or {}
+				local seen = false
+				for _, c in ipairs(items[inst]) do
+					if c.item.id == e.c.item.id then seen = true end
+				end
+				if not seen then table.insert(items[inst], e.c) end
+				if e.step then
+					steps[inst] = (steps[inst] or 0) + 1
+					stepItem[inst] = stepItem[inst] or {}
+					stepItem[inst][e.c.item.id] = true
+				end
 			end
-			if not seen then table.insert(names[inst], e.c) end
 		end
 	end
 	local dungeons, raids = {}, {}
 	for inst, s in pairs(score) do
 		local g = G.instances[inst]
 		if g and P.level + 3 >= g.level then
-			local e = { inst = inst, score = s, count = #names[inst], items = names[inst], g = g }
-			table.sort(e.items, function (a, b) return a.value > b.value end)
-			table.insert(g.raid and raids or dungeons, e)
+			local e = { inst = inst, score = s, count = #items[inst], steps = steps[inst] or 0, items = items[inst], g = g,
+				players = G.Players(g), raid = G.IsRaid(g) }
+			-- the ones your list shows first
+			local mine = stepItem[inst] or {}
+			table.sort(e.items, function (a, b)
+				if (mine[a.item.id] or false) ~= (mine[b.item.id] or false) then return mine[a.item.id] == true end
+				return a.value > b.value
+			end)
+			local small = not e.raid and e.players <= 5
+			table.insert(small and dungeons or raids, e)
 		end
 	end
 	local function byScore(a, b) return a.score > b.score end
@@ -696,6 +807,8 @@ function G.Build(choice, stage)
 		local r
 		if row.key == "OH" and not showOH then
 			r = nil
+		elseif row.pair then
+			r = G.BuildPairRow(row, prof, profileKey)
 		else
 			r = G.BuildRow(row, prof, profileKey, ohRef, row.key == "OH" and mhShown or nil)
 		end

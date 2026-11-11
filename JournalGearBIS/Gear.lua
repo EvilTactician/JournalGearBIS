@@ -226,7 +226,7 @@ local function build(panel)
 	local advice = J.CreateInset(body)
 	advice:SetPoint("TOPLEFT", body, "TOPLEFT", 0, -44)
 	advice:SetPoint("RIGHT", body, "RIGHT", 0, 0)
-	advice:SetHeight(76)
+	advice:SetHeight(88)
 	local adviceTitle = advice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	adviceTitle:SetPoint("TOPLEFT", advice, "TOPLEFT", 10, -8)
 	adviceTitle:SetText("Where to go next")
@@ -456,14 +456,19 @@ local function build(panel)
 		view = v
 
 		local prof = v.profile
-		local spec = v.treeName or prof.name
 		local className = UnitClass("player")
-		title:SetText("Classic gear: " .. spec .. " " .. className .. "  |cff9d9d9d" .. prof.role
+		local picked = db.choice and G.profiles[db.choice]
+		local noTalents = not v.treeName and not picked
+		local spec = noTalents and "" or ((v.treeName or prof.name) .. " ")
+		title:SetText("Classic gear: " .. spec .. className .. "  |cff9d9d9d" .. prof.role
 			.. (prof.mh and (", " .. prof.name:lower()) or "") .. "|r")
 		local lines
 		if v.preview then
 			lines = "A preview of your gear goals at level " .. v.cap .. ". From level " .. v.readyLevel
 				.. ", the list compares them with what you're wearing."
+		elseif noTalents then
+			lines = "Assign your talent points so the list fits your spec. Until then it's for a typical "
+				.. prof.name:lower() .. " " .. className:lower() .. "."
 		elseif db.choice == "other" and v.groups > 1 then
 			lines = "Your other talents (" .. (v.treeName or "none yet") .. "), compared with the gear you're wearing now, which is likely your active talents' gear."
 		elseif db.choice and G.profiles[db.choice] then
@@ -493,8 +498,12 @@ local function build(panel)
 				local names = {}
 				for k = 1, math.min(3, #e.items) do table.insert(names, itemName(e.items[k].item)) end
 				local more = #e.items > 3 and (" and " .. (#e.items - 3) .. " more") or ""
-				local lead = (i == 1 and not e.g.raid) and "|cff40ff40Best now:|r " or (e.g.raid and "|cffffd200Raid:|r " or "|cffffd200Also good:|r ")
-				b.text:SetText(lead .. "|cffffffff" .. e.g.name .. "|r  -  " .. e.count .. (e.count == 1 and " upgrade: " or " upgrades: ")
+				local big = e.raid or e.players > 5
+				local lead = big and "|cffffd200Raid:|r " or (i == 1 and "|cff40ff40Best now:|r " or "|cffffd200Also good:|r ")
+				local kind = "|cff9d9d9d(" .. (e.raid and "raid" or "dungeon") .. ", " .. e.players .. " players)|r"
+				local what = e.count .. (e.count == 1 and " upgrade" or " upgrades")
+					.. (e.steps > 0 and (" (" .. e.steps .. " on your list)") or "") .. ": "
+				b.text:SetText(lead .. "|cffffffff" .. e.g.name .. "|r " .. kind .. "  -  " .. what
 					.. table.concat(names, ", ") .. more)
 				b:Show()
 			else
@@ -519,13 +528,15 @@ local function build(panel)
 				h:SetWidth(width)
 				h.slot:SetText(r.row.name)
 				local have = r.owned.weak or r.owned.strong
-				if r.row.pair and r.owned.strong and r.owned.weak then have = r.owned.weak end
 				h.link = have and have.worn.link
 				if have then
 					h.icon:SetTexture(GetItemIcon and GetItemIcon(have.id) or J.ItemIcon(have.id))
 					h.icon:Show()
 					local text = have.worn.link:gsub("[%[%]]", "")
-					if r.row.pair and #r.owned.all == 2 then text = text .. " |cff9d9d9d(your weaker one)|r" end
+					-- rings and trinkets: both you wear
+					if r.row.pair and #r.owned.all == 2 then
+						text = r.owned.all[1].worn.link:gsub("[%[%]]", "") .. ", " .. r.owned.all[2].worn.link:gsub("[%[%]]", "")
+					end
 					h.have:SetText(text)
 				else
 					h.icon:Hide()
@@ -636,26 +647,46 @@ local function viewForTips()
 	return tipView
 end
 
+-- The line goes in on the next frame, so it comes after every other addon's lines (Pawn's included).
+local pending = {}
+local adder = CreateFrame("Frame")
+adder:Hide()
+adder:SetScript("OnUpdate", function (self)
+	self:Hide()
+	for tip, e in pairs(pending) do
+		pending[tip] = nil
+		local _, link = tip:GetItem()
+		if tip:IsShown() and link == e.link then
+			tip:AddLine("|cffffd200On your gear list:|r |cff00ff00Roll Need|r")
+			if e.becomes then
+				local names = {}
+				for _, other in ipairs(e.becomes) do
+					table.insert(names, GetItemInfo(other) or (G.Item(other) and G.Item(other).name) or ("item " .. other))
+				end
+				tip:AddLine("Exchange it for: " .. table.concat(names, ", "), 1, 1, 1, true)
+			end
+			tip:Show()
+		end
+	end
+end)
+
 local function onTooltipItem(tip)
 	local _, link = tip:GetItem()
 	local id = link and tonumber(link:match("item:(%d+)"))
 	if not id then return end
 	local ok, row, becomes = pcall(function () return G.Verdict(viewForTips(), id) end)
 	if not ok or not (row or becomes) then return end
-	tip:AddLine("|cffffd200On your gear list:|r |cff00ff00Roll Need|r")
-	if becomes then
-		local names = {}
-		for _, other in ipairs(becomes) do
-			local name = GetItemInfo(other) or (G.Item(other) and G.Item(other).name) or ("item " .. other)
-			table.insert(names, name)
-		end
-		tip:AddLine("Exchange it for: " .. table.concat(names, ", "), 1, 1, 1, true)
-	end
-	tip:Show()
+	pending[tip] = { link = link, becomes = becomes }
+	adder:Show()
 end
+local function onTooltipCleared(tip) pending[tip] = nil end
 
-GameTooltip:HookScript("OnTooltipSetItem", onTooltipItem)
-if ItemRefTooltip then ItemRefTooltip:HookScript("OnTooltipSetItem", onTooltipItem) end
+for _, tip in ipairs({ GameTooltip, ItemRefTooltip }) do
+	if tip then
+		tip:HookScript("OnTooltipSetItem", onTooltipItem)
+		tip:HookScript("OnTooltipCleared", onTooltipCleared)
+	end
+end
 
 local tipEvents = CreateFrame("Frame")
 for _, e in ipairs({ "PLAYER_EQUIPMENT_CHANGED", "BAG_UPDATE", "PLAYER_LEVEL_UP", "ACTIVE_TALENT_GROUP_CHANGED",
