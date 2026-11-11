@@ -1,7 +1,7 @@
 # Journal: Gear
 
 > [!WARNING]
-> **Early alpha (version 0.1.0-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.1-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,24 +10,29 @@ A World of Warcraft 3.3.5a addon that adds a **Gear** tab to the
 [Journal](https://github.com/buildthehomelab/wow-mod-forever-journal) (mod-forever-journal), for realms
 running [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression).
 
-It tells you which gear to aim for, so you never have to look it up. For your spec, every slot shows a
-short path from what you're wearing to the best item there is:
+It tells you which gear to aim for, so you never have to look it up. For your spec, every slot shows up to
+three steps from what you're wearing:
 
-- **An easy item first** where there is one: a quest reward, a crafted piece, or a dungeon drop that comes
-  often.
-- **The best from dungeons** (pre-raid best in slot).
-- **Each raid's best** as the raids open to you.
+- **Get**: what you can get now. Where there is one, an easy item comes first (a quest reward, a crafted
+  piece, or a dungeon drop that comes often), then the best you can get.
+- **Next**: the upgrade that opens next, such as the next raid at your progression stage.
+- **BiS**: the slot's best in slot in Classic.
 
-Only steps you can get **now** are listed. When that leaves fewer than three, the next locked one is added,
-so you can see what's coming. Once you have the best you can get, the slot says so, and if nothing in
-Classic beats what you're wearing, it says **Best in slot until The Burning Crusade**.
+Once you have the best you can get, the slot says **Best you can get now**, and if nothing in Classic beats
+what you're wearing, it says **Best in slot until The Burning Crusade**.
 
 At the top, **Where to go next** names the dungeon with the most upgrades for you right now, a second
 choice, and the raid with the most. Each is weighted by how big the upgrades are and how often they drop.
 
 Every step shows where it comes from, how likely it is to drop (*about 1 in 5 runs*), and whether that's
-**Easy**, **Medium** or **Hard**. Click a step to open that boss's loot in the Journal (for a quest, the
-quest giver on your map). Shift-click links the item; Ctrl-click tries it on.
+**Easy**, **Medium** or **Hard**. A quest that's part of a chain says so and names the quest it starts
+with. Clicking a step:
+
+- **A drop** opens that boss's loot in the Journal.
+- **A dungeon or raid quest** opens that instance's quests in the Journal, chain and all.
+- **Any other quest** marks where its chain starts on your map, and says so in chat.
+
+Each step's tooltip says which of these a click does. Shift-click links the item; Ctrl-click tries it on.
 
 Open it with `/gear` (or `/bis`), or from the Journal's tabs (next to Progression).
 
@@ -39,13 +44,14 @@ Screenshots are coming soon.
 
 | Status | Meaning |
 | --- | --- |
+| **Get** | You can get it now. |
+| **Next** | The upgrade that opens next. |
+| **BiS** | The slot's best in slot in Classic. |
 | **+N%** | How much better than what you have it is, for your spec. |
 | new | You have nothing in that slot yet. |
 | In your bags: wear it | You already own it. |
-| **Next** | Locked for now, shown so you know what comes after the steps you can take. |
-| Opens with *raid* | Your progression stage keeps that raid closed. |
-| Needs level *N* | You can't wear it yet. |
-| (BiS pick) | A hand-picked best-in-slot item for your spec, rather than a stat-weighted pick. |
+| Opens with *raid* / Opens at progression stage *N* | Your progression stage keeps it locked. |
+| Needs level *N* | You, or its quest, need a higher level. |
 | Easy / Medium / Hard | How easy it is to get: quest rewards are easy; drops go by how often they drop. |
 
 A slot's header shows what you wear there and how many upgrades you can get now, **Best you can get now**
@@ -54,11 +60,11 @@ trinkets are compared with the weaker of the two you wear.
 
 ## Which list you see
 
-The list follows your **active talents**: the tree you've put the most points in picks the spec. A rogue's
-list follows the weapon in their main hand (daggers, or swords and maces). With **dual spec**, the menu at
-the top right shows your other talents' list too; that one is compared with what you're wearing now,
-which is probably your active spec's gear. You can also pick any role your class has, such as Feral (bear)
-instead of Feral (cat).
+The list follows your **active talents**: the tree you've put the most points in picks the spec, and the
+weapons that go with it (a Combat rogue gets swords and maces, Assassination and Subtlety get daggers).
+The menu at the top right only appears when there's a choice to make: with **dual spec** it shows your
+other talents' list, compared with what you're wearing now (probably your active spec's gear), and a
+druid can pick Feral (bear) instead of Feral (cat).
 
 Steps are compared with what you **wear and carry** in your bags.
 
@@ -75,8 +81,10 @@ Each list covers levelling through its expansion and that expansion's level cap.
 Reaching 61 means you've moved on to Outland (mod-individual-progression keeps you at 60 until then), so
 Classic gear stops being the goal. Anyone still after Classic gear is at 60 and sees the Classic list.
 
-You can open the list at any level. While levelling, it lists what you can wear now from level 45 or so,
-with locked items shown as *Needs level N*, and suggests dungeons near your level.
+You can open the list at any level. Below level 55 (65, 75 for the later lists) it's a **preview**: the
+list as it will be at the level cap, at your progression stage, so you can see what you're working
+towards. From 55 it compares with what you're wearing, shows *Needs level N* for anything you, or its
+quest, aren't ready for, and suggests dungeons near your level.
 
 In Classic, your progression stage decides which raids are open: Molten Core from the start, then Onyxia
 (stage 1), Blackwing Lair (2), Zul'Gurub (3), Ahn'Qiraj (4) and Naxxramas (6). When the Journal gives a
@@ -103,7 +111,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 
 | Version | What's in it |
 | --- | --- |
-| **0.1.0-alpha** (now) | Classic lists for every spec; hand-picked items for Rogue and Priest. |
+| 0.1.0-alpha | Classic lists for every spec; hand-picked items for Rogue and Priest. |
+| **0.1.1-alpha** (now) | Get / Next / BiS steps, a preview below level 55, quest chains and levels, clearer clicks. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |

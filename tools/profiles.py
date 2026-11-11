@@ -64,12 +64,12 @@ PROFILES = {
                         w=w(HEALER, spi=0.7, int=0.5)),
 }
 
-# Talent tree (1, 2, 3) -> profile. ROGUE picks by the main-hand weapon it carries.
+# Talent tree (1, 2, 3) -> profile. Combat rogues use swords and maces; Assassination and Subtlety, daggers.
 BY_TREE = {
     "WARRIOR": ["WARRIOR_ARMS", "WARRIOR_FURY", "WARRIOR_PROT"],
     "PALADIN": ["PALADIN_HOLY", "PALADIN_PROT", "PALADIN_RET"],
     "HUNTER": ["HUNTER", "HUNTER", "HUNTER"],
-    "ROGUE": ["ROGUE_DAGGERS", "ROGUE_SWORDS", "ROGUE_SWORDS"],
+    "ROGUE": ["ROGUE_DAGGERS", "ROGUE_SWORDS", "ROGUE_DAGGERS"],
     "PRIEST": ["PRIEST_HEAL", "PRIEST_HEAL", "PRIEST_SHADOW"],
     "SHAMAN": ["SHAMAN_ELE", "SHAMAN_ENH", "SHAMAN_RESTO"],
     "MAGE": ["MAGE", "MAGE", "MAGE"],

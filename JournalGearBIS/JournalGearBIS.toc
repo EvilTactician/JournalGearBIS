@@ -2,7 +2,7 @@
 ## Title: Journal: Gear (alpha)
 ## Notes: Adds a Gear tab to the Journal: for your spec, every slot's way from what you wear to the best in slot, a step at a time - an easy item first, the best from dungeons, then each raid's - with where each drops and how likely, and the dungeon with the most upgrades for you. Follows your mod-individual-progression stage. /gear opens it.
 ## Author: EvilTactician
-## Version: 0.1.0-alpha
+## Version: 0.1.1-alpha
 ## Dependencies: Journal
 ## SavedVariablesPerCharacter: JournalGearBISCharDB
 

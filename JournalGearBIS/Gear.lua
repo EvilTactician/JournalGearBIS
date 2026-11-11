@@ -52,18 +52,22 @@ local function runs(chance)
 	return "about 1 in " .. math.max(2, math.floor(1 / chance + 0.5)) .. (chance >= 0.5 and " kills" or " runs")
 end
 
+-- An instance's name and what it is: "Scholomance (dungeon)", "Molten Core (raid)".
+local function place(g)
+	if not g then return "" end
+	return g.name .. (g.raid and " (raid)" or " (dungeon)")
+end
+
 -- How to get it, in one line.
 function G.SourceText(src)
 	local g = src.inst and G.instances[src.inst]
-	local where = g and g.name or ""
-	if src.kind == "D" then
-		return src.who .. " - " .. where .. "  |cff9d9d9d(" .. runs(src.chance) .. ")|r"
-	elseif src.kind == "C" then
-		return src.who .. " - " .. where .. "  |cff9d9d9d(" .. runs(src.chance) .. ")|r"
+	if src.kind == "D" or src.kind == "C" then
+		return src.who .. " in " .. place(g) .. "  |cff9d9d9d" .. runs(src.chance) .. "|r"
 	elseif src.kind == "Q" then
-		if g and g.raid then return "Quest: " .. src.who .. "  |cff9d9d9d(needs an item from " .. where .. ")|r" end
-		if g then return "Quest: " .. src.who .. "  |cff9d9d9d(" .. where .. ")|r" end
-		return "Quest: " .. src.who
+		local t = (src.chain or 1) > 1 and ("Quest chain starting with " .. src.startName) or ("Quest: " .. src.who)
+		if g and g.raid then return t .. "  |cff9d9d9d(needs an item from " .. place(g) .. ")|r" end
+		if g then return t .. "  |cff9d9d9d(" .. place(g) .. ")|r" end
+		return t
 	elseif src.kind == "V" then
 		local t = "Sold by " .. src.who
 		if (src.rep or 0) > 0 then
@@ -86,36 +90,67 @@ end
 -----------------------------------------
 -- opening a step's source in the Journal
 
+-- What clicking a step does, for its tooltip; nil when it does nothing.
+local function clickText(c)
+	local src = c.src
+	local g = src.inst and G.instances[src.inst]
+	if (src.kind == "D" or src.kind == "C") and g then
+		return "Click to open " .. src.who:gsub(",.*", "") .. "'s loot in the Journal."
+	elseif src.kind == "Q" and g then
+		return "Click to open " .. g.name .. "'s quests in the Journal."
+	elseif src.kind == "Q" and J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
+		return "Click to mark where the quest starts on your map."
+	end
+	return nil
+end
+
 local function openSource(c)
 	local src = c.src
-	if src.kind == "Q" and src.quest and not src.inst then
-		if J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then J.ShowOnMap("Q", src.quest) end
+	local g = src.inst and G.instances[src.inst]
+	if src.kind == "Q" and not g then
+		if J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal: Gear|r marked where " .. ((src.chain or 1) > 1 and "the quest chain" or "the quest")
+				.. " |cffffffff" .. src.startName .. "|r starts on your map.")
+			J.ShowOnMap("Q", src.start or src.quest)
+		end
 		return
 	end
-	local g = src.inst and G.instances[src.inst]
 	if not g then return end
-	local function open(boss, variant)
-		if g.journalId then J.OpenInstance(g.journalId, { boss = boss, variant = variant }) end
+	local function open(extra)
+		if g.journalId then J.OpenInstance(g.journalId, extra) end
 	end
-	-- The Journal's own loot search knows the boss and the tab; without it, the instance's page.
-	if J.Search and (src.kind == "D" or src.kind == "C") then
+	if src.kind == "Q" then
+		open({ tab = "quests" })
+	elseif J.Search then
+		-- The Journal's own loot search knows the boss; without it, the instance's loot.
 		local name = GetItemInfo(c.item.id) or c.item.name
 		J.Search(name, function (results)
 			for _, r in ipairs(results or {}) do
 				if r.kind == "L" and r.item == c.item.id then
-					J.OpenInstance(r.instance, { boss = r.boss, variant = r.variant })
+					J.OpenInstance(r.instance, { boss = r.boss, variant = r.variant, tab = "loot" })
 					return
 				end
 			end
-			open()
+			open({ tab = "loot" })
 		end)
 	else
-		open()
+		open({ tab = "loot" })
 	end
 end
 
 -----------------------------------------
 -- the tab
+
+-- Roles talents can't tell apart (a feral druid tanking or not): the class's profiles no tree picks.
+function G.ExtraRoles(class)
+	local byTree, out = {}, {}
+	for _, k in ipairs(G.byTree[class] or {}) do byTree[k] = true end
+	for k, p in pairs(G.profiles) do
+		if p.class == class and not byTree[k] then table.insert(out, k) end
+	end
+	table.sort(out)
+	return out
+end
 
 local function build(panel)
 	JournalGearBISCharDB = JournalGearBISCharDB or {}
@@ -156,20 +191,17 @@ local function build(panel)
 		end
 		table.insert(list, { text = "Show the list for", isTitle = true, notCheckable = true })
 		local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
-		local key, tree = G.TalentProfile(active)
-		add("My talents: " .. (tree or "-") .. (key and (" (" .. G.profiles[key].name .. ")") or ""), "active")
+		local _, tree = G.TalentProfile(active)
+		add("My talents (" .. (tree or "none yet") .. ")", "active")
 		if (GetNumTalentGroups and GetNumTalentGroups() or 1) > 1 then
-			local other = active == 1 and 2 or 1
-			local okey, otree = G.TalentProfile(other)
-			add("My other talents: " .. (otree or "none yet") .. (okey and (" (" .. G.profiles[okey].name .. ")") or ""), "other")
+			local _, otree = G.TalentProfile(active == 1 and 2 or 1)
+			add("My other talents (" .. (otree or "none yet") .. ")", "other")
 		end
-		table.insert(list, { text = "Or a role", isTitle = true, notCheckable = true })
-		local keys = {}
-		for k, p in pairs(G.profiles) do
-			if p.class == class then table.insert(keys, k) end
+		local extra = G.ExtraRoles(class)
+		if #extra > 0 then
+			table.insert(list, { text = "Or a role", isTitle = true, notCheckable = true })
+			for _, k in ipairs(extra) do add(G.profiles[k].name .. "  |cff9d9d9d" .. G.profiles[k].role .. "|r", k) end
 		end
-		table.sort(keys)
-		for _, k in ipairs(keys) do add(G.profiles[k].name .. "  |cff9d9d9d" .. G.profiles[k].role .. "|r", k) end
 		return list
 	end)
 	choose:SetPoint("TOPRIGHT", body, "TOPRIGHT", -8, -8)
@@ -283,12 +315,13 @@ local function build(panel)
 	local function makeStep()
 		local r = CreateFrame("Button", nil, c)
 		r:SetHeight(34)
-		r.num = r:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-		r.num:SetPoint("TOPLEFT", r, "TOPLEFT", 10, -4)
-		r.num:SetWidth(14)
+		r.num = r:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+		r.num:SetPoint("TOPLEFT", r, "TOPLEFT", 4, -4)
+		r.num:SetWidth(32)
+		r.num:SetJustifyH("LEFT")
 		r.icon = r:CreateTexture(nil, "ARTWORK")
 		r.icon:SetSize(28, 28)
-		r.icon:SetPoint("TOPLEFT", r, "TOPLEFT", 28, -3)
+		r.icon:SetPoint("TOPLEFT", r, "TOPLEFT", 38, -3)
 		r.name = r:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 		r.name:SetPoint("TOPLEFT", r.icon, "TOPRIGHT", 6, -1)
 		r.name:SetJustifyH("LEFT")
@@ -325,8 +358,16 @@ local function build(panel)
 				if i > 4 then break end
 				GameTooltip:AddLine(G.SourceText(s), 1, 1, 1, true)
 			end
-			if e.curated then GameTooltip:AddLine("A best-in-slot pick for this spec.", 0.5, 0.85, 1, true) end
-			GameTooltip:AddLine("Click to find it in the Journal. Shift-click links it.", 0.5, 0.85, 1, true)
+			if e.src.kind == "Q" and (e.src.chain or 1) > 1 then
+				GameTooltip:AddLine("It's a quest chain: start with " .. e.src.startName .. " and work through it to "
+					.. e.src.who .. ".", 0.8, 0.8, 0.8, true)
+			end
+			if e.lock then GameTooltip:AddLine(e.lock .. ".", 1, 0.4, 0.4, true) end
+			if e.curated then GameTooltip:AddLine("A hand-picked item for this spec.", 0.5, 0.85, 1, true) end
+			GameTooltip:AddLine(" ")
+			local click = clickText(e)
+			if click then GameTooltip:AddLine(click, 0.5, 0.85, 1, true) end
+			GameTooltip:AddLine("Shift-click links it in chat. Ctrl-click tries it on.", 0.5, 0.85, 1, true)
 			GameTooltip:Show()
 		end)
 		r:SetScript("OnLeave", function () GameTooltip:Hide() end)
@@ -351,8 +392,10 @@ local function build(panel)
 	local function stepState(e, r)
 		if e.inBags then return "|cff40ff40In your bags: wear it|r" end
 		if not e.open then return "|cffff6060" .. (e.lock or "Locked") .. "|r" end
+		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
+	local ROLE = { get = "|cff40ff40Get|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
 
 	render = function ()
 		if not panel:IsVisible() then return end
@@ -382,20 +425,29 @@ local function build(panel)
 		view = v
 
 		local prof = v.profile
-		title:SetText("Classic gear: " .. prof.name .. "  |cff9d9d9d" .. prof.role .. "|r")
+		local spec = v.treeName or prof.name
+		local className = UnitClass("player")
+		title:SetText("Classic gear: " .. spec .. " " .. className .. "  |cff9d9d9d" .. prof.role
+			.. (prof.mh and (", " .. prof.name:lower()) or "") .. "|r")
 		local lines
-		if db.choice == "other" and v.groups > 1 then
+		if v.preview then
+			lines = "A preview of your gear goals at level " .. v.cap .. ". From level " .. v.readyLevel
+				.. ", the list compares them with what you're wearing."
+		elseif db.choice == "other" and v.groups > 1 then
 			lines = "Your other talents (" .. (v.treeName or "none yet") .. "), compared with the gear you're wearing now, which is likely your active talents' gear."
 		elseif db.choice and G.profiles[db.choice] then
-			lines = "The list you picked, compared with the gear you're wearing and carrying."
+			lines = "The role you picked, compared with the gear you're wearing and carrying."
 		else
-			lines = "For your active talents" .. (v.treeName and (" (" .. v.treeName .. ")") or "")
-				.. " and the gear you're wearing and carrying. Change talents, or pick a list on the right."
+			lines = "For your talents" .. (v.treeName and (" (" .. v.treeName .. ")") or "")
+				.. ", compared with the gear you're wearing and carrying."
 		end
 		if J.Has(J.HELLO_PROGRESSION) then lines = lines .. "  Progression stage " .. s .. "." end
 		note:SetText(lines)
+		-- The menu is only there when there's a choice: dual spec, or a role talents can't tell.
+		local choices = (v.groups > 1) or #G.ExtraRoles(v.class) > 0
+		setShown(choose, choices)
 		local p = G.profiles[v.profileKey]
-		choose:SetText(p and p.name or "Choose")
+		choose:SetText((db.choice == "other" and "Other talents") or (db.choice and G.profiles[db.choice] and p.name) or "My talents")
 
 		-- where to go next
 		local ad = {}
@@ -417,7 +469,7 @@ local function build(panel)
 			end
 		end
 		if #ad == 0 then
-			adviceLines[1].text:SetText("|cff9d9d9dNo dungeon or raid open to you has an upgrade left. Well done!|r")
+			adviceLines[1].text:SetText("|cff9d9d9d" .. (v.adviceNote or "") .. "|r")
 			adviceLines[1]:Show()
 		end
 
@@ -448,12 +500,14 @@ local function build(panel)
 				end
 				local open = 0
 				for _, e in ipairs(r.steps) do if e.open then open = open + 1 end end
-				if r.best and have then
+				if v.preview then
+					h.state:SetText("")
+				elseif r.best and have then
 					h.state:SetText("|cff40ff40Best in slot until " .. EXPANSION_NEXT[0] .. "|r")
-				elseif open == 0 and r.next then
+				elseif open == 0 and #r.steps > 0 then
 					h.state:SetText("|cff40ff40Best you can get now|r")
 				elseif open > 0 then
-					h.state:SetText(open .. (open == 1 and " upgrade" or " upgrades"))
+					h.state:SetText(open .. (open == 1 and " upgrade now" or " upgrades now"))
 				else
 					h.state:SetText("")
 				end
@@ -465,11 +519,10 @@ local function build(panel)
 					st:ClearAllPoints()
 					st:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 					st:SetWidth(width)
-					st.num:SetText(e.open and (i .. ".") or "|cffff6060Next|r")
-					st.num:SetWidth(e.open and 14 or 26)
+					st.num:SetText(ROLE[e.role] or "")
 					st.icon:SetTexture(GetItemIcon and GetItemIcon(e.item.id) or J.ItemIcon(e.item.id))
 					st.icon:SetDesaturated(not e.open)
-					st.name:SetText(itemName(e.item) .. (e.curated and " |cff9d9d9d(BiS pick)|r" or ""))
+					st.name:SetText(itemName(e.item))
 					st.name:SetWidth(width - 230)
 					st.source:SetText(G.SourceText(e.src))
 					st.source:SetWidth(width - 230)
