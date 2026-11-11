@@ -51,8 +51,6 @@ G.ROWS = {
 
 -- Raids in the order they open; dungeons come before them all.
 G.RAID_ORDER = { [409] = 1, [249] = 2, [469] = 3, [309] = 4, [509] = 5, [531] = 6, [533] = 7 }
--- The tier players know a raid by; the others go by the stage that opens them.
-G.RAID_TIER = { [409] = "T1", [249] = "T1", [469] = "T2", [531] = "T2.5", [533] = "T3" }
 local TIER_EASY, TIER_DUNGEON, TIER_RAID = 1, 2, 10
 
 -- An upgrade beats what you have by MIN_GAIN; a step is only worth taking when it's STEP_GAIN better than
@@ -396,15 +394,17 @@ local function candidate(t, prof, rowKey, curated)
 	c.stage, c.need = src.stage, need
 	c.open = src.open and need <= P.level
 	if need > P.level and src.open then
-		c.lock = "Needs level " .. need
+		c.lock = "Available at level " .. need
 	elseif not src.open then
 		local g = src.inst and G.instances[src.inst]
 		if g then
-			c.lock = "Opens with " .. g.name .. " (" .. (G.RAID_TIER[src.inst] or ("stage " .. src.stage)) .. ")"
+			c.lock = "Opens with " .. g.name .. " (Stage " .. src.stage .. ")"
 		else
-			c.lock = "Opens at progression stage " .. src.stage
+			c.lock = "Opens at Stage " .. src.stage
 		end
 	end
+	-- In a preview, the level you can first get it at.
+	if P.preview and need > P.realLevel then c.availableAt = need end
 	return c
 end
 
