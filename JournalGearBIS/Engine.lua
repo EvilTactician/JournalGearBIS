@@ -51,6 +51,8 @@ G.ROWS = {
 
 -- Raids in the order they open; dungeons come before them all.
 G.RAID_ORDER = { [409] = 1, [249] = 2, [469] = 3, [309] = 4, [509] = 5, [531] = 6, [533] = 7 }
+-- The tier players know a raid by; the others go by the stage that opens them.
+G.RAID_TIER = { [409] = "T1", [249] = "T1", [469] = "T2", [531] = "T2.5", [533] = "T3" }
 local TIER_EASY, TIER_DUNGEON, TIER_RAID = 1, 2, 10
 
 -- An upgrade beats what you have by MIN_GAIN; a step is only worth taking when it's STEP_GAIN better than
@@ -306,7 +308,11 @@ local function readSource(s)
 		src.tier = g.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
 	elseif kind == "Q" then
 		src.quest, src.who, src.inst, src.stage, src.races, src.qlevel = s[2], s[3], s[4] ~= 0 and s[4] or nil, s[5], s[6], s[7]
-		src.need, src.start, src.startName, src.chain = s[8] or 0, s[9] or s[2], s[10] or s[3], s[11] or 1
+		-- the chain as your faction starts it: { first quest, title, quest givers, all trainers, quests in it }
+		local chain = (P.faction == "Horde" and s[10] or s[9]) or {}
+		src.need = s[8] or 0
+		src.start, src.startName, src.givers, src.trainer, src.chain = chain[1] or s[2], chain[2] or s[3], chain[3] or 1,
+			chain[4] == 1, chain[5] or 1
 		if src.races ~= 0 and band(src.races, P.raceBit) == 0 then return nil end
 		if src.inst then
 			local g = G.instances[src.inst]
@@ -394,7 +400,7 @@ local function candidate(t, prof, rowKey, curated)
 	elseif not src.open then
 		local g = src.inst and G.instances[src.inst]
 		if g then
-			c.lock = "Opens with " .. g.name
+			c.lock = "Opens with " .. g.name .. " (" .. (G.RAID_TIER[src.inst] or ("stage " .. src.stage)) .. ")"
 		else
 			c.lock = "Opens at progression stage " .. src.stage
 		end
@@ -429,7 +435,6 @@ end
 -- What you have for a row: its value and what it is. For rings and trinkets, the weaker of the two
 -- (the one an upgrade replaces), with the stronger kept too.
 local function ownedFor(row, prof, curated)
-	if P.preview then return { value = 0, all = {} } end
 	local part = weaponPart(row.key)
 	local list = {}
 	for _, slot in ipairs(row.slots) do
@@ -445,13 +450,20 @@ local function ownedFor(row, prof, curated)
 			table.insert(list, { worn = w, value = value, id = w.id })
 		end
 	end
+	local o
 	if row.pair then
 		table.sort(list, function (a, b) return a.value > b.value end)
-		if #list < 2 then return { value = 0, weak = nil, strong = list[1], all = list } end
-		return { value = list[2].value, weak = list[2], strong = list[1], all = list }
+		if #list < 2 then
+			o = { value = 0, weak = nil, strong = list[1], all = list }
+		else
+			o = { value = list[2].value, weak = list[2], strong = list[1], all = list }
+		end
+	else
+		o = { value = list[1] and list[1].value or 0, weak = list[1], strong = list[1], all = list }
 	end
-	local o = list[1]
-	return { value = o and o.value or 0, weak = o, strong = o, all = list }
+	-- A preview shows what you wear, but its goals are for the level cap, so nothing you have counts yet.
+	if P.preview then o.value = 0 end
+	return o
 end
 
 -- The steps for one row: { owned, steps = { candidate... } (each with .role "get", "next" or "bis"), best (true
@@ -475,7 +487,9 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 
 	-- What you wear isn't offered again, nor what another row already shows.
 	local wornIds = {}
-	for _, o in ipairs(owned.all) do wornIds[o.id] = true end
+	if not P.preview then
+		for _, o in ipairs(owned.all) do wornIds[o.id] = true end
+	end
 	local pool = {}
 	for _, c in ipairs(cands) do
 		if not wornIds[c.item.id] and not (exclude and exclude[c.item.id]) and c.value > owned.value * MIN_GAIN + 0.5 then
@@ -559,9 +573,12 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 			table.insert(shown, final)
 		end
 	end
+	local wearing = {}
+	for _, o in ipairs(owned.all) do wearing[o.id] = true end
 	for _, c in ipairs(shown) do
 		c.role = (c == final) and "bis" or (c.open and "get" or "next")
-		c.inBags = not P.preview and P.bags[c.item.id] ~= nil
+		c.equipped = wearing[c.item.id] == true
+		c.inBags = not c.equipped and P.bags[c.item.id] ~= nil
 	end
 
 	-- Every open candidate that beats what you have (for the dungeon advice).
@@ -627,6 +644,7 @@ function G.Build(choice, stage)
 	local _, class = UnitClass("player")
 	local _, race = UnitRace("player")
 	P.class, P.race, P.raceBit = class, race, G.RACE_BIT[race] or 0
+	P.faction = UnitFactionGroup and UnitFactionGroup("player") or "Alliance"
 	P.realLevel = UnitLevel("player")
 	local phase = G.Phase(P.realLevel)
 	P.preview = P.realLevel < G.READY[phase]

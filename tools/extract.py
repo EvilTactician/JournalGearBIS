@@ -261,11 +261,21 @@ def quest_min_level(q):
     return (q.get("MinLevel") or 0) or max(1, (q.get("QuestLevel") or 1) - 4)
 
 
-def chain_start(qid):
-    """The first quest of a quest's chain, and how many quests the chain has up to and including it."""
+HORDE, ALLIANCE = 690, 1101  # race masks
+gstarters = collections.defaultdict(list)
+for r in R("gameobject_queststarter"):
+    gstarters[r["quest"]].append(r["id"])
+
+
+def chain_start(qid, races=0):
+    """The first quest of a quest's chain for a faction (races: its race mask, 0 for either), and how many
+    quests the chain has up to and including it."""
+    def fits(p):
+        m = quests[p].get("AllowableRaces") or 0
+        return not races or not m or (m & races)
     seen, cur, n = {qid}, qid, 1
     while True:
-        prevs = [p for p in sorted(prev_of.get(cur, ())) if p in quests and p not in seen]
+        prevs = [p for p in sorted(prev_of.get(cur, ())) if p in quests and p not in seen and fits(p)]
         if not prevs:
             return cur, n
         a = qaddon.get(cur, {})
@@ -274,6 +284,13 @@ def chain_start(qid):
         n += 1
         if n > 25:
             return cur, n
+
+
+def giver_info(qid):
+    """How many quest givers start a quest, and whether they're all trainers (a class quest from any trainer)."""
+    cs = qstarters.get(qid, [])
+    trainer = bool(cs) and all(((ctpl.get(c) or {}).get("npcflag") or 0) & 16 for c in cs)
+    return len(cs) + len(gstarters.get(qid, [])), trainer
 
 
 def needs_world_epic(q, depth=0):
@@ -318,10 +335,14 @@ for q in quests.values():
     if end <= 8 and end <= stage:
         continue
     for it in rewards:
-        start, steps = chain_start(q["ID"])
-        need = max(quest_min_level(q), quest_min_level(quests[start]))
+        chains = {}
+        for side, mask in (("A", ALLIANCE), ("H", HORDE)):
+            start, steps = chain_start(q["ID"], mask)
+            givers, trainer = giver_info(start)
+            chains[side] = (start, quests[start].get("LogTitle") or "", givers, 1 if trainer else 0, steps)
+        need = max(quest_min_level(q), min(quest_min_level(quests[chains["A"][0]]), quest_min_level(quests[chains["H"][0]])))
         sources[it].append({"k": "Q", "q": q["ID"], "n": (q.get("LogTitle") or ""), "lvl": (q.get("QuestLevel") or 0), "i": via, "st": stage,
-                            "need": need, "start": start, "startn": quests[start].get("LogTitle") or "", "steps": steps,
+                            "need": need, "chains": chains,
                             "races": (q.get("AllowableRaces") or 0), "classes": a.get("AllowableClasses", 0) or 0, "end": end})
 
 # ---------------------------------------------------------------- vendors (Eastern Kingdoms / Kalimdor only)

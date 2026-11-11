@@ -1,7 +1,7 @@
 # Journal: Gear
 
 > [!WARNING]
-> **Early alpha (version 0.1.1-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.2-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -30,7 +30,8 @@ with. Clicking a step:
 
 - **A drop** opens that boss's loot in the Journal.
 - **A dungeon or raid quest** opens that instance's quests in the Journal, chain and all.
-- **Any other quest** marks where its chain starts on your map, and says so in chat.
+- **Any other quest** marks where its chain starts on your map, and says so in chat. A chain your class
+  trainer (or several quest givers) starts has nothing to mark: the step says who to talk to instead.
 
 Each step's tooltip says which of these a click does. Shift-click links the item; Ctrl-click tries it on.
 
@@ -46,11 +47,12 @@ Screenshots are coming soon.
 | --- | --- |
 | **Get** | You can get it now. |
 | **Next** | The upgrade that opens next. |
-| **BiS** | The slot's best in slot in Classic. |
+| **BiS** | The slot's best in slot in Classic: the best it gets before The Burning Crusade. |
+| Equipped | You're wearing it. |
 | **+N%** | How much better than what you have it is, for your spec. |
 | new | You have nothing in that slot yet. |
 | In your bags: wear it | You already own it. |
-| Opens with *raid* / Opens at progression stage *N* | Your progression stage keeps it locked. |
+| Opens with *raid* (T2) / Opens at progression stage *N* | Your progression stage keeps it locked; the tier (T1 to T3) or stage says when it opens. |
 | Needs level *N* | You, or its quest, need a higher level. |
 | Easy / Medium / Hard | How easy it is to get: quest rewards are easy; drops go by how often they drop. |
 
@@ -66,7 +68,8 @@ The menu at the top right only appears when there's a choice to make: with **dua
 other talents' list, compared with what you're wearing now (probably your active spec's gear), and a
 druid can pick Feral (bear) instead of Feral (cat).
 
-Steps are compared with what you **wear and carry** in your bags.
+Steps are compared with what you **wear and carry** in your bags. Quest chains are the ones your faction
+starts.
 
 ## Expansions
 
@@ -112,7 +115,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | Version | What's in it |
 | --- | --- |
 | 0.1.0-alpha | Classic lists for every spec; hand-picked items for Rogue and Priest. |
-| **0.1.1-alpha** (now) | Get / Next / BiS steps, a preview below level 55, quest chains and levels, clearer clicks. |
+| 0.1.1-alpha | Get / Next / BiS steps, a preview below level 55, quest chains and levels, clearer clicks. |
+| **0.1.2-alpha** (now) | Quest chains for your faction, raid tiers on locked steps, your gear shown in the preview. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
