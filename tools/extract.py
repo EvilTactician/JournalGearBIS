@@ -213,6 +213,23 @@ def quest_via(qid, depth=0, seen=None):
     return via, stage
 
 
+def quest_tokens(qid, depth=0, seen=None):
+    """The raid drops a quest (or the quests before it) asks you to hand in: tier tokens, Head of Onyxia."""
+    seen = seen or set()
+    if qid in seen or depth > 6 or qid not in quests:
+        return set()
+    seen.add(qid)
+    q = quests[qid]
+    out = set()
+    for ri in [q.get("RequiredItemId%d" % i) for i in range(1, 7)] + [q.get("StartItem")]:
+        if ri and any(ik in RAIDS for ik in drops_of.get(ri, {})):
+            out.add(ri)
+    if not out:
+        for p in prev_of.get(qid, ()):
+            out |= quest_tokens(p, depth + 1, seen)
+    return out
+
+
 # mod-individual-progression's quest gating, as the Journal reads it: conditions on its stage quests
 # (66000 + stage), and the era scripts on the quest's giver. -> quest: (first stage, stage it goes away at)
 ERA_SCRIPTS = {"npc_ipp_preaq": (3, 255), "gobject_ipp_preaq": (3, 255), "npc_ipp_we": (3, 4), "npc_ipp_aqwewar": (3, 5),
@@ -237,8 +254,8 @@ for r in R("gameobject_queststarter"):
         e = quest_era[r["quest"]]
         e[0], e[1] = max(e[0], ERA_SCRIPTS[sc][0]), min(e[1], ERA_SCRIPTS[sc][1])
 
-# Quests that need an epic from outside the instances (world bosses' dragon heads and the like) aren't
-# something to point a player at.
+# Quests that need an epic quest item from outside the instances (world bosses' dragon heads and the like)
+# aren't something to point a player at. Epic crafting materials (Nexus Crystals) don't count.
 instance_items = set(drops_of)
 
 
@@ -296,7 +313,7 @@ def giver_info(qid):
 def needs_world_epic(q, depth=0):
     for ri in [q.get("RequiredItemId%d" % i) for i in range(1, 7)] + [q.get("StartItem")]:
         it = items.get(ri or 0)
-        if it and it["Quality"] >= 4 and ri not in instance_items:
+        if it and it["Quality"] >= 4 and it["class"] == 12 and ri not in instance_items:
             return True
     if depth < 6:
         for p in prev_of.get(q["ID"], ()):
@@ -342,7 +359,7 @@ for q in quests.values():
             chains[side] = (start, quests[start].get("LogTitle") or "", givers, 1 if trainer else 0, steps)
         need = max(quest_min_level(q), min(quest_min_level(quests[chains["A"][0]]), quest_min_level(quests[chains["H"][0]])))
         sources[it].append({"k": "Q", "q": q["ID"], "n": (q.get("LogTitle") or ""), "lvl": (q.get("QuestLevel") or 0), "i": via, "st": stage,
-                            "need": need, "chains": chains,
+                            "need": need, "chains": chains, "tokens": sorted(quest_tokens(q["ID"])) if via in RAIDS else [],
                             "races": (q.get("AllowableRaces") or 0), "classes": a.get("AllowableClasses", 0) or 0, "end": end})
 
 # ---------------------------------------------------------------- vendors (Eastern Kingdoms / Kalimdor only)

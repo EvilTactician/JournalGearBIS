@@ -14,7 +14,6 @@ local setShown = J.SetShown or function (f, shown) if shown then f:Show() else f
 
 local STAGE_QUEST = 66000
 local MAX_STAGE = 18
-local EXPANSION_NEXT = { [0] = "The Burning Crusade", [1] = "Wrath of the Lich King" }
 local DIFFICULTY = { "|cff40ff40Easy|r", "|cffffd200Medium|r", "|cffff7f3fHard|r" }
 
 -----------------------------------------
@@ -200,6 +199,7 @@ local function build(panel)
 		local function add(text, value)
 			table.insert(list, { text = text, checked = (db.choice or "active") == value, func = function ()
 				db.choice = value
+				G.MarkTipsDirty()
 				CloseDropDownMenus()
 				render()
 			end })
@@ -390,7 +390,7 @@ local function build(panel)
 				GameTooltip:AddLine("Available at level " .. e.availableAt .. ".", 1, 0.4, 0.4, true)
 			end
 			if e.role == "bis" then
-				GameTooltip:AddLine("Best in slot for Classic: the best this slot gets before The Burning Crusade.", 1, 0.82, 0, true)
+				GameTooltip:AddLine(G.BIS_TEXT[0], 1, 0.82, 0, true)
 			end
 			if e.curated then GameTooltip:AddLine("A hand-picked item for this spec.", 0.5, 0.85, 1, true) end
 			GameTooltip:AddLine(" ")
@@ -426,7 +426,7 @@ local function build(panel)
 		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
-	local ROLE = { get = "|cff40ff40Get|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
+	local ROLE = { get = "|cff40ff40Now|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
 
 	render = function ()
 		if not panel:IsVisible() then return end
@@ -536,7 +536,7 @@ local function build(panel)
 				if v.preview then
 					h.state:SetText("")
 				elseif r.best and have then
-					h.state:SetText("|cff40ff40Best in slot until " .. EXPANSION_NEXT[0] .. "|r")
+					h.state:SetText("|cff40ff40" .. G.BIS_TEXT[0] .. "|r")
 				elseif open == 0 and #r.steps > 0 then
 					h.state:SetText("|cff40ff40Best you can get now|r")
 				elseif open > 0 then
@@ -609,6 +609,62 @@ local function build(panel)
 
 	return load
 end
+
+-----------------------------------------
+-- item tooltips everywhere: "On your gear list: Roll Need" on an item that's an upgrade for you, and on a
+-- token that becomes one. Worked out for your active talents (or the role you picked), and kept until your
+-- gear, bags, level, talents or stage change.
+
+local tipView, tipDirty = nil, true
+
+local function viewForTips()
+	if tipDirty or not tipView then
+		local db = JournalGearBISCharDB or {}
+		local choice = (db.choice == "other") and "active" or db.choice
+		if not G.learned then
+			G.learned = true
+			G.LearnInstances()
+		end
+		local _, class = UnitClass("player")
+		if class == "DEATHKNIGHT" or G.Phase(UnitLevel("player")) ~= 0 then
+			tipView = nil
+		else
+			tipView = G.Build(choice or "active", stage())
+		end
+		tipDirty = false
+	end
+	return tipView
+end
+
+local function onTooltipItem(tip)
+	local _, link = tip:GetItem()
+	local id = link and tonumber(link:match("item:(%d+)"))
+	if not id then return end
+	local ok, row, becomes = pcall(function () return G.Verdict(viewForTips(), id) end)
+	if not ok or not (row or becomes) then return end
+	tip:AddLine("|cffffd200On your gear list:|r |cff00ff00Roll Need|r")
+	if becomes then
+		local names = {}
+		for _, other in ipairs(becomes) do
+			local name = GetItemInfo(other) or (G.Item(other) and G.Item(other).name) or ("item " .. other)
+			table.insert(names, name)
+		end
+		tip:AddLine("Exchange it for: " .. table.concat(names, ", "), 1, 1, 1, true)
+	end
+	tip:Show()
+end
+
+GameTooltip:HookScript("OnTooltipSetItem", onTooltipItem)
+if ItemRefTooltip then ItemRefTooltip:HookScript("OnTooltipSetItem", onTooltipItem) end
+
+local tipEvents = CreateFrame("Frame")
+for _, e in ipairs({ "PLAYER_EQUIPMENT_CHANGED", "BAG_UPDATE", "PLAYER_LEVEL_UP", "ACTIVE_TALENT_GROUP_CHANGED",
+		"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "QUEST_QUERY_COMPLETE", "PLAYER_ENTERING_WORLD" }) do
+	tipEvents:RegisterEvent(e)
+end
+tipEvents:SetScript("OnEvent", function () tipDirty = true end)
+J.On("READY", function () tipDirty = true end)
+G.MarkTipsDirty = function () tipDirty = true end
 
 local load
 Journal.RegisterTab({

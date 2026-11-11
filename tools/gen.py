@@ -311,6 +311,18 @@ for i in sorted(keep):
         i, lstr(it["name"]), it["InventoryType"], it["class"] * 100 + it["subclass"], it["ItemLevel"], it["RequiredLevel"],
         it["Quality"], usable_mask(it), races, uniq, ltable(stats(it)), src_lua(i)))
 L.append("}")
+L.append("")
+L.append("-- Raid drops you hand in for an item (tier tokens, Head of Onyxia): token = { items it can become }.")
+tokens = collections.defaultdict(set)
+for i in keep:
+    for s in sources.get(i, []):
+        if s["k"] == "Q":
+            for tk in s.get("tokens", []):
+                tokens[tk].add(i)
+L.append("G.tokens = {")
+for tk in sorted(tokens):
+    L.append("\t[%d] = { %s }, -- %s" % (tk, ", ".join(str(x) for x in sorted(tokens[tk])), items[tk]["name"] if tk in items else "?"))
+L.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Data.lua"), "w").write("\n".join(L) + "\n")
 
 # ---------------------------------------------------------------- Profiles.lua
