@@ -65,6 +65,13 @@ function G.SourceText(src)
 		return src.who .. " in " .. place(g) .. "  |cff9d9d9d" .. runs(src.chance) .. "|r"
 	elseif src.kind == "Q" then
 		local t = (src.chain or 1) > 1 and ("Quest chain starting with " .. src.startName) or ("Quest: " .. src.who)
+		if src.trainer then
+			t = t .. "  |cff9d9d9d(from your class trainer)|r"
+		elseif (src.givers or 1) > 1 and not g then
+			t = t .. "  |cff9d9d9d(from several quest givers)|r"
+		elseif (src.givers or 1) == 0 and not g then
+			t = t .. "  |cff9d9d9d(starts from an item)|r"
+		end
 		if g and g.raid then return t .. "  |cff9d9d9d(needs an item from " .. place(g) .. ")|r" end
 		if g then return t .. "  |cff9d9d9d(" .. place(g) .. ")|r" end
 		return t
@@ -98,6 +105,8 @@ local function clickText(c)
 		return "Click to open " .. src.who:gsub(",.*", "") .. "'s loot in the Journal."
 	elseif src.kind == "Q" and g then
 		return "Click to open " .. g.name .. "'s quests in the Journal."
+	elseif src.kind == "Q" and (src.givers or 1) ~= 1 then
+		return nil
 	elseif src.kind == "Q" and J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
 		return "Click to mark where the quest starts on your map."
 	end
@@ -108,7 +117,8 @@ local function openSource(c)
 	local src = c.src
 	local g = src.inst and G.instances[src.inst]
 	if src.kind == "Q" and not g then
-		if J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
+		-- One giver can be marked; with several (a trainer in every city) the Journal can't pick yours.
+		if (src.givers or 1) == 1 and J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
 			DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal: Gear|r marked where " .. ((src.chain or 1) > 1 and "the quest chain" or "the quest")
 				.. " |cffffffff" .. src.startName .. "|r starts on your map.")
 			J.ShowOnMap("Q", src.start or src.quest)
@@ -215,6 +225,9 @@ local function build(panel)
 	local adviceTitle = advice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	adviceTitle:SetPoint("TOPLEFT", advice, "TOPLEFT", 10, -8)
 	adviceTitle:SetText("Where to go next")
+	local stageText = advice:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	stageText:SetPoint("TOPRIGHT", advice, "TOPRIGHT", -10, -10)
+	stageText:SetTextColor(0.8, 0.8, 0.8)
 	local adviceLines = {}
 	for i = 1, 3 do
 		local b = CreateFrame("Button", nil, advice)
@@ -362,7 +375,15 @@ local function build(panel)
 				GameTooltip:AddLine("It's a quest chain: start with " .. e.src.startName .. " and work through it to "
 					.. e.src.who .. ".", 0.8, 0.8, 0.8, true)
 			end
+			if e.src.kind == "Q" and e.src.trainer then
+				GameTooltip:AddLine("Your class trainer in any capital city gives you the first quest.", 0.8, 0.8, 0.8, true)
+			elseif e.src.kind == "Q" and (e.src.givers or 1) > 1 and not e.src.inst then
+				GameTooltip:AddLine("Several quest givers offer the first quest.", 0.8, 0.8, 0.8, true)
+			end
 			if e.lock then GameTooltip:AddLine(e.lock .. ".", 1, 0.4, 0.4, true) end
+			if e.role == "bis" then
+				GameTooltip:AddLine("Best in slot for Classic: the best this slot gets before The Burning Crusade.", 1, 0.82, 0, true)
+			end
 			if e.curated then GameTooltip:AddLine("A hand-picked item for this spec.", 0.5, 0.85, 1, true) end
 			GameTooltip:AddLine(" ")
 			local click = clickText(e)
@@ -390,6 +411,7 @@ local function build(panel)
 	end
 
 	local function stepState(e, r)
+		if e.equipped then return "|cff40ff40Equipped|r" end
 		if e.inBags then return "|cff40ff40In your bags: wear it|r" end
 		if not e.open then return "|cffff6060" .. (e.lock or "Locked") .. "|r" end
 		if view and view.preview then return "" end
@@ -441,8 +463,8 @@ local function build(panel)
 			lines = "For your talents" .. (v.treeName and (" (" .. v.treeName .. ")") or "")
 				.. ", compared with the gear you're wearing and carrying."
 		end
-		if J.Has(J.HELLO_PROGRESSION) then lines = lines .. "  Progression stage " .. s .. "." end
 		note:SetText(lines)
+		stageText:SetText(J.Has(J.HELLO_PROGRESSION) and ("Progression stage " .. s) or "")
 		-- The menu is only there when there's a choice: dual spec, or a role talents can't tell.
 		local choices = (v.groups > 1) or #G.ExtraRoles(v.class) > 0
 		setShown(choose, choices)
