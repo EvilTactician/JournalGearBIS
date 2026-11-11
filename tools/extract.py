@@ -257,6 +257,25 @@ def era_of(qid, depth=0, seen=None):
     return None
 
 
+def quest_min_level(q):
+    return (q.get("MinLevel") or 0) or max(1, (q.get("QuestLevel") or 1) - 4)
+
+
+def chain_start(qid):
+    """The first quest of a quest's chain, and how many quests the chain has up to and including it."""
+    seen, cur, n = {qid}, qid, 1
+    while True:
+        prevs = [p for p in sorted(prev_of.get(cur, ())) if p in quests and p not in seen]
+        if not prevs:
+            return cur, n
+        a = qaddon.get(cur, {})
+        cur = a.get("PrevQuestID") if a.get("PrevQuestID") in prevs else prevs[0]
+        seen.add(cur)
+        n += 1
+        if n > 25:
+            return cur, n
+
+
 def needs_world_epic(q, depth=0):
     for ri in [q.get("RequiredItemId%d" % i) for i in range(1, 7)] + [q.get("StartItem")]:
         it = items.get(ri or 0)
@@ -299,7 +318,10 @@ for q in quests.values():
     if end <= 8 and end <= stage:
         continue
     for it in rewards:
+        start, steps = chain_start(q["ID"])
+        need = max(quest_min_level(q), quest_min_level(quests[start]))
         sources[it].append({"k": "Q", "q": q["ID"], "n": (q.get("LogTitle") or ""), "lvl": (q.get("QuestLevel") or 0), "i": via, "st": stage,
+                            "need": need, "start": start, "startn": quests[start].get("LogTitle") or "", "steps": steps,
                             "races": (q.get("AllowableRaces") or 0), "classes": a.get("AllowableClasses", 0) or 0, "end": end})
 
 # ---------------------------------------------------------------- vendors (Eastern Kingdoms / Kalimdor only)

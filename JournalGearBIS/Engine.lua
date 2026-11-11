@@ -1,7 +1,7 @@
 -- JournalGearBIS's logic: which spec list to show, what each item is worth to it, what you own, and for every
--- slot the upgrade steps from what you wear to the best item Classic has: an easy one first where there is one,
--- the best from dungeons, then each raid's best. Only steps you can get now are listed, plus one still locked
--- when that leaves fewer than three, so you can see what comes next.
+-- slot up to three steps from what you wear: what to get now (an easy item first where there is one, then the
+-- best you can get), what opens next, and the slot's best in slot. Below the level gearing starts, the list is
+-- a preview of your goals at the level cap.
 --
 -- Profiles.lua has the stat weights, Curated.lua the hand-picked items and Data.lua the items and where they
 -- come from. Nothing here draws anything: Gear.lua is the tab.
@@ -54,8 +54,8 @@ G.RAID_ORDER = { [409] = 1, [249] = 2, [469] = 3, [309] = 4, [509] = 5, [531] = 
 local TIER_EASY, TIER_DUNGEON, TIER_RAID = 1, 2, 10
 
 -- An upgrade beats what you have by MIN_GAIN; a step is only worth taking when it's STEP_GAIN better than
--- the one before it. At most MAX_OPEN steps you can take now are shown.
-local MIN_GAIN, STEP_GAIN, MAX_OPEN = 1.03, 1.08, 3
+-- the one before it. A slot shows at most SHOWN steps.
+local MIN_GAIN, STEP_GAIN, SHOWN = 1.03, 1.08, 3
 -- Curated items win their tier unless the stat-weighted pick is much better.
 local CURATED_BONUS = 1.15
 -- Drop chances: at least EASY is easy, at least MEDIUM is medium, below that hard.
@@ -68,6 +68,10 @@ function G.Phase(level)
 	if level >= 61 then return 1 end
 	return 0
 end
+
+-- Each expansion's level cap, and the level gearing for it starts: below that the list is a preview.
+G.CAP = { [0] = 60, 70, 80 }
+G.READY = { [0] = 55, 65, 75 }
 
 -----------------------------------------
 -- the item table
@@ -101,7 +105,7 @@ end
 -----------------------------------------
 -- profiles
 
--- The profile for a talent group (1 or 2): the tree with the most points; a rogue's by the weapon in hand.
+-- The profile for a talent group (1 or 2): the tree with the most points.
 function G.TalentProfile(group)
 	local _, class = UnitClass("player")
 	local trees = G.byTree[class]
@@ -111,24 +115,7 @@ function G.TalentProfile(group)
 		local tabName, _, points = GetTalentTabInfo(tab, false, false, group)
 		if (points or 0) > bestPoints then best, bestPoints, name = tab, points or 0, tabName end
 	end
-	local key = trees[best]
-	if class == "ROGUE" then
-		-- Rogues go by the main hand they carry: a dagger means a dagger build, whatever the talents.
-		local link = GetInventoryItemLink("player", 16)
-		local id = link and tonumber(link:match("item:(%d+)"))
-		local t = id and item(id)
-		local dagger
-		if t then
-			dagger = t.class == 2 and t.subclass == 15
-		elseif id then
-			local _, _, _, _, _, _, subType, _, equipLoc = GetItemInfo(id)
-			dagger = subType ~= nil and equipLoc ~= nil and subType == "Daggers"
-		end
-		if group == (GetActiveTalentGroup and GetActiveTalentGroup() or 1) and dagger ~= nil then
-			key = dagger and "ROGUE_DAGGERS" or "ROGUE_SWORDS"
-		end
-	end
-	return key, (bestPoints > 0) and name or nil
+	return trees[best], (bestPoints > 0) and name or nil
 end
 
 -----------------------------------------
@@ -319,6 +306,7 @@ local function readSource(s)
 		src.tier = g.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
 	elseif kind == "Q" then
 		src.quest, src.who, src.inst, src.stage, src.races, src.qlevel = s[2], s[3], s[4] ~= 0 and s[4] or nil, s[5], s[6], s[7]
+		src.need, src.start, src.startName, src.chain = s[8] or 0, s[9] or s[2], s[10] or s[3], s[11] or 1
 		if src.races ~= 0 and band(src.races, P.raceBit) == 0 then return nil end
 		if src.inst then
 			local g = G.instances[src.inst]
@@ -337,6 +325,8 @@ local function readSource(s)
 		return nil
 	end
 	src.open = src.stage <= P.stage
+	-- usable now: open, and you're the level its quest needs
+	src.ok = src.open and (src.need or 0) <= P.level
 	return src
 end
 
@@ -363,6 +353,7 @@ local function sourcesOf(t)
 		if src then table.insert(list, src) end
 	end
 	table.sort(list, function (a, b)
+		if a.ok ~= b.ok then return a.ok end
 		if a.open ~= b.open then return a.open end
 		if a.tier ~= b.tier then return a.tier < b.tier end
 		return (a.chance or 1) > (b.chance or 1)
@@ -395,9 +386,11 @@ local function candidate(t, prof, rowKey, curated)
 	if value <= 0 then return nil end
 	local src = srcs[1]
 	local c = { item = t, value = value, sources = srcs, src = src, tier = src.tier, curated = pick and true or false }
-	c.open = src.open and t.req <= P.level
-	if t.req > P.level and src.open then
-		c.lock = "Needs level " .. t.req
+	local need = math.max(t.req, src.need or 0)
+	c.stage, c.need = src.stage, need
+	c.open = src.open and need <= P.level
+	if need > P.level and src.open then
+		c.lock = "Needs level " .. need
 	elseif not src.open then
 		local g = src.inst and G.instances[src.inst]
 		if g then
@@ -436,6 +429,7 @@ end
 -- What you have for a row: its value and what it is. For rings and trinkets, the weaker of the two
 -- (the one an upgrade replaces), with the stronger kept too.
 local function ownedFor(row, prof, curated)
+	if P.preview then return { value = 0, all = {} } end
 	local part = weaponPart(row.key)
 	local list = {}
 	for _, slot in ipairs(row.slots) do
@@ -460,9 +454,10 @@ local function ownedFor(row, prof, curated)
 	return { value = o and o.value or 0, weak = o, strong = o, all = list }
 end
 
--- The steps for one row: { owned, steps = { candidate... }, next (the first locked step), best (true when
--- what you have beats everything Classic has), upgrades (open candidates better than yours) }
-function G.BuildRow(row, prof, profileKey, ohRef)
+-- The steps for one row: { owned, steps = { candidate... } (each with .role "get", "next" or "bis"), best (true
+-- when what you have beats everything Classic has), upgrades (open candidates better than yours) }.
+-- exclude: items another row already shows (the main hand's, for the off hand).
+function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	local curated = curatedFor(profileKey)
 	local owned = ownedFor(row, prof, curated)
 	local cands = candidates(row, prof, curated)
@@ -473,42 +468,41 @@ function G.BuildRow(row, prof, profileKey, ohRef)
 		for _, c in ipairs(cands) do
 			if c.item.inv ~= 17 then c.value = c.value + (ohRef or 0) end
 		end
-		local w = P.worn[16]
+		local w = not P.preview and P.worn[16]
 		if w and not w.twoHand then base = base + (ohRef or 0) end
 	end
 	owned.value = base
 
-	-- For a pair, don't offer what you already wear in the other slot when it's unique.
+	-- What you wear isn't offered again, nor what another row already shows.
 	local wornIds = {}
 	for _, o in ipairs(owned.all) do wornIds[o.id] = true end
-
-	local tiers = {}
+	local pool = {}
 	for _, c in ipairs(cands) do
-		if not (wornIds[c.item.id] and (row.pair or c.value <= owned.value)) then
-			tiers[c.tier] = tiers[c.tier] or {}
+		if not wornIds[c.item.id] and not (exclude and exclude[c.item.id]) and c.value > owned.value * MIN_GAIN + 0.5 then
+			table.insert(pool, c)
+		end
+	end
+
+	-- The way up through what you can get now: each tier's best when it beats the step before (in
+	-- dungeons, an easier drop first when the best is a rare one).
+	local tiers, order = {}, {}
+	for _, c in ipairs(pool) do
+		if c.open then
+			if not tiers[c.tier] then tiers[c.tier] = {}; table.insert(order, c.tier) end
 			table.insert(tiers[c.tier], c)
 		end
 	end
-	local order = {}
-	for tier in pairs(tiers) do table.insert(order, tier) end
 	table.sort(order)
-
-	-- The way up from what you have, through what you can get now: each tier's best when it beats the
-	-- step before (in dungeons, an easier drop first when the best is a rare one).
 	local steps, prev = {}, owned.value
 	local function better(v) return v > prev * (#steps == 0 and MIN_GAIN or STEP_GAIN) + 0.5 end
 	for _, tier in ipairs(order) do
 		local list = tiers[tier]
 		table.sort(list, function (a, b) return a.value > b.value end)
-		local best
-		for _, c in ipairs(list) do
-			if c.open then best = c break end
-		end
-		if best and better(best.value) then
+		local best = list[1]
+		if better(best.value) then
 			if tier == TIER_DUNGEON and G.Difficulty(best.src) >= 2 then
 				for _, c in ipairs(list) do
-					if c ~= best and c.open and G.Difficulty(c.src) == 1 and better(c.value)
-							and c.value * STEP_GAIN < best.value then
+					if c ~= best and G.Difficulty(c.src) == 1 and better(c.value) and c.value * STEP_GAIN < best.value then
 						table.insert(steps, c)
 						prev = c.value
 						break
@@ -521,38 +515,64 @@ function G.BuildRow(row, prof, profileKey, ohRef)
 	end
 	-- A first step worth less than half the next isn't worth the detour.
 	if #steps >= 2 and steps[1].value < steps[2].value * 0.5 then table.remove(steps, 1) end
-	-- Too many: keep the first (the easiest way in) and the best ones.
-	while #steps > MAX_OPEN do table.remove(steps, 2) end
 
-	-- What comes next: the soonest locked item that beats the top of that, in tier order.
-	local nextLocked
-	for _, tier in ipairs(order) do
-		for _, c in ipairs(tiers[tier]) do
-			if not c.open and c.value > prev * STEP_GAIN + 0.5 and (not nextLocked or (c.tier == nextLocked.tier and c.value > nextLocked.value)) then
-				nextLocked = c
-			end
-		end
-		if nextLocked then break end
+	-- What opens after that, soonest first: by progression stage, then level, then raid order.
+	local locked = {}
+	for _, c in ipairs(pool) do
+		if not c.open then table.insert(locked, c) end
 	end
-	local topOpen = steps[#steps]
+	table.sort(locked, function (a, b)
+		if a.stage ~= b.stage then return a.stage < b.stage end
+		if a.need ~= b.need then return a.need < b.need end
+		if a.tier ~= b.tier then return a.tier < b.tier end
+		return a.value > b.value
+	end)
+	local chain, prevL = {}, prev
+	for _, c in ipairs(locked) do
+		if c.value > prevL * STEP_GAIN + 0.5 then
+			table.insert(chain, c)
+			prevL = c.value
+		end
+	end
+
+	-- The slot's best in slot: the best of everything, open or not.
+	local final
+	for _, c in ipairs(pool) do
+		if not final or c.value > final.value then final = c end
+	end
+
+	-- Shown: what to get now (the easy way in and the best you can get), then what opens next, then the
+	-- best in slot; three at most.
 	local shown = {}
-	for _, c in ipairs(steps) do table.insert(shown, c) end
-	if nextLocked and #steps < 3 then table.insert(shown, nextLocked) end
+	if #steps >= 1 then table.insert(shown, steps[1]) end
+	if #steps >= 2 then table.insert(shown, steps[#steps]) end
+	for _, c in ipairs(chain) do
+		if #shown >= SHOWN - 1 then break end
+		if c ~= final then table.insert(shown, c) end
+	end
+	local last = shown[#shown]
+	if final then
+		local present = false
+		for _, c in ipairs(shown) do if c == final then present = true end end
+		if not present and (not last or final.value > last.value) then
+			if #shown >= SHOWN then table.remove(shown, #shown) end
+			table.insert(shown, final)
+		end
+	end
+	for _, c in ipairs(shown) do
+		c.role = (c == final) and "bis" or (c.open and "get" or "next")
+		c.inBags = not P.preview and P.bags[c.item.id] ~= nil
+	end
 
 	-- Every open candidate that beats what you have (for the dungeon advice).
 	local upgrades = {}
-	for _, c in ipairs(cands) do
-		if c.open and c.value > owned.value * MIN_GAIN + 0.5 and not wornIds[c.item.id] then table.insert(upgrades, c) end
-	end
-
-	-- In your bags already?
-	for _, c in ipairs(shown) do
-		c.inBags = P.bags[c.item.id] ~= nil
+	for _, c in ipairs(pool) do
+		if c.open then table.insert(upgrades, c) end
 	end
 
 	return {
-		row = row, owned = owned, steps = shown, next = nextLocked, all = steps, upgrades = upgrades,
-		best = #steps == 0 and not nextLocked, topOpen = topOpen, candidates = cands,
+		row = row, owned = owned, steps = shown, upgrades = upgrades, final = final,
+		best = final == nil, openSteps = #steps, candidates = cands,
 	}
 end
 
@@ -607,7 +627,11 @@ function G.Build(choice, stage)
 	local _, class = UnitClass("player")
 	local _, race = UnitRace("player")
 	P.class, P.race, P.raceBit = class, race, G.RACE_BIT[race] or 0
-	P.level = UnitLevel("player")
+	P.realLevel = UnitLevel("player")
+	local phase = G.Phase(P.realLevel)
+	P.preview = P.realLevel < G.READY[phase]
+	-- A preview is the list as it will be at the level cap.
+	P.level = P.preview and G.CAP[phase] or P.realLevel
 	P.stage = stage or 18
 	if not G.byTree[class] then return nil, "class" end
 	scanOwned()
@@ -645,12 +669,16 @@ function G.Build(choice, stage)
 	end
 
 	local showOH = prof.weapons ~= "2h"
+	local mhShown = {}
 	for _, row in ipairs(G.ROWS) do
 		local r
 		if row.key == "OH" and not showOH then
 			r = nil
 		else
-			r = G.BuildRow(row, prof, profileKey, ohRef)
+			r = G.BuildRow(row, prof, profileKey, ohRef, row.key == "OH" and mhShown or nil)
+		end
+		if r and row.key == "MH" then
+			for _, c in ipairs(r.steps) do mhShown[c.item.id] = true end
 		end
 		if r then table.insert(rows, r) end
 	end
@@ -662,7 +690,7 @@ function G.Build(choice, stage)
 		for _, c in ipairs(mh and mh.steps or {}) do
 			if c.item.inv ~= 17 then twoHand = false end
 		end
-		if mh and #mh.steps == 0 then twoHand = P.worn[16] and P.worn[16].twoHand end
+		if mh and #mh.steps == 0 then twoHand = not P.preview and P.worn[16] and P.worn[16].twoHand end
 		if twoHand then
 			for i, r in ipairs(rows) do
 				if r.row.key == "OH" then
@@ -673,9 +701,24 @@ function G.Build(choice, stage)
 		end
 	end
 
-	local dungeons, raids = G.Recommend(rows)
+	-- Where to go next, or why there's nowhere: a preview has no advice; otherwise, all done or out of range.
+	local dungeons, raids, adviceNote = {}, {}, nil
+	if P.preview then
+		adviceNote = "Dungeon advice starts at level " .. G.READY[phase] .. "."
+	else
+		dungeons, raids = G.Recommend(rows)
+		if #dungeons == 0 and #raids == 0 then
+			local done = true
+			for _, r in ipairs(rows) do
+				if not r.best and not r.hidden then done = false end
+			end
+			adviceNote = done and "You have the best in slot everywhere. Well done!"
+				or "No dungeon or raid open to you, near your level, has an upgrade for you right now."
+		end
+	end
 	return {
 		profileKey = profileKey, profile = prof, treeName = treeName, group = which, active = active, groups = groups,
-		rows = rows, dungeons = dungeons, raids = raids, class = class,
+		rows = rows, dungeons = dungeons, raids = raids, class = class, adviceNote = adviceNote,
+		preview = P.preview, readyLevel = G.READY[phase], cap = G.CAP[phase],
 	}
 end
