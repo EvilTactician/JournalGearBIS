@@ -12,6 +12,7 @@ G.curated = {
 		{ 16821 }, -- Nightslayer Cover
 		{ 16908 }, -- Bloodfang Hood
 		{ 21360 }, -- Deathdealer's Helm
+		{ 22478 }, -- Bonescythe Helmet
 		{ 15411 }, -- Mark of Fordring
 		{ 18404 }, -- Onyxia Tooth Pendant
 		{ 19377 }, -- Prestor's Talisman of Connivery
@@ -20,6 +21,7 @@ G.curated = {
 		{ 16823 }, -- Nightslayer Shoulder Pads
 		{ 16832 }, -- Bloodfang Spaulders
 		{ 21361 }, -- Deathdealer's Spaulders
+		{ 22479 }, -- Bonescythe Pauldrons
 		{ 13340 }, -- Cape of the Black Baron
 		{ 19398 }, -- Cloak of Firemaw
 		{ 21710 }, -- Cloak of the Fallen God
@@ -28,19 +30,25 @@ G.curated = {
 		{ 16820 }, -- Nightslayer Chestpiece
 		{ 16905 }, -- Bloodfang Chestpiece
 		{ 21364 }, -- Deathdealer's Vest
+		{ 22476 }, -- Bonescythe Breastplate
 		{ 16911 }, -- Bloodfang Bracers
+		{ 22483 }, -- Bonescythe Bracers
 		{ 15063 }, -- Devilsaur Gauntlets
 		{ 16826 }, -- Nightslayer Gloves
 		{ 16907 }, -- Bloodfang Gloves
+		{ 22481 }, -- Bonescythe Gauntlets
 		{ 16827 }, -- Nightslayer Belt
 		{ 16910 }, -- Bloodfang Belt
+		{ 22482 }, -- Bonescythe Waistguard
 		{ 15062 }, -- Devilsaur Leggings
 		{ 16822 }, -- Nightslayer Pants
 		{ 16909 }, -- Bloodfang Pants
 		{ 21362 }, -- Deathdealer's Leggings
+		{ 22477 }, -- Bonescythe Legplates
 		{ 16824 }, -- Nightslayer Boots
 		{ 16906 }, -- Bloodfang Boots
 		{ 21359 }, -- Deathdealer's Boots
+		{ 22480 }, -- Bonescythe Sabatons
 		{ 17713 }, -- Blackstone Ring
 		{ 13098 }, -- Painweaver Band
 		{ 18821 }, -- Quick Strike Ring
@@ -66,6 +74,7 @@ G.curated = {
 		{ 16821 }, -- Nightslayer Cover
 		{ 16908 }, -- Bloodfang Hood
 		{ 21360 }, -- Deathdealer's Helm
+		{ 22478 }, -- Bonescythe Helmet
 		{ 15411 }, -- Mark of Fordring
 		{ 18404 }, -- Onyxia Tooth Pendant
 		{ 19377 }, -- Prestor's Talisman of Connivery
@@ -74,6 +83,7 @@ G.curated = {
 		{ 16823 }, -- Nightslayer Shoulder Pads
 		{ 16832 }, -- Bloodfang Spaulders
 		{ 21361 }, -- Deathdealer's Spaulders
+		{ 22479 }, -- Bonescythe Pauldrons
 		{ 13340 }, -- Cape of the Black Baron
 		{ 19398 }, -- Cloak of Firemaw
 		{ 21710 }, -- Cloak of the Fallen God
@@ -82,19 +92,25 @@ G.curated = {
 		{ 16820 }, -- Nightslayer Chestpiece
 		{ 16905 }, -- Bloodfang Chestpiece
 		{ 21364 }, -- Deathdealer's Vest
+		{ 22476 }, -- Bonescythe Breastplate
 		{ 16911 }, -- Bloodfang Bracers
+		{ 22483 }, -- Bonescythe Bracers
 		{ 15063 }, -- Devilsaur Gauntlets
 		{ 16826 }, -- Nightslayer Gloves
 		{ 16907 }, -- Bloodfang Gloves
+		{ 22481 }, -- Bonescythe Gauntlets
 		{ 16827 }, -- Nightslayer Belt
 		{ 16910 }, -- Bloodfang Belt
+		{ 22482 }, -- Bonescythe Waistguard
 		{ 15062 }, -- Devilsaur Leggings
 		{ 16822 }, -- Nightslayer Pants
 		{ 16909 }, -- Bloodfang Pants
 		{ 21362 }, -- Deathdealer's Leggings
+		{ 22477 }, -- Bonescythe Legplates
 		{ 16824 }, -- Nightslayer Boots
 		{ 16906 }, -- Bloodfang Boots
 		{ 21359 }, -- Deathdealer's Boots
+		{ 22480 }, -- Bonescythe Sabatons
 		{ 17713 }, -- Blackstone Ring
 		{ 13098 }, -- Painweaver Band
 		{ 18821 }, -- Quick Strike Ring
@@ -117,25 +133,33 @@ G.curated = {
 		{ 16813 }, -- Circlet of Prophecy
 		{ 16921 }, -- Halo of Transcendence
 		{ 21348 }, -- Tiara of the Oracle
+		{ 22514 }, -- Circlet of Faith
 		{ 18723 }, -- Animated Chain Necklace
 		{ 17109 }, -- Choker of Enlightenment
 		{ 16695 }, -- Devout Mantle
 		{ 16816 }, -- Mantle of Prophecy
 		{ 16924 }, -- Pauldrons of Transcendence
+		{ 22515 }, -- Shoulderpads of Faith
 		{ 18510 }, -- Hide of the Wild
 		{ 14154 }, -- Truefaith Vestments
 		{ 16815 }, -- Robes of Prophecy
 		{ 16923 }, -- Robes of Transcendence
+		{ 22512 }, -- Robe of Faith
 		{ 16819 }, -- Vambraces of Prophecy
 		{ 16926 }, -- Bindings of Transcendence
+		{ 22519 }, -- Bindings of Faith
 		{ 16812 }, -- Gloves of Prophecy
 		{ 16920 }, -- Handguards of Transcendence
+		{ 22517 }, -- Gloves of Faith
 		{ 16817 }, -- Girdle of Prophecy
 		{ 16925 }, -- Belt of Transcendence
+		{ 22518 }, -- Belt of Faith
 		{ 16814 }, -- Pants of Prophecy
 		{ 16922 }, -- Leggings of Transcendence
+		{ 22513 }, -- Leggings of Faith
 		{ 16811 }, -- Boots of Prophecy
 		{ 16919 }, -- Boots of Transcendence
+		{ 22516 }, -- Sandals of Faith
 		{ 19140 }, -- Cauterizing Band
 		{ 19382 }, -- Pure Elementium Band
 		{ 11819, 20 }, -- Second Wind

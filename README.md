@@ -1,7 +1,7 @@
 # Journal: Gear
 
 > [!WARNING]
-> **Early alpha (version 0.1.3-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.4-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -13,13 +13,21 @@ running [mod-individual-progression](https://github.com/Grimfeather/mod-individu
 It tells you which gear to aim for, so you never have to look it up. For your spec, every slot shows up to
 three steps from what you're wearing:
 
-- **Get**: what you can get now. Where there is one, an easy item comes first (a quest reward, a crafted
+- **Now**: what you can get now. Where there is one, an easy item comes first (a quest reward, a crafted
   piece, or a dungeon drop that comes often), then the best you can get.
-- **Next**: the upgrade that opens next, such as the next raid at your progression stage.
+- **Next**: the one upgrade that opens next, such as the next raid at your progression stage.
 - **BiS**: the slot's best in slot in Classic.
 
 Once you have the best you can get, the slot says **Best you can get now**, and if nothing in Classic beats
-what you're wearing, it says **Best in slot until The Burning Crusade**.
+what you're wearing, it says **Best in Slot until The Burning Crusade**.
+
+## On your gear list: Roll Need
+
+Anywhere in the game, an item's tooltip says **On your gear list: Roll Need** when it's a clear upgrade
+for your spec: in a loot window, a Need or Greed roll, a chat link, a vendor or the auction house. That
+includes items the list doesn't show as a step, so a good drop is never missed, and raid tokens (tier
+tokens, Head of Onyxia), which also say what to exchange them for. The line doesn't show for items you
+own (worn or in your bags), for anything no better than what you have, or before level 55.
 
 At the top, **Where to go next** names the dungeon with the most upgrades for you right now, a second
 choice, and the raid with the most. Each is weighted by how big the upgrades are and how often they drop.
@@ -45,9 +53,9 @@ Screenshots are coming soon.
 
 | Status | Meaning |
 | --- | --- |
-| **Get** | You can get it now. |
+| **Now** | You can get it now. |
 | **Next** | The upgrade that opens next. |
-| **BiS** | The slot's best in slot in Classic: the best it gets before The Burning Crusade. |
+| **BiS** | The slot's best in slot: Best in Slot until The Burning Crusade. |
 | Equipped | You're wearing it. |
 | **+N%** | How much better than what you have it is, for your spec. |
 | new | You have nothing in that slot yet. |
@@ -57,7 +65,7 @@ Screenshots are coming soon.
 | Easy / Medium / Hard | How easy it is to get: quest rewards are easy; drops go by how often they drop. |
 
 A slot's header shows what you wear there and how many upgrades you can get now, **Best you can get now**
-when the rest are locked, or **Best in slot until The Burning Crusade** when nothing beats it. Rings and
+when the rest are locked, or **Best in Slot until The Burning Crusade** when nothing beats it. Rings and
 trinkets are compared with the weaker of the two you wear.
 
 ## Which list you see
@@ -117,7 +125,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.0-alpha | Classic lists for every spec; hand-picked items for Rogue and Priest. |
 | 0.1.1-alpha | Get / Next / BiS steps, a preview below level 55, quest chains and levels, clearer clicks. |
 | 0.1.2-alpha | Quest chains for your faction, raid tiers on locked steps, your gear shown in the preview. |
-| **0.1.3-alpha** (now) | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
+| 0.1.3-alpha | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
+| **0.1.4-alpha** (now) | "On your gear list: Roll Need" on item tooltips everywhere, Now / Next / BiS labels. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |

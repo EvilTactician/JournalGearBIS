@@ -72,6 +72,10 @@ end
 -- Each expansion's level cap, and the level gearing for it starts: below that the list is a preview.
 G.CAP = { [0] = 60, 70, 80 }
 G.READY = { [0] = 55, 65, 75 }
+-- What a slot's best in slot is, per list: Classic now; The Burning Crusade's and Wrath's for when they come.
+G.BIS_TEXT = { [0] = "Best in Slot until The Burning Crusade", "Best in Slot until Wrath of the Lich King", "Best in Slot" }
+-- An item tooltip says it's on your gear list when it's at least this much better than what you have.
+G.TOOLTIP_GAIN = 1.05
 
 -----------------------------------------
 -- the item table
@@ -555,14 +559,14 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 		if not final or c.value > final.value then final = c end
 	end
 
-	-- Shown: what to get now (the easy way in and the best you can get), then what opens next, then the
-	-- best in slot; three at most.
+	-- Shown: what to get now (the easy way in and the best you can get), then what opens next (one: you
+	-- can't get it yet anyway), then the best in slot; three at most.
 	local shown = {}
 	if #steps >= 1 then table.insert(shown, steps[1]) end
 	if #steps >= 2 then table.insert(shown, steps[#steps]) end
 	for _, c in ipairs(chain) do
-		if #shown >= SHOWN - 1 then break end
-		if c ~= final then table.insert(shown, c) end
+		if #shown < SHOWN - 1 and c ~= final then table.insert(shown, c) end
+		break
 	end
 	local last = shown[#shown]
 	if final then
@@ -737,6 +741,49 @@ function G.Build(choice, stage)
 	return {
 		profileKey = profileKey, profile = prof, treeName = treeName, group = which, active = active, groups = groups,
 		rows = rows, dungeons = dungeons, raids = raids, class = class, adviceNote = adviceNote,
-		preview = P.preview, readyLevel = G.READY[phase], cap = G.CAP[phase],
+		preview = P.preview, readyLevel = G.READY[phase], cap = G.CAP[phase], phase = phase,
+		worn = P.worn, bags = P.bags, level = P.realLevel,
 	}
+end
+
+-----------------------------------------
+-- item tooltips: is this on your gear list?
+
+-- The rows an item is an upgrade for, in a view: you don't own it (worn or in your bags), you can wear it
+-- within a couple of levels, and it's clearly better than what you have there. Tokens go by what they become.
+local function owns(view, id)
+	if view.bags[id] then return true end
+	for _, w in pairs(view.worn) do
+		if w.id == id then return true end
+	end
+	return false
+end
+
+local function upgradeRow(view, id)
+	if owns(view, id) then return nil end
+	for _, r in ipairs(view.rows) do
+		if not r.hidden then
+			for _, c in ipairs(r.candidates) do
+				if c.item.id == id and c.item.req <= view.level + 2 and c.value >= r.owned.value * G.TOOLTIP_GAIN + 0.5 then
+					return r
+				end
+			end
+		end
+	end
+	return nil
+end
+
+-- For an item: the row it's an upgrade for, or nil. For a token: the items it becomes that are, or nil.
+function G.Verdict(view, id)
+	if not view or view.preview then return nil end
+	local r = upgradeRow(view, id)
+	if r then return r, nil end
+	local becomes = G.tokens and G.tokens[id]
+	if not becomes then return nil end
+	local list = {}
+	for _, other in ipairs(becomes) do
+		if upgradeRow(view, other) then table.insert(list, other) end
+	end
+	if #list == 0 then return nil end
+	return nil, list
 end
