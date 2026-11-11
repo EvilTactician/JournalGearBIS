@@ -52,6 +52,11 @@ local function runs(chance)
 	return "about 1 in " .. math.max(2, math.floor(1 / chance + 0.5)) .. (chance >= 0.5 and " kills" or " runs")
 end
 
+-- A source line's guidance after its "where": " - about 1 in 5 runs", greyed.
+local function hint(text)
+	return "  |cff9d9d9d- " .. text .. "|r"
+end
+
 -- An instance's name and what it is: "Scholomance (dungeon)", "Molten Core (raid)".
 local function place(g)
 	if not g then return "" end
@@ -62,23 +67,23 @@ end
 function G.SourceText(src)
 	local g = src.inst and G.instances[src.inst]
 	if src.kind == "D" or src.kind == "C" then
-		return src.who .. " in " .. place(g) .. "  |cff9d9d9d" .. runs(src.chance) .. "|r"
+		return src.who .. " in " .. place(g) .. hint(runs(src.chance))
 	elseif src.kind == "Q" then
 		local t = (src.chain or 1) > 1 and ("Quest chain starting with " .. src.startName) or ("Quest: " .. src.who)
 		if src.trainer then
-			t = t .. "  |cff9d9d9d(from your class trainer)|r"
+			t = t .. hint("from your class trainer")
 		elseif (src.givers or 1) > 1 and not g then
-			t = t .. "  |cff9d9d9d(from several quest givers)|r"
+			t = t .. hint("from several quest givers")
 		elseif (src.givers or 1) == 0 and not g then
-			t = t .. "  |cff9d9d9d(starts from an item)|r"
+			t = t .. hint("starts from an item")
 		end
-		if g and g.raid then return t .. "  |cff9d9d9d(needs an item from " .. place(g) .. ")|r" end
-		if g then return t .. "  |cff9d9d9d(" .. place(g) .. ")|r" end
+		if g and g.raid then return t .. hint("needs an item from " .. place(g)) end
+		if g then return t .. hint(place(g)) end
 		return t
 	elseif src.kind == "V" then
 		local t = "Sold by " .. src.who
 		if (src.rep or 0) > 0 then
-			t = t .. "  |cff9d9d9d(" .. (G.STANDINGS[src.rank] or "?") .. " with " .. (G.FACTIONS[src.rep] or "a faction") .. ")|r"
+			t = t .. hint((G.STANDINGS[src.rank] or "?") .. " with " .. (G.FACTIONS[src.rep] or "a faction"))
 		end
 		if (src.price or 0) > 0 and J.Money then t = t .. "  " .. J.Money(src.price) end
 		return t
@@ -225,9 +230,8 @@ local function build(panel)
 	local adviceTitle = advice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	adviceTitle:SetPoint("TOPLEFT", advice, "TOPLEFT", 10, -8)
 	adviceTitle:SetText("Where to go next")
-	local stageText = advice:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-	stageText:SetPoint("TOPRIGHT", advice, "TOPRIGHT", -10, -10)
-	stageText:SetTextColor(0.8, 0.8, 0.8)
+	local stageText = advice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	stageText:SetPoint("TOPRIGHT", advice, "TOPRIGHT", -10, -8)
 	local adviceLines = {}
 	for i = 1, 3 do
 		local b = CreateFrame("Button", nil, advice)
@@ -380,7 +384,11 @@ local function build(panel)
 			elseif e.src.kind == "Q" and (e.src.givers or 1) > 1 and not e.src.inst then
 				GameTooltip:AddLine("Several quest givers offer the first quest.", 0.8, 0.8, 0.8, true)
 			end
-			if e.lock then GameTooltip:AddLine(e.lock .. ".", 1, 0.4, 0.4, true) end
+			if e.lock then
+				GameTooltip:AddLine(e.lock .. ".", 1, 0.4, 0.4, true)
+			elseif e.availableAt then
+				GameTooltip:AddLine("Available at level " .. e.availableAt .. ".", 1, 0.4, 0.4, true)
+			end
 			if e.role == "bis" then
 				GameTooltip:AddLine("Best in slot for Classic: the best this slot gets before The Burning Crusade.", 1, 0.82, 0, true)
 			end
@@ -414,6 +422,7 @@ local function build(panel)
 		if e.equipped then return "|cff40ff40Equipped|r" end
 		if e.inBags then return "|cff40ff40In your bags: wear it|r" end
 		if not e.open then return "|cffff6060" .. (e.lock or "Locked") .. "|r" end
+		if e.availableAt then return "|cffff6060Available at level " .. e.availableAt .. "|r" end
 		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
@@ -464,7 +473,9 @@ local function build(panel)
 				.. ", compared with the gear you're wearing and carrying."
 		end
 		note:SetText(lines)
-		stageText:SetText(J.Has(J.HELLO_PROGRESSION) and ("Progression stage " .. s) or "")
+		-- worded and coloured as the Progression tab has it
+		stageText:SetText(J.Has(J.HELLO_PROGRESSION) and ("Your progression stage: |cffffffff" .. s .. "|r")
+			or "|cff9d9d9dProgression isn't on for you here|r")
 		-- The menu is only there when there's a choice: dual spec, or a role talents can't tell.
 		local choices = (v.groups > 1) or #G.ExtraRoles(v.class) > 0
 		setShown(choose, choices)

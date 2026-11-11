@@ -1,7 +1,7 @@
 # Journal: Gear
 
 > [!WARNING]
-> **Early alpha (version 0.1.2-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.3-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -52,8 +52,8 @@ Screenshots are coming soon.
 | **+N%** | How much better than what you have it is, for your spec. |
 | new | You have nothing in that slot yet. |
 | In your bags: wear it | You already own it. |
-| Opens with *raid* (T2) / Opens at progression stage *N* | Your progression stage keeps it locked; the tier (T1 to T3) or stage says when it opens. |
-| Needs level *N* | You, or its quest, need a higher level. |
+| Opens with *raid* (Stage *N*) / Opens at Stage *N* | Your progression stage keeps it locked until that stage. |
+| Available at level *N* | You, or its quest, need a higher level. |
 | Easy / Medium / Hard | How easy it is to get: quest rewards are easy; drops go by how often they drop. |
 
 A slot's header shows what you wear there and how many upgrades you can get now, **Best you can get now**
@@ -86,8 +86,8 @@ Classic gear stops being the goal. Anyone still after Classic gear is at 60 and 
 
 You can open the list at any level. Below level 55 (65, 75 for the later lists) it's a **preview**: the
 list as it will be at the level cap, at your progression stage, so you can see what you're working
-towards. From 55 it compares with what you're wearing, shows *Needs level N* for anything you, or its
-quest, aren't ready for, and suggests dungeons near your level.
+towards, each step marked *Available at level N*. From 55 it compares with what you're wearing, and
+suggests dungeons near your level.
 
 In Classic, your progression stage decides which raids are open: Molten Core from the start, then Onyxia
 (stage 1), Blackwing Lair (2), Zul'Gurub (3), Ahn'Qiraj (4) and Naxxramas (6). When the Journal gives a
@@ -116,7 +116,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | --- | --- |
 | 0.1.0-alpha | Classic lists for every spec; hand-picked items for Rogue and Priest. |
 | 0.1.1-alpha | Get / Next / BiS steps, a preview below level 55, quest chains and levels, clearer clicks. |
-| **0.1.2-alpha** (now) | Quest chains for your faction, raid tiers on locked steps, your gear shown in the preview. |
+| 0.1.2-alpha | Quest chains for your faction, raid tiers on locked steps, your gear shown in the preview. |
+| **0.1.3-alpha** (now) | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
