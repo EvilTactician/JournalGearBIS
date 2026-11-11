@@ -1,7 +1,7 @@
 # Journal: Gear
 
 > [!WARNING]
-> **Early alpha (version 0.1.5-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.6-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -29,11 +29,11 @@ includes items the list doesn't show as a step, so a good drop is never missed, 
 tokens, Head of Onyxia), which also say what to exchange them for. The line doesn't show for items you
 own (worn or in your bags), for anything no better than what you have, or before level 55.
 
-At the top, **Where to go next** names the five-player dungeon with the most upgrades for you right now, a
-second choice, and the raid (or larger group instance, such as Upper Blackrock Spire) with the most. Each
-line says what it is and how many players it takes, and how many of its upgrades are on your list. They're
-weighted by how big the upgrades are and how often they drop, with the items your list shows counting
-most.
+At the top, **Where to go next** names the two dungeons with the most upgrades for you right now, two more
+that are also good, and the raid with the most (Upper Blackrock Spire counts as a raid). Each says how many
+upgrades it has and how many of them are on your list; hover over one to see the items, or click it to open
+it in the Journal. They're weighted by how big the upgrades are and how often they drop, with the items
+your list shows counting most.
 
 Every step shows where it comes from, how likely it is to drop (*about 1 in 5 runs*), and whether that's
 **Easy**, **Medium** or **Hard**. A quest that's part of a chain says so and names the quest it starts
@@ -134,7 +134,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.2-alpha | Quest chains for your faction, raid tiers on locked steps, your gear shown in the preview. |
 | 0.1.3-alpha | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
 | 0.1.4-alpha | "On your gear list: Roll Need" on item tooltips everywhere, Now / Next / BiS labels. |
-| **0.1.5-alpha** (now) | Two rings and trinkets, clearer dungeon advice, no-talents note, tooltip line last. |
+| 0.1.5-alpha | Two rings and trinkets, clearer dungeon advice, no-talents note, tooltip line last. |
+| **0.1.6-alpha** (now) | Four dungeons in Where to go next, Lower Blackrock Spire back as a dungeon. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |

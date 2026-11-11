@@ -232,15 +232,18 @@ local function build(panel)
 	adviceTitle:SetText("Where to go next")
 	local stageText = advice:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	stageText:SetPoint("TOPRIGHT", advice, "TOPRIGHT", -10, -8)
+	-- Three lines (Best now, Also good, Raid), each a label and up to two places; a place's items show on
+	-- hover.
 	local adviceLines = {}
-	for i = 1, 3 do
+	local adviceNote = advice:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+	adviceNote:SetPoint("TOPLEFT", advice, "TOPLEFT", 10, -31)
+	adviceNote:SetPoint("RIGHT", advice, "RIGHT", -10, 0)
+	adviceNote:SetJustifyH("LEFT")
+	local function adviceEntry()
 		local b = CreateFrame("Button", nil, advice)
 		b:SetHeight(18)
-		b:SetPoint("TOPLEFT", advice, "TOPLEFT", 10, -10 - i * 18)
-		b:SetPoint("RIGHT", advice, "RIGHT", -10, 0)
 		b.text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		b.text:SetPoint("LEFT", b, "LEFT", 0, 0)
-		b.text:SetPoint("RIGHT", b, "RIGHT", 0, 0)
 		b.text:SetJustifyH("LEFT")
 		local hl = b:CreateTexture(nil, "HIGHLIGHT")
 		hl:SetAllPoints(b)
@@ -269,7 +272,17 @@ local function build(panel)
 			GameTooltip:Show()
 		end)
 		b:SetScript("OnLeave", function () GameTooltip:Hide() end)
-		adviceLines[i] = b
+		return b
+	end
+	for i = 1, 3 do
+		local line = {}
+		line.lead = advice:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		line.lead:SetPoint("LEFT", advice, "TOPLEFT", 10, -19 - i * 18)
+		line[1] = adviceEntry()
+		line[1]:SetPoint("LEFT", line.lead, "RIGHT", 4, 0)
+		line[2] = adviceEntry()
+		line[2]:SetPoint("LEFT", line[1], "RIGHT", 0, 0)
+		adviceLines[i] = line
 	end
 
 	-- the slots
@@ -467,8 +480,7 @@ local function build(panel)
 			lines = "A preview of your gear goals at level " .. v.cap .. ". From level " .. v.readyLevel
 				.. ", the list compares them with what you're wearing."
 		elseif noTalents then
-			lines = "Assign your talent points so the list fits your spec. Until then it's for a typical "
-				.. prof.name:lower() .. " " .. className:lower() .. "."
+			lines = "You have no talent points assigned. Please assign your talent points so that this list doesn't guess."
 		elseif db.choice == "other" and v.groups > 1 then
 			lines = "Your other talents (" .. (v.treeName or "none yet") .. "), compared with the gear you're wearing now, which is likely your active talents' gear."
 		elseif db.choice and G.profiles[db.choice] then
@@ -487,33 +499,36 @@ local function build(panel)
 		local p = G.profiles[v.profileKey]
 		choose:SetText((db.choice == "other" and "Other talents") or (db.choice and G.profiles[db.choice] and p.name) or "My talents")
 
-		-- where to go next
-		local ad = {}
-		for i = 1, 2 do if v.dungeons[i] then table.insert(ad, v.dungeons[i]) end end
-		if v.raids[1] then table.insert(ad, v.raids[1]) end
+		-- where to go next: two dungeons a line, then the raid
+		local groups = {}
+		local function group(lead, a, b)
+			if a then table.insert(groups, { lead = lead, a, b }) end
+		end
+		group("|cff40ff40Best now:|r", v.dungeons[1], v.dungeons[2])
+		group("|cffffd200Also good:|r", v.dungeons[3], v.dungeons[4])
+		group("|cffffd200Raid:|r", v.raids[1])
 		for i = 1, 3 do
-			local b, e = adviceLines[i], ad[i]
-			b.entry = e
-			if e then
-				local names = {}
-				for k = 1, math.min(3, #e.items) do table.insert(names, itemName(e.items[k].item)) end
-				local more = #e.items > 3 and (" and " .. (#e.items - 3) .. " more") or ""
-				local big = e.raid or e.players > 5
-				local lead = big and "|cffffd200Raid:|r " or (i == 1 and "|cff40ff40Best now:|r " or "|cffffd200Also good:|r ")
-				local kind = "|cff9d9d9d(" .. (e.raid and "raid" or "dungeon") .. ", " .. e.players .. " players)|r"
-				local what = e.count .. (e.count == 1 and " upgrade" or " upgrades")
-					.. (e.steps > 0 and (" (" .. e.steps .. " on your list)") or "") .. ": "
-				b.text:SetText(lead .. "|cffffffff" .. e.g.name .. "|r " .. kind .. "  -  " .. what
-					.. table.concat(names, ", ") .. more)
-				b:Show()
-			else
-				b:Hide()
+			local line, g = adviceLines[i], groups[i]
+			setShown(line.lead, g ~= nil)
+			if g then line.lead:SetText(g.lead) end
+			for k = 1, 2 do
+				local b, e = line[k], g and g[k]
+				b.entry = e
+				if e then
+					local kind = e.raid and ("raid, " .. e.players .. " players") or "dungeon"
+					local what = e.count .. (e.count == 1 and " upgrade" or " upgrades")
+						.. (e.steps > 0 and (" (" .. e.steps .. " on your list)") or "")
+					local gap = (k == 1 and g[2]) and "," or ""
+					b.text:SetText("|cffffffff" .. e.g.name .. "|r |cff9d9d9d(" .. kind .. ")|r  -  " .. what .. gap)
+					b:SetWidth(b.text:GetStringWidth() + (gap ~= "" and 12 or 0))
+					b:Show()
+				else
+					b:Hide()
+				end
 			end
 		end
-		if #ad == 0 then
-			adviceLines[1].text:SetText("|cff9d9d9d" .. (v.adviceNote or "") .. "|r")
-			adviceLines[1]:Show()
-		end
+		adviceNote:SetText(#groups == 0 and ("|cff9d9d9d" .. (v.adviceNote or "") .. "|r") or "")
+		setShown(adviceNote, #groups == 0)
 
 		-- the slots
 		headers:Reset()

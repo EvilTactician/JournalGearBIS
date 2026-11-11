@@ -316,7 +316,7 @@ end
 function G.Players(g) return g.journalPlayers or g.players end
 function G.IsRaid(g)
 	if g.journalRaid ~= nil then return g.journalRaid end
-	return g.raid
+	return g.raid or G.Players(g) > 5
 end
 
 -- One way to get an item: { kind, inst, chance, who, quest, stage, tier, order, open, why, ... }
@@ -691,8 +691,8 @@ function G.BuildPairRow(row, prof, profileKey)
 	}
 end
 
--- Where to go next: the five-player dungeons with the most for you, and the best larger instance (a raid,
--- or Upper Blackrock Spire). Each upgrade counts by how likely it is to drop and how big it is; the items
+-- Where to go next: the dungeons with the most for you, and the best raid (Upper Blackrock Spire is one; the
+-- Journal has Lower Blackrock Spire as a dungeon, though its map takes ten players). Each upgrade counts by how likely it is to drop and how big it is; the items
 -- your list shows as steps count fully, other upgrades a third.
 local OTHER_UPGRADE = 0.35
 function G.Recommend(rows)
@@ -741,8 +741,7 @@ function G.Recommend(rows)
 				if (mine[a.item.id] or false) ~= (mine[b.item.id] or false) then return mine[a.item.id] == true end
 				return a.value > b.value
 			end)
-			local small = not e.raid and e.players <= 5
-			table.insert(small and dungeons or raids, e)
+			table.insert(e.raid and raids or dungeons, e)
 		end
 	end
 	local function byScore(a, b) return a.score > b.score end
