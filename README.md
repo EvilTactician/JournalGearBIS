@@ -32,8 +32,9 @@ own (worn or in your bags), for anything no better than what you have, or before
 At the top, **Where to go next** names the two dungeons with the most upgrades for you right now, two more
 that are also good, and the raid with the most (Upper Blackrock Spire counts as a raid). Each says how many
 upgrades it has and how many of them are on your list; hover over one to see the items, or click it to open
-it in the Journal. They're weighted by how big the upgrades are and how often they drop, with the items
-your list shows counting most.
+it in the Journal. Dungeon names are blue and raid names purple, here and on every source line. They're
+weighted by how big the upgrades are and how often they drop, with the items your list shows counting most
+(hand-picked ones a little more), and an empty slot measured against the best you can get now.
 
 Every step shows where it comes from, how likely it is to drop (*about 1 in 5 runs*), and whether that's
 **Easy**, **Medium** or **Hard**. A quest that's part of a chain says so and names the quest it starts
@@ -135,7 +136,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.3-alpha | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
 | 0.1.4-alpha | "On your gear list: Roll Need" on item tooltips everywhere, Now / Next / BiS labels. |
 | 0.1.5-alpha | Two rings and trinkets, clearer dungeon advice, no-talents note, tooltip line last. |
-| **0.1.6-alpha** (now) | Four dungeons in Where to go next, Lower Blackrock Spire back as a dungeon. |
+| **0.1.6-alpha** (now) | Four dungeons in Where to go next, list items rank higher, blue dungeon and purple raid names. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |

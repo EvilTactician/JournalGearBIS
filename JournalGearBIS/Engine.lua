@@ -316,7 +316,7 @@ end
 function G.Players(g) return g.journalPlayers or g.players end
 function G.IsRaid(g)
 	if g.journalRaid ~= nil then return g.journalRaid end
-	return g.raid or G.Players(g) > 5
+	return g.raid or (G.Players(g) or 5) > 5
 end
 
 -- One way to get an item: { kind, inst, chance, who, quest, stage, tier, order, open, why, ... }
@@ -692,9 +692,11 @@ function G.BuildPairRow(row, prof, profileKey)
 end
 
 -- Where to go next: the dungeons with the most for you, and the best raid (Upper Blackrock Spire is one; the
--- Journal has Lower Blackrock Spire as a dungeon, though its map takes ten players). Each upgrade counts by how likely it is to drop and how big it is; the items
--- your list shows as steps count fully, other upgrades a third.
-local OTHER_UPGRADE = 0.35
+-- Journal has Lower Blackrock Spire as a dungeon, though the two share a map). Each upgrade counts by how
+-- likely it is to drop and how big it is, against what you wear (an empty slot against the best you can get
+-- now, so a weak item isn't a full upgrade). Items your list shows count fully, hand-picked ones a bit
+-- more, other upgrades a quarter; a place with lots of likely upgrades can still come first.
+local OTHER_UPGRADE, CURATED_STEP = 0.25, 1.25
 function G.Recommend(rows)
 	local score, items, steps, stepItem = {}, {}, {}, {}
 	for _, r in ipairs(rows) do
@@ -702,12 +704,16 @@ function G.Recommend(rows)
 			local isStep = {}
 			for _, c in ipairs(r.steps) do isStep[c] = true end
 			local perInst = {}
-			local base = math.max(r.owned.value, 1)
+			local base = r.owned.value
+			if base <= 0 then
+				for _, c in ipairs(r.upgrades) do base = math.max(base, c.value) end
+			end
+			base = math.max(base, 1)
 			for _, c in ipairs(r.upgrades) do
 				for _, src in ipairs(c.sources) do
 					if src.open and (src.kind == "D" or src.kind == "C") then
 						local gain = math.min(1, (c.value - r.owned.value) / base)
-						local v = gain * (src.chance or 0) * (isStep[c] and 1 or OTHER_UPGRADE)
+						local v = gain * (src.chance or 0) * (isStep[c] and (c.curated and CURATED_STEP or 1) or OTHER_UPGRADE)
 						local cur = perInst[src.inst]
 						if not cur or v > cur.v then perInst[src.inst] = { v = v, c = c, step = isStep[c] } end
 					end

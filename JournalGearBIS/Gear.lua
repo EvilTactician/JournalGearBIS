@@ -56,10 +56,13 @@ local function hint(text)
 	return "  |cff9d9d9d- " .. text .. "|r"
 end
 
--- An instance's name and what it is: "Scholomance (dungeon)", "Molten Core (raid)".
-local function place(g)
+-- An instance's name and what it is: "Scholomance (dungeon)", "Molten Core (raid)". Dungeon names are blue and
+-- raid names purple, like loot; resume is the colour the text after the name goes back to.
+local DUNGEON_COLOUR, RAID_COLOUR = "|cff0070dd", "|cffa335ee"
+local function place(g, resume)
 	if not g then return "" end
-	return g.name .. (g.raid and " (raid)" or " (dungeon)")
+	local raid = G.IsRaid(g)
+	return (raid and RAID_COLOUR or DUNGEON_COLOUR) .. g.name .. (resume or "|r") .. (raid and " (raid)" or " (dungeon)")
 end
 
 -- How to get it, in one line.
@@ -76,8 +79,8 @@ function G.SourceText(src)
 		elseif (src.givers or 1) == 0 and not g then
 			t = t .. hint("starts from an item")
 		end
-		if g and g.raid then return t .. hint("needs an item from " .. place(g)) end
-		if g then return t .. hint(place(g)) end
+		if g and G.IsRaid(g) then return t .. hint("needs an item from " .. place(g, "|cff9d9d9d")) end
+		if g then return t .. hint(place(g, "|cff9d9d9d")) end
 		return t
 	elseif src.kind == "V" then
 		local t = "Sold by " .. src.who
@@ -505,8 +508,8 @@ local function build(panel)
 			if a then table.insert(groups, { lead = lead, a, b }) end
 		end
 		group("|cff40ff40Best now:|r", v.dungeons[1], v.dungeons[2])
-		group("|cffffd200Also good:|r", v.dungeons[3], v.dungeons[4])
-		group("|cffffd200Raid:|r", v.raids[1])
+		group("|cff40ff40Also good:|r", v.dungeons[3], v.dungeons[4])
+		group("|cff40ff40Raid:|r", v.raids[1])
 		for i = 1, 3 do
 			local line, g = adviceLines[i], groups[i]
 			setShown(line.lead, g ~= nil)
@@ -518,9 +521,10 @@ local function build(panel)
 					local kind = e.raid and ("raid, " .. e.players .. " players") or "dungeon"
 					local what = e.count .. (e.count == 1 and " upgrade" or " upgrades")
 						.. (e.steps > 0 and (" (" .. e.steps .. " on your list)") or "")
-					local gap = (k == 1 and g[2]) and "," or ""
-					b.text:SetText("|cffffffff" .. e.g.name .. "|r |cff9d9d9d(" .. kind .. ")|r  -  " .. what .. gap)
-					b:SetWidth(b.text:GetStringWidth() + (gap ~= "" and 12 or 0))
+					local gap = (k == 1 and g[2]) and "     |cff9d9d9d||r" or ""
+					b.text:SetText((e.raid and RAID_COLOUR or DUNGEON_COLOUR) .. e.g.name .. "|r |cff9d9d9d(" .. kind
+						.. ")|r  -  " .. what .. gap)
+					b:SetWidth(b.text:GetStringWidth() + (gap ~= "" and 16 or 0))
 					b:Show()
 				else
 					b:Hide()
