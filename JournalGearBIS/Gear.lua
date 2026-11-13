@@ -403,7 +403,7 @@ local function build(panel)
 			if e.lock then
 				GameTooltip:AddLine(e.lock .. ".", 1, 0.4, 0.4, true)
 			elseif e.availableAt then
-				GameTooltip:AddLine("Available at level " .. e.availableAt .. ".", 1, 0.4, 0.4, true)
+				GameTooltip:AddLine("Requires level " .. e.availableAt .. ".", 1, 0.4, 0.4, true)
 			end
 			if e.role == "bis" then
 				GameTooltip:AddLine(G.BIS_TEXT[0], 1, 0.82, 0, true)
@@ -438,11 +438,13 @@ local function build(panel)
 		if e.equipped then return "|cff40ff40Equipped|r" end
 		if e.inBags then return "|cff40ff40In your bags: wear it|r" end
 		if not e.open then return "|cffff6060" .. (e.lock or "Locked") .. "|r" end
-		if e.availableAt then return "|cffff6060Available at level " .. e.availableAt .. "|r" end
+		if e.availableAt then return "|cffff6060Requires level " .. e.availableAt .. "|r" end
 		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
 	local ROLE = { get = "|cff40ff40Now|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
+	-- a Now or Next you're not the level for yet
+	local SOON = "|cffff9933Soon|r"
 
 	render = function ()
 		if not panel:IsVisible() then return end
@@ -521,7 +523,7 @@ local function build(panel)
 					local kind = e.raid and ("raid, " .. e.players .. " players") or "dungeon"
 					local what = e.count .. (e.count == 1 and " upgrade" or " upgrades")
 						.. (e.steps > 0 and (" (" .. e.steps .. " on your list)") or "")
-					local gap = (k == 1 and g[2]) and "     |cff9d9d9d||r" or ""
+					local gap = (k == 1 and g[2]) and "     |cff9d9d9d|||r" or ""
 					b.text:SetText((e.raid and RAID_COLOUR or DUNGEON_COLOUR) .. e.g.name .. "|r |cff9d9d9d(" .. kind
 						.. ")|r  -  " .. what .. gap)
 					b:SetWidth(b.text:GetStringWidth() + (gap ~= "" and 16 or 0))
@@ -582,7 +584,7 @@ local function build(panel)
 					st:ClearAllPoints()
 					st:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 					st:SetWidth(width)
-					st.num:SetText(ROLE[e.role] or "")
+					st.num:SetText((e.soon and e.role ~= "bis" and SOON) or ROLE[e.role] or "")
 					st.icon:SetTexture(GetItemIcon and GetItemIcon(e.item.id) or J.ItemIcon(e.item.id))
 					st.icon:SetDesaturated(not e.open)
 					st.name:SetText(itemName(e.item))

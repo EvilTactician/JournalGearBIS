@@ -174,8 +174,28 @@ for r in R("creature_queststarter"):
     qstarters[r["quest"]].append(r["id"])
 
 
+# Zones in Outland and Northrend (The Burning Crusade and Wrath), from the client's AreaTable.dbc: their
+# quests aren't Classic, even the few with quest ids below 9500 (Hellfire Peninsula has some).
+from dbc import load as dbc_load
+AREAS, _, _ = dbc_load(os.path.join(BUILD, "dbc", "AreaTable.dbc"))
+LATER_MAPS = {530, 571}
+spawn_maps = collections.defaultdict(set)
+for r in R("creature"):
+    spawn_maps[r["id1"]].add(r["map"])
+
+
+def later_expansion(q):
+    zone = q.get("QuestSortID") or 0
+    if zone > 0 and zone in AREAS and AREAS[zone][1] in LATER_MAPS:
+        return True
+    maps = set()
+    for c in qstarters.get(q["ID"], []):
+        maps |= spawn_maps.get(c, set())
+    return bool(maps) and maps <= LATER_MAPS
+
+
 def quest_ok(q):
-    if not (q["ID"] < 9500 or q["ID"] >= 100000):
+    if not (q["ID"] < 9500 or q["ID"] >= 100000) or later_expansion(q):
         return False
     if (q.get("MinLevel") or 0) > 60 or (q.get("QuestLevel") or 0) > 63:
         return False
@@ -358,9 +378,13 @@ for q in quests.values():
             givers, trainer = giver_info(start)
             chains[side] = (start, quests[start].get("LogTitle") or "", givers, 1 if trainer else 0, steps)
         need = max(quest_min_level(q), min(quest_min_level(quests[chains["A"][0]]), quest_min_level(quests[chains["H"][0]])))
+        # the classes that can do it: the quest's own, or its chain's first quest's (a class quest chain)
+        classes = a.get("AllowableClasses", 0) or 0
+        for side in ("A", "H"):
+            classes = classes or (qaddon.get(chains[side][0], {}).get("AllowableClasses", 0) or 0)
         sources[it].append({"k": "Q", "q": q["ID"], "n": (q.get("LogTitle") or ""), "lvl": (q.get("QuestLevel") or 0), "i": via, "st": stage,
                             "need": need, "chains": chains, "tokens": sorted(quest_tokens(q["ID"])) if via in RAIDS else [],
-                            "races": (q.get("AllowableRaces") or 0), "classes": a.get("AllowableClasses", 0) or 0, "end": end})
+                            "races": (q.get("AllowableRaces") or 0), "classes": classes, "end": end})
 
 # ---------------------------------------------------------------- vendors (Eastern Kingdoms / Kalimdor only)
 continent = collections.defaultdict(set)
