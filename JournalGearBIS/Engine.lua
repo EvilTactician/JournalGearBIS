@@ -338,6 +338,8 @@ local function readSource(s)
 		src.start, src.startName, src.givers, src.trainer, src.chain = chain[1] or s[2], chain[2] or s[3], chain[3] or 1,
 			chain[4] == 1, chain[5] or 1
 		if src.races ~= 0 and band(src.races, P.raceBit) == 0 then return nil end
+		local classes = s[11] or 0
+		if classes ~= 0 and band(classes, G.CLASS_BIT[P.class] or 0) == 0 then return nil end
 		if src.inst then
 			local g = G.instances[src.inst]
 			src.stage = math.max(src.stage, G.InstanceStage(src.inst))
@@ -419,8 +421,10 @@ local function candidate(t, prof, rowKey, curated)
 	local need = math.max(t.req, src.need or 0)
 	c.stage, c.need = src.stage, need
 	c.open = src.open and need <= P.level
+	-- Soon: open at your stage, but you're not the level for it yet
+	c.soon = src.open and need > P.realLevel
 	if need > P.level and src.open then
-		c.lock = "Available at level " .. need
+		c.lock = "Requires level " .. need
 	elseif not src.open then
 		local g = src.inst and G.instances[src.inst]
 		if g then

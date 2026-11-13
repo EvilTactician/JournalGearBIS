@@ -1,7 +1,7 @@
 # Journal: Gear
 
 > [!WARNING]
-> **Early alpha (version 0.1.6-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.7-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -59,13 +59,14 @@ Screenshots are coming soon.
 | --- | --- |
 | **Now** | You can get it now. |
 | **Next** | The upgrade that opens next. |
+| **Soon** | It's open at your stage, but you're not the level for it yet. |
 | **BiS** | The slot's best in slot: Best in Slot until The Burning Crusade. |
 | Equipped | You're wearing it. |
 | **+N%** | How much better than what you have it is, for your spec. |
 | new | You have nothing in that slot yet. |
 | In your bags: wear it | You already own it. |
 | Opens with *raid* (Stage *N*) / Opens at Stage *N* | Your progression stage keeps it locked until that stage. |
-| Available at level *N* | You, or its quest, need a higher level. |
+| Requires level *N* | You, or its quest, need a higher level. |
 | Easy / Medium / Hard | How easy it is to get: quest rewards are easy; drops go by how often they drop. |
 
 A slot's header shows what you wear there and how many upgrades you can get now, **Best you can get now**
@@ -102,7 +103,7 @@ Classic gear stops being the goal. Anyone still after Classic gear is at 60 and 
 
 You can open the list at any level. Below level 55 (65, 75 for the later lists) it's a **preview**: the
 list as it will be at the level cap, at your progression stage, so you can see what you're working
-towards, each step marked *Available at level N*. From 55 it compares with what you're wearing, and
+towards, each step you're not the level for marked **Soon** and *Requires level N*. From 55 it compares with what you're wearing, and
 suggests dungeons near your level.
 
 In Classic, your progression stage decides which raids are open: Molten Core from the start, then Onyxia
@@ -136,7 +137,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.3-alpha | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
 | 0.1.4-alpha | "On your gear list: Roll Need" on item tooltips everywhere, Now / Next / BiS labels. |
 | 0.1.5-alpha | Two rings and trinkets, clearer dungeon advice, no-talents note, tooltip line last. |
-| **0.1.6-alpha** (now) | Four dungeons in Where to go next, list items rank higher, blue dungeon and purple raid names. |
+| 0.1.6-alpha | Four dungeons in Where to go next, list items rank higher, blue dungeon and purple raid names. |
+| **0.1.7-alpha** (now) | Soon and "Requires level N", no Outland or other classes' quests, tidier separator. |
 | 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
@@ -185,11 +187,12 @@ the Lua copies. You need Python 3 and:
 - the `data/sql/base/db_world` folder of [azerothcore-wotlk](https://github.com/azerothcore/azerothcore-wotlk)
   (set `GEARBIS_AC` to it)
 - the `data/sql/world/base` folder of mod-individual-progression (`GEARBIS_MOD`)
-- `Spell.dbc`: `python3 tools/rangezip.py Spell.dbc` fetches just that file from AzerothCore's
-  client-data release
+- `Spell.dbc` and `AreaTable.dbc`: `python3 tools/rangezip.py <file>` fetches just that file from
+  AzerothCore's client-data release
 
 ```
 python3 tools/rangezip.py Spell.dbc
+python3 tools/rangezip.py AreaTable.dbc
 python3 tools/sqlload.py     # a few minutes: loads the tables and applies the module's changes
 python3 tools/extract.py     # where every item comes from
 python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
