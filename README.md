@@ -13,8 +13,7 @@
 [![Version](https://img.shields.io/badge/Version-0.1.8-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**A World of Warcraft 3.3.5a addon that adds a **Gear** tab to the
-[Journal](https://github.com/EvilTactician/wow-mod-forever-journal) (EvilTactician's mod-forever-journal), for realms
+**A World of Warcraft 3.3.5a addon that adds a **Gear** tab to [mod-orever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
 running [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression).**
 
 </div>
