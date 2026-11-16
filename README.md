@@ -1,14 +1,22 @@
-# Journal: Gear
+# Journal: Gear 0.1.8
 
 > [!WARNING]
-> **Early alpha (version 0.1.6-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.8-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
 
-A World of Warcraft 3.3.5a addon that adds a **Gear** tab to the
-[Journal](https://github.com/buildthehomelab/wow-mod-forever-journal) (mod-forever-journal), for realms
-running [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression).
+<div align="center">
+
+![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
+![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
+[![Version](https://img.shields.io/badge/Version-0.1.8-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+
+**A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
+running [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression).**
+
+</div>
 
 It tells you which gear to aim for, so you never have to look it up. For your spec, every slot shows up to
 three steps from what you're wearing:
@@ -41,9 +49,10 @@ Every step shows where it comes from, how likely it is to drop (*about 1 in 5 ru
 with. Clicking a step:
 
 - **A drop** opens that boss's loot in the Journal.
-- **A dungeon or raid quest** opens that instance's quests in the Journal, chain and all.
-- **Any other quest** marks where its chain starts on your map, and says so in chat. A chain your class
-  trainer (or several quest givers) starts has nothing to mark: the step says who to talk to instead.
+- **A quest** opens it in the Journal's Quests tab, with its chain.
+- If the Quests tab doesn't list it, **a dungeon or raid quest** opens that instance's quests instead,
+  and **any other quest** marks where its chain starts on your map, and says so in chat. A chain your
+  class trainer (or several quest givers) starts has nothing to mark: the step says who to talk to.
 
 Each step's tooltip says which of these a click does. Shift-click links the item; Ctrl-click tries it on.
 
@@ -59,13 +68,14 @@ Screenshots are coming soon.
 | --- | --- |
 | **Now** | You can get it now. |
 | **Next** | The upgrade that opens next. |
+| **Soon** | It's open at your stage, but you're not the level for it yet. |
 | **BiS** | The slot's best in slot: Best in Slot until The Burning Crusade. |
 | Equipped | You're wearing it. |
 | **+N%** | How much better than what you have it is, for your spec. |
 | new | You have nothing in that slot yet. |
 | In your bags: wear it | You already own it. |
 | Opens with *raid* (Stage *N*) / Opens at Stage *N* | Your progression stage keeps it locked until that stage. |
-| Available at level *N* | You, or its quest, need a higher level. |
+| Requires level *N* | You, or its quest, need a higher level. |
 | Easy / Medium / Hard | How easy it is to get: quest rewards are easy; drops go by how often they drop. |
 
 A slot's header shows what you wear there and how many upgrades you can get now, **Best you can get now**
@@ -102,7 +112,7 @@ Classic gear stops being the goal. Anyone still after Classic gear is at 60 and 
 
 You can open the list at any level. Below level 55 (65, 75 for the later lists) it's a **preview**: the
 list as it will be at the level cap, at your progression stage, so you can see what you're working
-towards, each step marked *Available at level N*. From 55 it compares with what you're wearing, and
+towards, each step you're not the level for marked **Soon** and *Requires level N*. From 55 it compares with what you're wearing, and
 suggests dungeons near your level.
 
 In Classic, your progression stage decides which raids are open: Molten Core from the start, then Onyxia
@@ -130,24 +140,18 @@ different stage for a raid on your realm, the tab uses the realm's.
 
 | Version | What's in it |
 | --- | --- |
-| 0.1.0-alpha | Classic lists for every spec; hand-picked items for Rogue and Priest. |
-| 0.1.1-alpha | Get / Next / BiS steps, a preview below level 55, quest chains and levels, clearer clicks. |
-| 0.1.2-alpha | Quest chains for your faction, raid tiers on locked steps, your gear shown in the preview. |
-| 0.1.3-alpha | Stages instead of tiers, "Available at level N" in the preview, tidier source lines. |
-| 0.1.4-alpha | "On your gear list: Roll Need" on item tooltips everywhere, Now / Next / BiS labels. |
-| 0.1.5-alpha | Two rings and trinkets, clearer dungeon advice, no-talents note, tooltip line last. |
-| **0.1.6-alpha** (now) | Four dungeons in Where to go next, list items rank higher, blue dungeon and purple raid names. |
-| 0.x alphas | Hand-picked lists for the other classes, and fixes from playtesting. |
+| 0.1.0 to 0.1.7-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips. |
+| **0.1.8-alpha** (now) | Quest steps open the quest in the Journal's Quests tab. |
+| 0.2.0-alpha | Rogue and Priest finished, with the next big features. |
+| 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
 
 ## Requirements
 
-- **[mod-forever-journal](https://github.com/buildthehomelab/wow-mod-forever-journal)**: the Journal
-  addon on your client and the module on the realm. The tab gets your progression stage, each raid's
-  stage on your realm, and the boss pages it opens from it. It also works with
-  [EvilTactician's fork](https://github.com/EvilTactician/wow-mod-forever-journal), which has extra
-  bugfixes.
+- **[mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal)** (my fork): the Journal addon on your client and the module on the realm. This fork is
+  required: the tab builds on hooks only it has, such as opening a quest in the Quests tab. The tab gets
+  your progression stage, each raid's stage on your realm, and the boss and quest pages it opens from it.
 - **[mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression)** on the
   realm. Without it, every raid counts as open.
 
@@ -185,11 +189,12 @@ the Lua copies. You need Python 3 and:
 - the `data/sql/base/db_world` folder of [azerothcore-wotlk](https://github.com/azerothcore/azerothcore-wotlk)
   (set `GEARBIS_AC` to it)
 - the `data/sql/world/base` folder of mod-individual-progression (`GEARBIS_MOD`)
-- `Spell.dbc`: `python3 tools/rangezip.py Spell.dbc` fetches just that file from AzerothCore's
-  client-data release
+- `Spell.dbc` and `AreaTable.dbc`: `python3 tools/rangezip.py <file>` fetches just that file from
+  AzerothCore's client-data release
 
 ```
 python3 tools/rangezip.py Spell.dbc
+python3 tools/rangezip.py AreaTable.dbc
 python3 tools/sqlload.py     # a few minutes: loads the tables and applies the module's changes
 python3 tools/extract.py     # where every item comes from
 python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
@@ -211,8 +216,6 @@ python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
 
 ## Credits
 
-- [mod-forever-journal](https://github.com/buildthehomelab/wow-mod-forever-journal), the Journal this
-  tab lives in.
 - [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression), the
   progression stages and the Classic item and loot changes.
 - [AzerothCore](https://www.azerothcore.org/) for the world database the item sources come from.

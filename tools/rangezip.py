@@ -1,4 +1,4 @@
-"""Pulls the DBC files gen.py needs (Spell.dbc) out of AzerothCore's client-data archive, without downloading all of it.
+"""Pulls the DBC files the tools need (Spell.dbc, AreaTable.dbc) out of AzerothCore's client-data archive, without downloading all of it.
 
 usage: python3 rangezip.py Spell.dbc"""
 import urllib.request, zipfile, io, sys, os

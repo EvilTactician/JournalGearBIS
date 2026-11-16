@@ -1,7 +1,7 @@
 -- The Journal's Gear tab: for your spec, every slot's way from what you wear to the best Classic has, a step at
 -- a time, and where to go next for the most upgrades. Engine.lua works it all out; this draws it.
 --
--- Your progression stage and the raids' entrances and bosses come from the Journal (mod-forever-journal) and
+-- Your progression stage and the raids' entrances and bosses come from the Journal (EvilTactician's fork) and
 -- mod-individual-progression, so a step for a raid you haven't opened shows as what's next, not as a goal.
 
 local J = Journal
@@ -104,11 +104,18 @@ end
 -----------------------------------------
 -- opening a step's source in the Journal
 
+-- The Journal can open a quest in its Quests tab (Journal.API 2, on a realm with the Quests tab).
+local function canOpenQuest()
+	return (J.API or 0) >= 2 and J.OpenQuest and J.Has(J.HELLO_QUESTS)
+end
+
 -- What clicking a step does, for its tooltip; nil when it does nothing.
 local function clickText(c)
 	local src = c.src
 	local g = src.inst and G.instances[src.inst]
-	if (src.kind == "D" or src.kind == "C") and g then
+	if src.kind == "Q" and canOpenQuest() then
+		return "Click to open the quest in the Journal."
+	elseif (src.kind == "D" or src.kind == "C") and g then
 		return "Click to open " .. src.who:gsub(",.*", "") .. "'s loot in the Journal."
 	elseif src.kind == "Q" and g then
 		return "Click to open " .. g.name .. "'s quests in the Journal."
@@ -120,9 +127,20 @@ local function clickText(c)
 	return nil
 end
 
-local function openSource(c)
+local openSource
+
+-- A quest opens in the Journal's Quests tab; when the tab doesn't list it, or the realm can't open
+-- quests, the click does what it did before (the instance's quests, or the chain's start on the map).
+local function openQuest(c)
+	return canOpenQuest() and J.OpenQuest(c.src.quest, function (shown)
+		if not shown then openSource(c, true) end
+	end)
+end
+
+function openSource(c, notInQuestsTab)
 	local src = c.src
 	local g = src.inst and G.instances[src.inst]
+	if src.kind == "Q" and not notInQuestsTab and openQuest(c) then return end
 	if src.kind == "Q" and not g then
 		-- One giver can be marked; with several (a trainer in every city) the Journal can't pick yours.
 		if (src.givers or 1) == 1 and J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
@@ -403,7 +421,7 @@ local function build(panel)
 			if e.lock then
 				GameTooltip:AddLine(e.lock .. ".", 1, 0.4, 0.4, true)
 			elseif e.availableAt then
-				GameTooltip:AddLine("Available at level " .. e.availableAt .. ".", 1, 0.4, 0.4, true)
+				GameTooltip:AddLine("Requires level " .. e.availableAt .. ".", 1, 0.4, 0.4, true)
 			end
 			if e.role == "bis" then
 				GameTooltip:AddLine(G.BIS_TEXT[0], 1, 0.82, 0, true)
@@ -438,11 +456,13 @@ local function build(panel)
 		if e.equipped then return "|cff40ff40Equipped|r" end
 		if e.inBags then return "|cff40ff40In your bags: wear it|r" end
 		if not e.open then return "|cffff6060" .. (e.lock or "Locked") .. "|r" end
-		if e.availableAt then return "|cffff6060Available at level " .. e.availableAt .. "|r" end
+		if e.availableAt then return "|cffff6060Requires level " .. e.availableAt .. "|r" end
 		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
 	local ROLE = { get = "|cff40ff40Now|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
+	-- a Now or Next you're not the level for yet
+	local SOON = "|cffff9933Soon|r"
 
 	render = function ()
 		if not panel:IsVisible() then return end
@@ -521,7 +541,7 @@ local function build(panel)
 					local kind = e.raid and ("raid, " .. e.players .. " players") or "dungeon"
 					local what = e.count .. (e.count == 1 and " upgrade" or " upgrades")
 						.. (e.steps > 0 and (" (" .. e.steps .. " on your list)") or "")
-					local gap = (k == 1 and g[2]) and "     |cff9d9d9d||r" or ""
+					local gap = (k == 1 and g[2]) and "     |cff9d9d9d|||r" or ""
 					b.text:SetText((e.raid and RAID_COLOUR or DUNGEON_COLOUR) .. e.g.name .. "|r |cff9d9d9d(" .. kind
 						.. ")|r  -  " .. what .. gap)
 					b:SetWidth(b.text:GetStringWidth() + (gap ~= "" and 16 or 0))
@@ -582,7 +602,7 @@ local function build(panel)
 					st:ClearAllPoints()
 					st:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 					st:SetWidth(width)
-					st.num:SetText(ROLE[e.role] or "")
+					st.num:SetText((e.soon and e.role ~= "bis" and SOON) or ROLE[e.role] or "")
 					st.icon:SetTexture(GetItemIcon and GetItemIcon(e.item.id) or J.ItemIcon(e.item.id))
 					st.icon:SetDesaturated(not e.open)
 					st.name:SetText(itemName(e.item))

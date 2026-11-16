@@ -265,8 +265,8 @@ def src_lua(i):
         if s["k"] == "Q" and s["q"] not in seenq:
             seenq.add(s["q"])
             ch = lambda c: "{ %d, %s, %d, %d, %d }" % (c[0], lstr(c[1]), c[2], c[3], c[4])
-            out.append("{ \"Q\", %d, %s, %d, %d, %d, %d, %d, %s, %s }" % (s["q"], lstr(s["n"]), s["i"] or 0, s["st"], s["races"] or 0,
-                       s["lvl"] or 0, s["need"], ch(s["chains"]["A"]), ch(s["chains"]["H"])))
+            out.append("{ \"Q\", %d, %s, %d, %d, %d, %d, %d, %s, %s, %d }" % (s["q"], lstr(s["n"]), s["i"] or 0, s["st"], s["races"] or 0,
+                       s["lvl"] or 0, s["need"], ch(s["chains"]["A"]), ch(s["chains"]["H"]), s["classes"] or 0))
         elif s["k"] == "V":
             name = s["n"] + (" <%s>" % s["sub"] if s["sub"] else "")
             out.append("{ \"V\", %s, %d, %d, %d, %d }" % (lstr(name), s["price"] or 0, s["rep"] or 0, s["rank"] or 0, s["st"]))
@@ -287,7 +287,7 @@ L.append("--                 stats = { ... }, sources = { ... } }")
 L.append("--   a source:  { \"D\", instance, chance (all its bosses together), \"who\" }   a drop")
 L.append("--              { \"C\", instance, chance, \"chest\" }                         a chest")
 L.append("--              { \"Q\", quest, \"title\", instance it needs or 0, stage, races, quest level, level needed,")
-L.append("--                     Alliance chain, Horde chain }")
+L.append("--                     Alliance chain, Horde chain, classes (bit mask, 0 = all) }")
 L.append("--                a chain: { first quest, \"its title\", quest givers, 1 if they're all trainers, quests in it }")
 L.append("--              { \"V\", \"vendor\", price in copper, faction, standing, stage }")
 L.append("--              { \"X\", \"how it's made\" }")
