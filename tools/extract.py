@@ -193,6 +193,27 @@ for e, rows in group_loot("item_loot_template").items():
 
 # ---------------------------------------------------------------- quests
 RAIDS = {k for k, v in INSTANCES.items() if v[1]}
+
+# Items you can get outside a raid too: world drops (creatures out in the world), dungeon drops, vendors and
+# crafting. A quest only needs a raid when one of its items comes from nowhere else (Black Diamonds and
+# librams drop in Molten Core, but also in Blackrock Depths and the world).
+world_drops, _lootcache, _world = set(), {}, collections.defaultdict(set)
+for r in R("creature"):
+    _world[r["id1"]].add(r["map"])
+for e, maps in _world.items():
+    c = ctpl.get(e)
+    if not c or not c["lootid"] or not (maps & {0, 1}):
+        continue
+    if c["lootid"] not in _lootcache:
+        _lootcache[c["lootid"]] = [it for it, ch in resolve(CLT.get(c["lootid"], [])).items() if ch >= 0.0005]
+    world_drops.update(_lootcache[c["lootid"]])
+sold = {r["item"] for r in R("npc_vendor")}
+
+
+def raid_only(it):
+    where = drops_of.get(it, {})
+    return (any(k in RAIDS for k in where) and all(k in RAIDS for k in where) and it not in world_drops
+            and it not in sold and not crafts.creates.get(it))
 # Quests filed under an instance (their zone is the instance's area): they're done there.
 QUEST_ZONE = {19: 309, 2717: 409, 2677: 469, 2159: 249, 3429: 509, 3428: 531, 3456: 533, 2017: 329, 2057: 289,
               1584: 230, 1583: 229, 2557: 429, 1477: 109, 2100: 349, 1176: 209, 1337: 70}
@@ -253,7 +274,7 @@ def quest_via(qid, depth=0, seen=None):
     q = quests[qid]
     via, stage = None, 0
     for ri in [q.get("RequiredItemId%d" % i) for i in range(1, 7)] + [q.get("StartItem")]:
-        for ik in drops_of.get(ri or 0, {}):
+        for ik in (drops_of.get(ri or 0, {}) if raid_only(ri or 0) else {}):
             if ik in RAIDS and (via is None or INSTANCES[ik][3] > stage):
                 via, stage = ik, INSTANCES[ik][3]
     if via is None:

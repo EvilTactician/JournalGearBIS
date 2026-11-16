@@ -448,8 +448,8 @@ def enchant_slots(sid):
 
 
 def recipe_way(skill, rank, sid, recipe, label=None):
-    """{ "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from" }."""
-    stage, where = stage_of_rank(rank), "from a trainer"
+    """{ "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", the recipe's instance }."""
+    stage, where, inst = stage_of_rank(rank), "from a trainer", 0
     for s in sources.get(recipe, []):
         if s["k"] == "V":
             stage = max(stage, s["st"])
@@ -459,7 +459,7 @@ def recipe_way(skill, rank, sid, recipe, label=None):
             break
         if s["k"] in ("D", "C"):
             where = "recipe drops in %s" % INSTANCES[s["i"]][0]
-            stage = max(stage, INSTANCES[s["i"]][3])
+            stage, inst = max(stage, INSTANCES[s["i"]][3]), s["i"]
             break
         if s["k"] == "Q":
             where = "recipe from the quest %s" % s["n"]
@@ -468,7 +468,7 @@ def recipe_way(skill, rank, sid, recipe, label=None):
     else:
         if recipe:
             where = "from a recipe"
-    return "{ \"X\", %s, %d, %d, %d, %s }" % (lstr(label or ("Crafted: " + PROFESSIONS[skill])), skill, rank, stage, lstr(where))
+    return "{ \"X\", %s, %d, %d, %d, %s, %d }" % (lstr(label or ("Crafted: " + PROFESSIONS[skill])), skill, rank, stage, lstr(where), inst)
 
 
 extra_items = set()

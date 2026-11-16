@@ -392,8 +392,9 @@ local function readSource(s)
 		src.who, src.price, src.rep, src.rank, src.stage = s[2], s[3], s[4], s[5], s[6]
 		src.tier = TIER_EASY
 	elseif kind == "X" then
-		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from" }
+		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", its instance }
 		src.who, src.skill, src.rank, src.stage, src.where, src.tier = s[2], s[3], s[4], s[5] or 0, s[6], TIER_EASY
+		src.recipeInst = s[7] ~= 0 and s[7] or nil
 	else
 		return nil
 	end

@@ -115,7 +115,7 @@ GLYPHS = {
 }
 
 # Recommended consumables, by spec profile: "Item name" or ("Item name", "a note for its tooltip").
-ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Juju Power", "Doesn't stack with Elixir of Giants."),
+ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Juju Power", "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants."),
                      ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
 CONSUMABLES = {

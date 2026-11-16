@@ -250,8 +250,8 @@ local function build(panel)
 	local consumables = CreateFrame("Frame", nil, body)
 	consumables:SetSize(10, 20)
 	consumables.label = consumables:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	consumables.label:SetPoint("RIGHT", consumables, "LEFT", -6, 0)
-	consumables.label:SetText("Consumables")
+	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 3)
+	consumables.label:SetText("Recommended consumables")
 	local consumableIcons = {}
 	local function consumableIcon(i)
 		if consumableIcons[i] then return consumableIcons[i] end
@@ -269,11 +269,17 @@ local function build(panel)
 			if #c.sources > 0 then
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
-				for k, src in ipairs(c.sources) do
-					if k > 3 then break end
-					local t = G.SourceText(src)
-					if not src.open then t = t .. "  |cffff6060(Opens at Stage " .. src.stage .. ")|r" end
-					GameTooltip:AddLine(t, 1, 1, 1, true)
+				-- the ways open to you now; the locked ones only when there are none
+				local anyOpen = c.sources[1].open
+				local shown = 0
+				for _, src in ipairs(c.sources) do
+					if shown >= 3 then break end
+					if src.open or not anyOpen then
+						local t = G.SourceText(src)
+						if not src.open then t = t .. "  |cffff6060(Opens at Stage " .. src.stage .. ")|r" end
+						GameTooltip:AddLine(t, 1, 1, 1, true)
+						shown = shown + 1
+					end
 				end
 			end
 			GameTooltip:AddLine(" ")
@@ -385,6 +391,11 @@ local function build(panel)
 			if o.level > (UnitLevel("player") or 0) then
 				GameTooltip:AddLine("Requires level " .. o.level .. ".", 1, 0.4, 0.4, true)
 			end
+		end
+		if e.pre then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine("|cffffd200Before raids:|r " .. G.EnchantName(e.pre) .. effect(e.pre), 1, 1, 1, true)
+			if e.current == e.pre.e then GameTooltip:AddLine("You have it.", 0.25, 1, 0.25) else ways(e.pre) end
 		end
 		if e.now then
 			GameTooltip:AddLine(" ")
@@ -650,9 +661,9 @@ local function build(panel)
 		local list = v.consumables or {}
 		consumables:ClearAllPoints()
 		if choose:IsShown() then
-			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -4)
+			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -18)
 		else
-			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -12)
+			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -20)
 		end
 		consumables:SetWidth(math.max(1, #list * 22 - 2))
 		for i, c in ipairs(list) do

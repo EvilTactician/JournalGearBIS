@@ -117,7 +117,14 @@ local function enchantValue(e, room, credit, part, speed)
 	return v
 end
 
+-- Whether a way of getting something takes a raid: a raid drop, a quest needing a raid item, a recipe from one.
+local function raidWay(w)
+	local inst = w.inst or w.recipeInst
+	return inst and G.instances[inst] and G.IsRaid(G.instances[inst]) or false
+end
+
 -- The best enchant for what you wear in a row: { now = the best you can get, later = a better one still locked,
+-- pre = the best you can get without raiding when that's not the best (a pre-raid step),
 -- current = the enchant on it now (0 for none), state = "good", "weak", "none" or "later" (only a locked one) },
 -- or nil when nothing's worth putting on.
 function G.EnchantFor(r, room)
@@ -129,19 +136,25 @@ function G.EnchantFor(r, room)
 	local speed = worn.item and worn.item.stats and worn.item.stats.speed
 	local credit = G.enchantStats[current]
 	local classBit = G.CLASS_BIT[P.class] or 0
-	local best, later
+	local best, later, pre
 	for _, slot in ipairs(enchantSlots(r.row.key, worn)) do
 		for _, o in ipairs(G.enchants[slot] or {}) do
 			if (o.classes or 0) == 0 or band(o.classes, classBit) ~= 0 then
 				local value = enchantValue(o.e, room, credit, part, speed)
 				if value > 0 then
 					local ways = enchantWays(o)
-					local open = false
-					for _, w in ipairs(ways) do if w.open then open = true end end
+					local open, noRaid = false, false
+					for _, w in ipairs(ways) do
+						if w.open then
+							open = true
+							if not raidWay(w) then noRaid = true end
+						end
+					end
 					local entry = { e = o.e, spell = o.spell, item = o.item, level = o.level or 0, value = value, ways = ways, open = open }
 					if #ways > 0 then
 						if open and entry.level <= P.realLevel then
 							if not best or value > best.value then best = entry end
+							if noRaid and (not pre or value > pre.value) then pre = entry end
 						elseif not later or value > later.value then
 							later = entry
 						end
@@ -152,6 +165,7 @@ function G.EnchantFor(r, room)
 	end
 	if not best and not later then return nil end
 	if later and best and later.value <= best.value * 1.05 then later = nil end
+	if pre and best and (pre.e == best.e or pre.value >= best.value * 0.98) then pre = nil end
 	local have = enchantValue(current, room, credit, part, speed)
 	local state
 	if not best then
@@ -165,7 +179,7 @@ function G.EnchantFor(r, room)
 	else
 		state = "weak"
 	end
-	return { now = best, later = later, current = current, have = have, state = state }
+	return { now = best, later = later, pre = pre, current = current, have = have, state = state }
 end
 
 -- An enchant's name, what it gives and its icon.
@@ -193,10 +207,16 @@ G.GLYPH_LEVELS = { major = { 15, 50, 80 }, minor = { 15, 30, 70 } }
 function G.GlyphsFor()
 	local lists = G.glyphs and G.glyphs[P.profileKey]
 	if not lists then return nil end
-	local have = {}
-	for i = 1, 6 do
-		if GetGlyphSocketInfo then
-			local _, _, spell = GetGlyphSocketInfo(i)
+	-- the glyphs you have in any socket, and how many sockets of each kind are open
+	local have, open = {}, nil
+	if GetGlyphSocketInfo then
+		open = { major = 0, minor = 0 }
+		for i = 1, 6 do
+			local enabled, kind, spell = GetGlyphSocketInfo(i)
+			if enabled then
+				local k = kind == 1 and "major" or "minor"
+				open[k] = open[k] + 1
+			end
 			if spell then have[spell] = true end
 		end
 	end
@@ -211,14 +231,20 @@ function G.GlyphsFor()
 				if g.talent and (P.talents[g.talent] or 0) == 0 then
 					hint = hint or ("Better with the " .. g.talent .. " talent: " .. g.name)
 				else
-					table.insert(slots, { glyph = g, equipped = have[g.spell], hint = hint })
+					table.insert(slots, { glyph = g, equipped = have[g.spell], hint = hint, order = #slots + 1 })
 					hint = nil
 				end
 			end
 		end
+		-- The ones you have take the sockets you've opened, whichever socket they're in; the rest fill the
+		-- others, then the sockets still to open.
+		table.sort(slots, function (a, b)
+			if (a.equipped and 1 or 0) ~= (b.equipped and 1 or 0) then return a.equipped and true or false end
+			return a.order < b.order
+		end)
 		for i, s in ipairs(slots) do
 			s.unlock = G.GLYPH_LEVELS[kind][i]
-			s.locked = P.realLevel < s.unlock
+			if open then s.locked = i > open[kind] else s.locked = P.realLevel < s.unlock end
 		end
 		out[kind] = slots
 	end
