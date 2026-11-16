@@ -1,7 +1,7 @@
 -- The Journal's Gear tab: for your spec, every slot's way from what you wear to the best Classic has, a step at
 -- a time, and where to go next for the most upgrades. Engine.lua works it all out; this draws it.
 --
--- Your progression stage and the raids' entrances and bosses come from the Journal (mod-forever-journal) and
+-- Your progression stage and the raids' entrances and bosses come from the Journal (EvilTactician's fork) and
 -- mod-individual-progression, so a step for a raid you haven't opened shows as what's next, not as a goal.
 
 local J = Journal
@@ -104,11 +104,18 @@ end
 -----------------------------------------
 -- opening a step's source in the Journal
 
+-- The Journal can open a quest in its Quests tab (Journal.API 2, on a realm with the Quests tab).
+local function canOpenQuest()
+	return (J.API or 0) >= 2 and J.OpenQuest and J.Has(J.HELLO_QUESTS)
+end
+
 -- What clicking a step does, for its tooltip; nil when it does nothing.
 local function clickText(c)
 	local src = c.src
 	local g = src.inst and G.instances[src.inst]
-	if (src.kind == "D" or src.kind == "C") and g then
+	if src.kind == "Q" and canOpenQuest() then
+		return "Click to open the quest in the Journal."
+	elseif (src.kind == "D" or src.kind == "C") and g then
 		return "Click to open " .. src.who:gsub(",.*", "") .. "'s loot in the Journal."
 	elseif src.kind == "Q" and g then
 		return "Click to open " .. g.name .. "'s quests in the Journal."
@@ -120,9 +127,20 @@ local function clickText(c)
 	return nil
 end
 
-local function openSource(c)
+local openSource
+
+-- A quest opens in the Journal's Quests tab; when the tab doesn't list it, or the realm can't open
+-- quests, the click does what it did before (the instance's quests, or the chain's start on the map).
+local function openQuest(c)
+	return canOpenQuest() and J.OpenQuest(c.src.quest, function (shown)
+		if not shown then openSource(c, true) end
+	end)
+end
+
+function openSource(c, notInQuestsTab)
 	local src = c.src
 	local g = src.inst and G.instances[src.inst]
+	if src.kind == "Q" and not notInQuestsTab and openQuest(c) then return end
 	if src.kind == "Q" and not g then
 		-- One giver can be marked; with several (a trainer in every city) the Journal can't pick yours.
 		if (src.givers or 1) == 1 and J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
