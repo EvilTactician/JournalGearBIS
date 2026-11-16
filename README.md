@@ -13,7 +13,7 @@
 [![Version](https://img.shields.io/badge/Version-0.1.8-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**A World of Warcraft 3.3.5a addon that adds a **Gear** tab to [mod-orever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
+**A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
 running [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression).**
 
 </div>
@@ -149,7 +149,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 
 ## Requirements
 
-- **[mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal)** (My fork): the Journal addon on your client and the module on the realm. This fork is
+- **[mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal)** (my fork): the Journal addon on your client and the module on the realm. This fork is
   required: the tab builds on hooks only it has, such as opening a quest in the Quests tab. The tab gets
   your progression stage, each raid's stage on your realm, and the boss and quest pages it opens from it.
 - **[mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression)** on the
@@ -216,7 +216,7 @@ python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
 
 ## Credits
 
-- [EvilTactician's Journal](https://github.com/EvilTactician/wow-mod-forever-journal), the Journal this
+- [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal) (my fork), the Journal this
   tab lives in.
 - [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression), the
   progression stages and the Classic item and loot changes.
