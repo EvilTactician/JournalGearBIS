@@ -24,6 +24,13 @@ G.CLASS_BIT = { WARRIOR = 1, PALADIN = 2, HUNTER = 4, ROGUE = 8, PRIEST = 16, DE
 G.RACE_BIT = { Human = 1, Orc = 2, Dwarf = 4, NightElf = 8, Scourge = 16, Tauren = 32, Gnome = 64, Troll = 128,
 	BloodElf = 512, Draenei = 1024 }
 G.STANDINGS = { [0] = "Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted" }
+-- The professions, by skill line, as the skill window names them.
+G.PROFESSIONS = { [164] = "Blacksmithing", [165] = "Leatherworking", [171] = "Alchemy", [182] = "Herbalism",
+	[185] = "Cooking", [186] = "Mining", [197] = "Tailoring", [202] = "Engineering", [333] = "Enchanting",
+	[356] = "Fishing", [393] = "Skinning", [129] = "First Aid", [755] = "Jewelcrafting", [773] = "Inscription" }
+-- Gear only a profession can wear (Engineering goggles) has to be this much better than the best you can get
+-- otherwise: it's often costly and hard to make.
+local PROFESSION_GEAR_GAIN = 1.10
 G.FACTIONS = {
 	[59] = "Thorium Brotherhood", [270] = "Zandalar Tribe", [529] = "Argent Dawn", [576] = "Timbermaw Hold",
 	[609] = "Cenarion Circle", [749] = "Hydraxian Waterlords", [809] = "Shen'dralar", [910] = "Brood of Nozdormu",
@@ -87,6 +94,8 @@ local function item(id)
 	if not t.id then
 		t.id, t.name, t.inv, t.sub, t.ilvl, t.req, t.quality, t.classes, t.races, t.unique, t.stats, t.sources =
 			id, t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[9] == 1, t[10], t[11]
+		-- the profession and skill needed to wear it (Engineering goggles)
+		t.prof, t.profRank = t[12], t[13]
 		t.class, t.subclass = math.floor(t.sub / 100), t.sub % 100
 	end
 	return t
@@ -269,6 +278,37 @@ local function scanOwned()
 		end
 	end
 	P.worn, P.bags = worn, bags
+	-- your professions and their skill, by skill line
+	local byName = {}
+	for id, name in pairs(G.PROFESSIONS) do byName[name] = id end
+	P.skills = {}
+	-- a collapsed header hides its skills: open those while reading, then close them again
+	local opened = {}
+	local i = 1
+	while i <= (GetNumSkillLines and GetNumSkillLines() or 0) do
+		local name, header, expanded, rank = GetSkillLineInfo(i)
+		if header and not expanded and ExpandSkillHeader then
+			opened[name] = true
+			ExpandSkillHeader(i)
+		elseif not header and byName[name] then
+			P.skills[byName[name]] = rank or 0
+		end
+		i = i + 1
+	end
+	if next(opened) then
+		for k = GetNumSkillLines(), 1, -1 do
+			local name, header, expanded = GetSkillLineInfo(k)
+			if header and expanded and opened[name] and CollapseSkillHeader then CollapseSkillHeader(k) end
+		end
+	end
+	-- your talents: points in each, by name
+	P.talents = {}
+	for tab = 1, (GetNumTalentTabs and GetNumTalentTabs() or 0) do
+		for i = 1, (GetNumTalents and GetNumTalents(tab) or 0) do
+			local name, _, _, _, rank = GetTalentInfo(tab, i)
+			if name then P.talents[name] = rank or 0 end
+		end
+	end
 end
 
 -----------------------------------------
@@ -352,7 +392,8 @@ local function readSource(s)
 		src.who, src.price, src.rep, src.rank, src.stage = s[2], s[3], s[4], s[5], s[6]
 		src.tier = TIER_EASY
 	elseif kind == "X" then
-		src.who, src.stage, src.tier = s[2], 0, TIER_EASY
+		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from" }
+		src.who, src.skill, src.rank, src.stage, src.where, src.tier = s[2], s[3], s[4], s[5] or 0, s[6], TIER_EASY
 	else
 		return nil
 	end
@@ -378,6 +419,8 @@ function G.Difficulty(src)
 end
 
 -- An item's sources you can use, the easiest first; and whether any is open.
+G.ReadSource = readSource
+
 local function sourcesOf(t)
 	local list = {}
 	for _, s in ipairs(t.sources) do
@@ -407,6 +450,7 @@ end
 
 -- A candidate: { item, value, sources, src (the one shown), tier, open, lock }
 local function candidate(t, prof, rowKey, curated)
+	if t.prof and (P.skills[t.prof] or 0) < (t.profRank or 0) then return nil end
 	local srcs = sourcesOf(t)
 	if #srcs == 0 then return nil end
 	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey))
@@ -458,6 +502,14 @@ local function candidates(row, prof, curated)
 				end
 			end
 		end
+	end
+	-- Profession gear only when it's clearly better than the best you can get without it.
+	local best = 0
+	for _, c in ipairs(out) do
+		if c.open and not c.item.prof and c.value > best then best = c.value end
+	end
+	for i = #out, 1, -1 do
+		if out[i].item.prof and out[i].value < best * PROFESSION_GEAR_GAIN then table.remove(out, i) end
 	end
 	return out
 end

@@ -12,7 +12,8 @@
 --                     Alliance chain, Horde chain, classes (bit mask, 0 = all) }
 --                a chain: { first quest, "its title", quest givers, 1 if they're all trainers, quests in it }
 --              { "V", "vendor", price in copper, faction, standing, stage }
---              { "X", "how it's made" }
+--              { "X", "how it's made", profession, skill }
+--   profession gear (Engineering goggles) adds: profession and skill needed to wear it, after sources
 
 JournalGearBIS = JournalGearBIS or {}
 local G = JournalGearBIS
@@ -252,7 +253,6 @@ G.items = {
 	[10746] = { "Runesteel Vambraces", 9, 404, 50, 0, 2, 3, 0, 0, { armor = 210, sta = 11, str = 2 }, { { "Q", 3378, "Prayer to Elune", 0, 0, 1101, 50, 40, { 3377, "Prayer to Elune", 1, 0, 2 }, { 3378, "Prayer to Elune", 1, 0, 1 }, 0 } } },
 	[10749] = { "Avenguard Helm", 1, 404, 54, 0, 3, 3, 0, 0, { agi = 5, armor = 461, spi = 10, sta = 25 }, { { "Q", 3528, "The God Hakkar", 0, 0, 0, 53, 40, { 3520, "Screecher Spirits", 1, 0, 4 }, { 3520, "Screecher Spirits", 1, 0, 4 }, 0 } } },
 	[10750] = { "Lifeforce Dirk", 13, 215, 54, 0, 3, 1501, 0, 0, { speed = 1.6, sta = 11, wdps = 35.9 }, { { "Q", 3528, "The God Hakkar", 0, 0, 0, 53, 40, { 3520, "Screecher Spirits", 1, 0, 4 }, { 3520, "Screecher Spirits", 1, 0, 4 }, 0 } } },
-	[10751] = { "Gemburst Circlet", 1, 401, 54, 0, 3, 1503, 0, 0, { agi = 5, armor = 63, int = 17, spi = 18, sta = 9 }, { { "Q", 3528, "The God Hakkar", 0, 0, 0, 53, 40, { 3520, "Screecher Spirits", 1, 0, 4 }, { 3520, "Screecher Spirits", 1, 0, 4 }, 0 } } },
 	[10779] = { "Demon's Blood", 12, 400, 60, 0, 2, 1503, 0, 0, { def = 5 }, { { "Q", 3628, "You Are Rakh'likh, Demon", 0, 0, 0, 60, 45, { 2783, "Petty Squabbles", 1, 0, 19 }, { 2784, "Fall From Grace", 1, 0, 22 }, 0 } } },
 	[10783] = { "Atal'ai Spaulders", 3, 402, 52, 47, 3, 1103, 0, 0, { armor = 193 }, { { "D", 109, 0.217, "Zul'Lor, Zolo, Gasher and others" } } },
 	[10784] = { "Atal'ai Breastplate", 5, 403, 52, 47, 3, 71, 0, 0, { ap = 22, armor = 311 }, { { "D", 109, 0.167, "Zul'Lor, Zolo, Gasher and others" } } },
@@ -367,7 +367,6 @@ G.items = {
 	[11909] = { "Excavator's Utility Belt", 6, 402, 55, 0, 2, 1103, 0, 0, { armor = 81, int = 16, sta = 4 }, { { "Q", 3882, "Roll the Bones", 0, 0, 0, 51, 49, { 3882, "Roll the Bones", 1, 0, 1 }, { 3882, "Roll the Bones", 1, 0, 1 }, 0 } } },
 	[11910] = { "Bejeweled Legguards", 7, 404, 55, 0, 2, 3, 0, 0, { armor = 459, dodge = 12, spi = 8, sta = 15 }, { { "Q", 4491, "A Little Help From My Friends", 0, 0, 0, 55, 50, { 4492, "Lost!", 1, 0, 2 }, { 4492, "Lost!", 1, 0, 2 }, 0 } } },
 	[11911] = { "Treetop Leggings", 7, 401, 55, 0, 2, 1503, 0, 0, { armor = 62, spi = 18, sta = 8, str = 8 }, { { "Q", 4491, "A Little Help From My Friends", 0, 0, 0, 55, 50, { 4492, "Lost!", 1, 0, 2 }, { 4492, "Lost!", 1, 0, 2 }, 0 } } },
-	[11913] = { "Clayridge Helm", 1, 403, 55, 0, 2, 71, 0, 0, { agi = 16, armor = 242, spi = 15 }, { { "Q", 4491, "A Little Help From My Friends", 0, 0, 0, 55, 50, { 4492, "Lost!", 1, 0, 2 }, { 4492, "Lost!", 1, 0, 2 }, 0 } } },
 	[11915] = { "Shizzle's Drizzle Blocker", 14, 406, 55, 0, 2, 67, 0, 0, { armor = 1691, bv = 29, sta = 1, str = 13 }, { { "Q", 4503, "Shizzle's Flyer", 0, 0, 0, 51, 49, { 4503, "Shizzle's Flyer", 1, 0, 1 }, { 4503, "Shizzle's Flyer", 1, 0, 1 }, 0 } } },
 	[11917] = { "Shizzle's Nozzle Wiper", 9, 401, 55, 0, 2, 1503, 0, 0, { armor = 31, int = 12, spi = 3, sta = 3 }, { { "Q", 4503, "Shizzle's Flyer", 0, 0, 0, 51, 49, { 4503, "Shizzle's Flyer", 1, 0, 1 }, { 4503, "Shizzle's Flyer", 1, 0, 1 }, 0 } } },
 	[11918] = { "Grotslab Gloves", 10, 403, 55, 0, 2, 71, 0, 0, { agi = 12, armor = 186, int = 12 }, { { "Q", 4501, "Beware of Pterrordax", 0, 0, 0, 55, 49, { 4501, "Beware of Pterrordax", 1, 0, 1 }, { 4501, "Beware of Pterrordax", 1, 0, 1 }, 0 } } },
@@ -792,6 +791,7 @@ G.items = {
 	[15930] = { "Imperial Red Scepter", 23, 400, 56, 51, 2, 1503, 0, 0, { agi = 2, int = 12, sta = 4 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 230, 0.007, "Dark Coffer" } } },
 	[15931] = { "Arcane Star", 23, 400, 61, 56, 2, 1503, 0, 0, { int = 10, spi = 8, sta = 5 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 329, 0.01, "Ramstein the Gorger" } } },
 	[15943] = { "Imbued Shield", 14, 406, 61, 56, 2, 67, 0, 0, { armor = 1861, bv = 35, sta = 14, str = 3 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 329, 0.01, "Ramstein the Gorger" } } },
+	[15999] = { "Spellpower Goggles Xtreme Plus", 1, 401, 54, 0, 2, 1503, 0, 0, { armor = 57, sp = 27 }, { { "X", "Crafted: Engineering", 202, 270 } }, 202, 270 },
 	[16058] = { "Fordring's Seal", 11, 400, 63, 0, 3, 1503, 0, 0, { int = 5, sp = 20, sta = 4 }, { { "Q", 5944, "In Dreams", 0, 0, 0, 60, 52, { 5542, "Demon Dogs", 1, 0, 9 }, { 5542, "Demon Dogs", 1, 0, 9 }, 0 } } },
 	[16309] = { "Drakefire Amulet", 2, 400, 63, 50, 3, 1503, 0, 1, { sta = 10 }, { { "Q", 6502, "Drakefire Amulet", 229, 0, 1101, 60, 50, { 4182, "Dragonkin Menace", 1, 0, 16 }, { 6502, "Drakefire Amulet", 1, 0, 1 }, 0 }, { "Q", 6602, "Blood of the Black Dragon Champion", 469, 2, 690, 60, 55, { 6602, "Blood of the Black Dragon Champion", 1, 0, 1 }, { 4903, "Warlord's Command", 1, 0, 12 }, 0 } } },
 	[16409] = { "Knight-Lieutenant's Lamellar Sabatons", 8, 404, 63, 58, 3, 2, 0, 1, { agi = 6, armor = 452, int = 7, sta = 16, str = 15 }, { { "V", "Captain Dirgehammer <Armor Quartermaster>", 42068, 0, 0, 0 } } },
@@ -1094,6 +1094,7 @@ G.items = {
 	[18102] = { "Dragonrider Boots", 8, 401, 63, 58, 3, 1503, 0, 0, { armor = 61, int = 16, sp = 18, sta = 5 }, { { "D", 2291, 0.093, "Warchief Rend Blackhand" } } },
 	[18103] = { "Band of Rumination", 11, 400, 63, 58, 3, 1503, 0, 0, { crit = 14, mp5 = 6 }, { { "D", 2291, 0.093, "Warchief Rend Blackhand" } } },
 	[18104] = { "Feralsurge Girdle", 6, 403, 63, 58, 3, 71, 0, 1, { armor = 208, int = 10, mp5 = 10, sta = 9 }, { { "D", 2291, 0.093, "Warchief Rend Blackhand" } } },
+	[18168] = { "Force Reactive Disk", 14, 406, 65, 60, 4, 67, 0, 0, { armor = 2548, bv = 44, sta = 11 }, { { "X", "Crafted: Engineering", 202, 300 } }, 202, 300 },
 	[18203] = { "Eskhandar's Right Claw", 21, 213, 66, 60, 4, 1101, 0, 1, { agi = 4, speed = 1.5, wdps = 48 }, { { "D", 409, 0.2, "Magmadar" } } },
 	[18205] = { "Eskhandar's Collar", 2, 400, 71, 60, 4, 1503, 0, 1, { crit = 14, dodge = 12, sta = 17 }, { { "D", 249, 0.25, "Onyxia" } } },
 	[18289] = { "Barbed Thorn Necklace", 2, 400, 56, 51, 3, 1503, 0, 0, { int = 6, nature = 17, sta = 7 }, { { "D", 429, 0.073, "Warpwood Crusher, Warpwood Tangler, Warpwood Treant and others" } } },
@@ -1264,7 +1265,6 @@ G.items = {
 	[18803] = { "Finkle's Lava Dredger", 17, 205, 70, 60, 4, 1091, 0, 0, { int = 24, mp5 = 11, speed = 2.9, sta = 25, wdps = 67.1 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18805] = { "Core Hound Tooth", 13, 215, 70, 60, 4, 1501, 0, 0, { ap = 20, crit = 14, speed = 1.6, sta = 9, wdps = 51.2 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18806] = { "Core Forged Greaves", 8, 404, 70, 60, 4, 3, 0, 0, { armor = 634, def = 6, sta = 28 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
-	[18807] = { "Helm of Latent Power", 1, 403, 62, 0, 3, 71, 0, 0, { armor = 297, crit = 14, int = 14, sp = 14, spi = 12, sta = 12 }, { { "Q", 7668, "The Darkreaver Menace", 0, 0, 0, 60, 58, { 7668, "The Darkreaver Menace", 0, 0, 1 }, { 7668, "The Darkreaver Menace", 0, 0, 1 }, 64 } } },
 	[18808] = { "Gloves of the Hypnotic Flame", 10, 401, 70, 60, 4, 1503, 0, 0, { armor = 67, fire = 23, int = 19, sp = 9, spi = 8, sta = 18 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18809] = { "Sash of Whispered Secrets", 6, 401, 71, 60, 4, 1503, 0, 0, { armor = 61, shadow = 33, sta = 20 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18810] = { "Wild Growth Spaulders", 3, 402, 71, 60, 4, 1103, 0, 0, { armor = 159, int = 12, sp = 33, spi = 10, sta = 11 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
@@ -1505,6 +1505,8 @@ G.items = {
 	[19982] = { "Duskbat Drape", 16, 401, 52, 0, 3, 1503, 0, 0, { agi = 14, armor = 37 }, { { "Q", 8236, "The Azure Key", 0, 0, 0, 52, 50, { 8233, "A Simple Request", 8, 1, 4 }, { 8233, "A Simple Request", 8, 1, 4 }, 8 } } },
 	[19984] = { "Ebon Mask", 1, 402, 52, 0, 3, 1103, 0, 0, { ap = 36, armor = 122, crit = 14, sta = 11 }, { { "Q", 8236, "The Azure Key", 0, 0, 0, 52, 50, { 8233, "A Simple Request", 8, 1, 4 }, { 8233, "A Simple Request", 8, 1, 4 }, 8 } } },
 	[19993] = { "Hoodoo Hunting Bow", 15, 202, 68, 60, 3, 13, 0, 0, { agi = 10, speed = 2.8, sta = 4, wdps = 35 }, { { "D", 309, 0.5, "Wushoolay" } } },
+	[19998] = { "Bloodvine Lens", 1, 402, 65, 60, 3, 1103, 0, 0, { armor = 147, crit = 28, sta = 12 }, { { "X", "Crafted: Engineering", 202, 300 } }, 202, 300 },
+	[19999] = { "Bloodvine Goggles", 1, 401, 65, 60, 3, 1503, 0, 0, { armor = 75, crit = 14, hit = 16, mp5 = 11 }, { { "X", "Crafted: Engineering", 202, 300 } }, 202, 300 },
 	[20032] = { "Flowing Ritual Robes", 20, 401, 65, 60, 4, 1503, 0, 1, { armor = 100, int = 23, sp = 22, spi = 24, sta = 15 }, { { "D", 309, 0.167, "High Priestess Mar'li" } } },
 	[20033] = { "Zandalar Demoniac's Robe", 20, 401, 65, 0, 4, 256, 0, 1, { armor = 100, hit = 8, sp = 27, sta = 35 }, { { "Q", 8077, "Paragons of Power: The Demoniac's Robes", 309, 3, 0, 60, 60, { 8077, "Paragons of Power: The Demoniac's Robes", 1, 0, 1 }, { 8077, "Paragons of Power: The Demoniac's Robes", 1, 0, 1 }, 256 } } },
 	[20034] = { "Zandalar Illusionist's Robe", 20, 401, 65, 0, 4, 128, 0, 1, { armor = 100, hit = 8, int = 24, sp = 27, sta = 23 }, { { "Q", 8069, "Paragons of Power: The Illusionist's Robes", 309, 3, 0, 60, 60, { 8069, "Paragons of Power: The Illusionist's Robes", 1, 0, 1 }, { 8069, "Paragons of Power: The Illusionist's Robes", 1, 0, 1 }, 128 } } },
@@ -1590,7 +1592,6 @@ G.items = {
 	[21273] = { "Blessed Qiraji Acolyte Staff", 17, 210, 79, 60, 4, 1493, 0, 1, { crit = 14, hit = 16, int = 33, sp = 76, speed = 3, sta = 32, wdps = 59.8 }, { { "Q", 8790, "Imperial Qiraji Regalia", 531, 4, 0, 60, 60, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, 0 } } },
 	[21275] = { "Blessed Qiraji Augur Staff", 17, 210, 79, 60, 4, 1493, 0, 1, { int = 24, mp5 = 19, sp = 76, speed = 3, sta = 23, wdps = 59.8 }, { { "Q", 8790, "Imperial Qiraji Regalia", 531, 4, 0, 60, 60, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, 0 } } },
 	[21316] = { "Leggings of the Ursa", 7, 404, 55, 0, 2, 3, 0, 0, { armor = 459, crit = 14, str = 17 }, { { "Q", 8461, "Deadwood of the North", 0, 0, 0, 55, 45, { 8461, "Deadwood of the North", 1, 0, 1 }, { 8461, "Deadwood of the North", 1, 0, 1 }, 0 } } },
-	[21317] = { "Helm of the Pathfinder", 1, 402, 55, 0, 2, 1103, 0, 0, { armor = 117, crit = 14, sta = 17 }, { { "Q", 8461, "Deadwood of the North", 0, 0, 0, 55, 45, { 8461, "Deadwood of the North", 1, 0, 1 }, { 8461, "Deadwood of the North", 1, 0, 1 }, 0 } } },
 	[21318] = { "Earth Warder's Gloves", 10, 401, 58, 0, 2, 1503, 0, 0, { armor = 47, sp = 22 }, { { "Q", 8464, "Winterfall Activity", 0, 0, 0, 58, 45, { 8464, "Winterfall Activity", 1, 0, 1 }, { 8464, "Winterfall Activity", 1, 0, 1 }, 0 } } },
 	[21319] = { "Gloves of the Pathfinder", 10, 402, 58, 0, 2, 1103, 0, 0, { agi = 12, armor = 94, str = 13 }, { { "Q", 8464, "Winterfall Activity", 0, 0, 0, 58, 45, { 8464, "Winterfall Activity", 1, 0, 1 }, { 8464, "Winterfall Activity", 1, 0, 1 }, 0 } } },
 	[21320] = { "Vest of the Den Watcher", 5, 403, 58, 0, 2, 71, 0, 0, { agi = 20, armor = 313, sta = 12 }, { { "Q", 8464, "Winterfall Activity", 0, 0, 0, 58, 45, { 8464, "Winterfall Activity", 1, 0, 1 }, { 8464, "Winterfall Activity", 1, 0, 1 }, 0 } } },
