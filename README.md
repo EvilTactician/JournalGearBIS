@@ -216,8 +216,6 @@ python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
 
 ## Credits
 
-- [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal) (my fork), the Journal this
-  tab lives in.
 - [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression), the
   progression stages and the Classic item and loot changes.
 - [AzerothCore](https://www.azerothcore.org/) for the world database the item sources come from.
