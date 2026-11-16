@@ -250,7 +250,7 @@ local function build(panel)
 	local consumables = CreateFrame("Frame", nil, body)
 	consumables:SetSize(10, 20)
 	consumables.label = consumables:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 3)
+	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 5)
 	consumables.label:SetText("Recommended consumables")
 	local consumableIcons = {}
 	local function consumableIcon(i)
@@ -496,7 +496,7 @@ local function build(panel)
 		r:SetHeight(34)
 		r.num = r:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 		r.num:SetPoint("TOPLEFT", r, "TOPLEFT", 4, -4)
-		r.num:SetWidth(32)
+		r.num:SetWidth(36)
 		r.num:SetJustifyH("LEFT")
 		r.icon = r:CreateTexture(nil, "ARTWORK")
 		r.icon:SetSize(28, 28)
@@ -661,9 +661,9 @@ local function build(panel)
 		local list = v.consumables or {}
 		consumables:ClearAllPoints()
 		if choose:IsShown() then
-			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -18)
+			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -22)
 		else
-			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -20)
+			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -24)
 		end
 		consumables:SetWidth(math.max(1, #list * 22 - 2))
 		for i, c in ipairs(list) do
@@ -818,7 +818,7 @@ local function build(panel)
 					st:ClearAllPoints()
 					st:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 					st:SetWidth(width)
-					st.num:SetText(kind == "major" and "|cffffd200Major|r" or "|cffffd200Minor|r")
+					st.num:SetText(kind == "major" and "Major" or "Minor")
 					st.icon:SetTexture(GetItemIcon and GetItemIcon(g.item) or J.ItemIcon(g.item))
 					st.icon:SetDesaturated(gs.locked)
 					local name = GetItemInfo(g.item)
@@ -857,12 +857,16 @@ local function build(panel)
 		J.Debounce("gearbis-render", delay or 0.3, function () if shown() then render() end end)
 	end
 
+	-- what changes the list; enchanting what you wear (UNIT_INVENTORY_CHANGED) and glyphs too, only while the
+	-- tab shows
 	local events = CreateFrame("Frame")
 	for _, e in ipairs({ "PLAYER_EQUIPMENT_CHANGED", "BAG_UPDATE", "PLAYER_LEVEL_UP", "ACTIVE_TALENT_GROUP_CHANGED",
-			"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "QUEST_QUERY_COMPLETE" }) do
+			"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "QUEST_QUERY_COMPLETE", "UNIT_INVENTORY_CHANGED",
+			"GLYPH_ADDED", "GLYPH_REMOVED", "GLYPH_UPDATED" }) do
 		events:RegisterEvent(e)
 	end
-	events:SetScript("OnEvent", function (self, event)
+	events:SetScript("OnEvent", function (self, event, unit)
+		if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
 		if event == "QUEST_QUERY_COMPLETE" then
 			local done = {}
 			if GetQuestsCompleted then GetQuestsCompleted(done) end

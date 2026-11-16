@@ -128,7 +128,7 @@ end
 -- current = the enchant on it now (0 for none), state = "good", "weak", "none" or "later" (only a locked one) },
 -- or nil when nothing's worth putting on.
 function G.EnchantFor(r, room)
-	if r.row.pair or P.preview then return nil end
+	if r.row.pair then return nil end
 	local worn = P.worn[r.row.slots[1]]
 	if not worn then return nil end
 	local current = tonumber(worn.link:match("item:%d+:(%d+)")) or 0
