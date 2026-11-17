@@ -250,7 +250,7 @@ local function build(panel)
 	local consumables = CreateFrame("Frame", nil, body)
 	consumables:SetSize(10, 20)
 	consumables.label = consumables:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 5)
+	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 3)
 	consumables.label:SetText("Recommended consumables")
 	local consumableIcons = {}
 	local function consumableIcon(i)
@@ -407,17 +407,19 @@ local function build(panel)
 				ways(e.now)
 			end
 		end
-		if e.later then
+		local function locked(label, o)
 			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine("|cff9d9d9dBetter later:|r " .. G.EnchantName(e.later) .. effect(e.later), 1, 1, 1, true)
-			local w = e.later.ways[1]
+			GameTooltip:AddLine("|cff9d9d9d" .. label .. "|r " .. G.EnchantName(o) .. effect(o), 1, 1, 1, true)
+			local w = o.ways[1]
 			if w and not w.open then
 				local g = w.inst and G.instances[w.inst]
 				GameTooltip:AddLine(g and ("Opens with " .. g.name .. " (Stage " .. w.stage .. ").") or ("Opens at Stage " .. w.stage .. "."),
 					1, 0.4, 0.4, true)
 			end
-			ways(e.later)
+			ways(o)
 		end
+		if e.next then locked("Next:", e.next) end
+		if e.later then locked(e.next and "Best later:" or "Better later:", e.later) end
 		GameTooltip:Show()
 	end
 
@@ -661,9 +663,9 @@ local function build(panel)
 		local list = v.consumables or {}
 		consumables:ClearAllPoints()
 		if choose:IsShown() then
-			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -22)
+			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -17)
 		else
-			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -24)
+			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -19)
 		end
 		consumables:SetWidth(math.max(1, #list * 22 - 2))
 		for i, c in ipairs(list) do
@@ -737,7 +739,7 @@ local function build(panel)
 				local ench = r.enchant
 				h.ench.enchant = ench
 				if ench then
-					local o = ench.now or ench.later
+					local o = ench.now or ench.next or ench.later
 					h.ench.icon:SetTexture(G.EnchantIcon(o))
 					h.ench.icon:SetDesaturated(ench.state == "later")
 					local c = ENCHANT_COLOURS[ench.state]

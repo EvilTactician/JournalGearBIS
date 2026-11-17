@@ -124,7 +124,8 @@ local function raidWay(w)
 end
 
 -- The best enchant for what you wear in a row: { now = the best you can get, later = a better one still locked,
--- pre = the best you can get without raiding when that's not the best (a pre-raid step),
+-- pre = the best you can get without raiding when that's not the best (a pre-raid step), next = the locked one
+-- that opens soonest when it isn't the best later (Lesser Arcanum of Voracity at 50 before Death's Embrace),
 -- current = the enchant on it now (0 for none), state = "good", "weak", "none" or "later" (only a locked one) },
 -- or nil when nothing's worth putting on.
 function G.EnchantFor(r, room)
@@ -137,6 +138,7 @@ function G.EnchantFor(r, room)
 	local credit = G.enchantStats[current]
 	local classBit = G.CLASS_BIT[P.class] or 0
 	local best, later, pre
+	local locked = {}
 	for _, slot in ipairs(enchantSlots(r.row.key, worn)) do
 		for _, o in ipairs(G.enchants[slot] or {}) do
 			if (o.classes or 0) == 0 or band(o.classes, classBit) ~= 0 then
@@ -155,8 +157,12 @@ function G.EnchantFor(r, room)
 						if open and entry.level <= P.realLevel then
 							if not best or value > best.value then best = entry end
 							if noRaid and (not pre or value > pre.value) then pre = entry end
-						elseif not later or value > later.value then
-							later = entry
+						else
+							if not later or value > later.value then later = entry end
+							-- when it opens: the stage (the soonest of its ways) and level it needs
+							entry.opensStage = math.huge
+							for _, w in ipairs(ways) do entry.opensStage = math.min(entry.opensStage, w.open and P.stage or w.stage or 0) end
+							table.insert(locked, entry)
 						end
 					end
 				end
@@ -166,6 +172,16 @@ function G.EnchantFor(r, room)
 	if not best and not later then return nil end
 	if later and best and later.value <= best.value * 1.05 then later = nil end
 	if pre and best and (pre.e == best.e or pre.value >= best.value * 0.98) then pre = nil end
+	-- the next step: of the locked ones better than what you'll have, the one that opens soonest
+	local floor = math.max(best and best.value or 0, enchantValue(current, room, credit, part, speed)) * 1.02
+	local nxt
+	for _, o in ipairs(locked) do
+		if o.value > floor and (not nxt or o.opensStage < nxt.opensStage
+				or (o.opensStage == nxt.opensStage and (o.level < nxt.level or (o.level == nxt.level and o.value > nxt.value)))) then
+			nxt = o
+		end
+	end
+	if nxt and later and nxt.e == later.e then nxt = nil end
 	local have = enchantValue(current, room, credit, part, speed)
 	local state
 	if not best then
@@ -179,7 +195,7 @@ function G.EnchantFor(r, room)
 	else
 		state = "weak"
 	end
-	return { now = best, later = later, pre = pre, current = current, have = have, state = state }
+	return { now = best, later = later, pre = pre, next = nxt, current = current, have = have, state = state }
 end
 
 -- An enchant's name, what it gives and its icon.

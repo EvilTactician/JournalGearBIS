@@ -1,7 +1,7 @@
-# Journal: Gear 0.1.11
+# Journal: Gear 0.1.12
 
 > [!WARNING]
-> **Early alpha (version 0.1.11-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.12-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.1.11-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.1.12-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -36,7 +36,8 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   enchant and one is worth putting on, and **grey** when only a locked one beats what you have. Its tooltip
   says what's on it now, the best you can get and exactly how: the enchanter's recipe and where it comes
   from, an arcanum's quest, a reputation and standing, the stage that opens it. When the best needs a raid,
-  it also names the best you can get **before raids**.
+  it also names the best you can get **before raids**, and when the best opens later, the **next** step on
+  the way (Lesser Arcanum of Voracity at level 50 before Death's Embrace).
 - **Stat caps** count: past the hit cap (and expertise and armor penetration caps), more of that stat is
   worth nothing, so an enchant that gives it loses out.
 - **Glyphs:** at the bottom of the list, the three major and three minor glyphs for your spec: the best you
@@ -163,7 +164,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | Version | What's in it |
 | --- | --- |
 | 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
-| **0.1.9 to 0.1.11-alpha** (now) | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
+| **0.1.9 to 0.1.12-alpha** (now) | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.2.0-alpha | Rogue and Priest finished, with the next big features. |
 | 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
