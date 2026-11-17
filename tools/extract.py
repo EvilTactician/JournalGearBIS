@@ -29,10 +29,20 @@ INSTANCES = {
 UBRS_BOSSES = {"Pyroguard Emberseer", "Solakar Flamewreath", "Jed Runewatcher", "Goraluk Anvilcrack", "Warchief Rend Blackhand",
                "Gyth", "The Beast", "General Drakkisath", "Lord Valthalak", "Father Flame", "Rookery Hatcher"}
 
+# Creatures that only spawn during a world event (the Darkmoon Faire's vendors, the Scourge Invasion's
+# bosses such as Balzaphon, which the progression module shows only during stage 6): their loot and wares
+# aren't there to get the rest of the time.
+event_guids = {r["guid"] for r in R("game_event_creature") if (r.get("eventEntry") or 0) > 0}
+_spawns = collections.defaultdict(list)
+for r in R("creature"):
+    # mod-individual-progression's Scourge Invasion bosses (its 614xxx copies, phased to stage 6 only)
+    _spawns[r["id1"]].append(r["guid"] in event_guids or 614000 <= r["id1"] < 615000)
+EVENT_ONLY = {e for e, ev in _spawns.items() if ev and all(ev)}
+
 # creature -> instance maps it spawns in
 cmaps = collections.defaultdict(set)
 for r in R("creature"):
-    if r["map"] in INSTANCES:
+    if r["map"] in INSTANCES and r["id1"] not in EVENT_ONLY:
         cmaps[r["id1"]].add(r["map"])
 gmaps = collections.defaultdict(set)
 for r in R("gameobject"):
@@ -110,8 +120,9 @@ EQUIP = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23,
 
 
 def classic_gear(e):
+    """Classic's own gear: ids below The Burning Crusade's (later patches added a few Azeroth quest rewards)."""
     it = items.get(e)
-    return (it is not None and it["InventoryType"] in EQUIP and it["Quality"] >= 2 and it["ItemLevel"] <= 92
+    return (it is not None and e < 23728 and it["InventoryType"] in EQUIP and it["Quality"] >= 2 and it["ItemLevel"] <= 92
             and it["RequiredLevel"] <= 60 and it["ItemLevel"] >= 35)
 
 
@@ -447,7 +458,7 @@ for r in R("npc_vendor"):
     it, e = r["item"], r["entry"]
     if not wanted(it) or r.get("ExtendedCost"):
         continue
-    if not (continent.get(e, set()) & {0, 1}):
+    if not (continent.get(e, set()) & {0, 1}) or e in EVENT_ONLY:
         continue
     x = items[it]
     if x["requiredhonorrank"]:

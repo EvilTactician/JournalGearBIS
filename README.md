@@ -1,7 +1,7 @@
-# Journal: Gear 0.1.13
+# Journal: Gear 0.1.14
 
 > [!WARNING]
-> **Early alpha (version 0.1.13-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.14-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.1.13-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.1.14-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -152,7 +152,8 @@ different stage for a raid on your realm, the tab uses the realm's.
   (with drop chances, all of an instance's bosses counted together), quest rewards and vendors. Quest
   rewards follow the module's stage gating (Dungeon Set 2 opens at stage 3, the Scourge Invasion at 6, and
   so on). Rewards for raid tokens, such as the tier 2.5 and 3 sets and Head of Onyxia's rewards, count as
-  part of that raid. Rewards behind world bosses, the Darkmoon Faire or battlegrounds are left out.
+  part of that raid. Rewards behind world bosses, the Darkmoon Faire or battlegrounds are left out, and so is
+  anything only a world event brings (the Darkmoon Faire's vendors, the Scourge Invasion's bosses).
 - **Item stats**, including the *Equip:* lines (attack power, crit, hit, spell power and the rest), come
   from the item table and the client's Spell.dbc.
 - **Stat weights** for every spec are in `Profiles.lua`.
@@ -165,7 +166,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | Version | What's in it |
 | --- | --- |
 | 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
-| **0.1.9 to 0.1.13-alpha** (now) | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
+| 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
+| **0.1.14-alpha** (now) | Rogue and Priest lists re-checked against current Classic guides and the realm. |
 | 0.2.0-alpha | Rogue and Priest finished, with the next big features. |
 | 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |

@@ -1,6 +1,7 @@
 """Hand-picked Classic BiS and key upgrades, by item name (resolved against the realm's item_template).
 
-Each entry: "Item name" or ("Item name", value) where value is the item's worth in the profile's score units
+Each entry: "Item name" or ("Item name", value) (an item id in place of the name picks one of several items sharing
+a name) where value is the item's worth in the profile's score units
 (attack power for melee, spell power for casters and healers) for items whose strength is a proc or use effect
 the stat weights can't see. Where an item drops or is earned is looked up from the realm; crafted items carry
 a 'craft' note since the world DB doesn't list recipes."""
@@ -10,46 +11,49 @@ ROGUE_COMMON = [
     "Mask of the Unforgiven", "Eye of Rend", "Nightslayer Cover", "Bloodfang Hood", "Deathdealer's Helm", "Bonescythe Helmet",
     # neck
     "Mark of Fordring", "Onyxia Tooth Pendant", "Prestor's Talisman of Connivery", "Barbed Choker",
+    "Stormrage's Talisman of Seething",
     # shoulders
     "Truestrike Shoulders", "Nightslayer Shoulder Pads", "Bloodfang Spaulders", "Deathdealer's Spaulders", "Bonescythe Pauldrons",
     # back
-    "Cape of the Black Baron", "Cloak of Firemaw", "Cloak of the Fallen God", "Cloak of the Shrouded Mists",
+    "Cape of the Black Baron", "Cloak of Firemaw", "Cloak of the Fallen God", "Cloak of the Shrouded Mists", "Shroud of Dominion",
     # chest
     "Cadaverous Armor", "Nightslayer Chestpiece", "Bloodfang Chestpiece", "Deathdealer's Vest", "Bonescythe Breastplate",
-    # wrist
-    "Nightslayer Bracelets", "Bloodfang Bracers", "Bonescythe Bracers",
+    # wrist (Nightslayer Bracelets have no source on the realm: a rare Molten Core trash drop)
+    "Shadowcraft Bracers", "Wristguards of Stability", "Bloodfang Bracers", "Bonescythe Bracers",
     # hands
-    "Devilsaur Gauntlets", "Nightslayer Gloves", "Bloodfang Gloves", "Bonescythe Gauntlets",
+    "Devilsaur Gauntlets", "Nightslayer Gloves", "Bloodfang Gloves", "Gloves of Enforcement", "Bonescythe Gauntlets",
     # waist
-    "Nightslayer Belt", "Bloodfang Belt", "Bonescythe Waistguard",
+    "Cloudrunner Girdle", "Nightslayer Belt", "Bloodfang Belt", "Bonescythe Waistguard",
     # legs
     "Devilsaur Leggings", "Nightslayer Pants", "Bloodfang Pants", "Deathdealer's Leggings", "Bonescythe Legplates",
     # feet
-    "Nightslayer Boots", "Bloodfang Boots", "Deathdealer's Boots", "Bonescythe Sabatons",
+    "Swiftwalker Boots", "Nightslayer Boots", "Bloodfang Boots", "Deathdealer's Boots", "Bonescythe Sabatons",
     # rings
-    "Blackstone Ring", "Painweaver Band", "Quick Strike Ring", "Master Dragonslayer's Ring",
+    "Blackstone Ring", "Painweaver Band", "Quick Strike Ring", "Band of Accuria", "Master Dragonslayer's Ring",
     "Circle of Applied Force",
     # trinkets
     ("Hand of Justice", 45), "Blackhand's Breadth", "Drake Fang Talisman", ("Kiss of the Spider", 75),
+    (23206, 60),  # Mark of the Champion, the melee one (attack power against undead and demons)
     # ranged
-    "Satyr's Bow", "Striker's Mark", "Dragonbreath Hand Cannon",
+    "Satyr's Bow", "Blackcrow", "Striker's Mark", "Dragonbreath Hand Cannon", "Nerubian Slavemaker",
 ]
 
 CURATED = {
     "ROGUE_SWORDS": ROGUE_COMMON + [
         "Dal'Rend's Sacred Charge", "Dal'Rend's Tribal Guardian", "Brutality Blade", "Vis'kag the Bloodletter",
-        "Chromatically Tempered Sword", "Maladath, Runed Blade of the Black Flight",
+        "Chromatically Tempered Sword", "Maladath, Runed Blade of the Black Flight", "The Hungering Cold",
     ],
     "ROGUE_DAGGERS": ROGUE_COMMON + [
-        "Felstriker", "Perdition's Blade", "Core Hound Tooth", "Distracting Dagger",
+        "Felstriker", "Perdition's Blade", "Core Hound Tooth", "Distracting Dagger", "Death's Sting",
+        "Aged Core Leather Gloves",
     ],
     "PRIEST_HEAL": [
         # head
         "Devout Crown", "Circlet of Prophecy", "Halo of Transcendence", "Tiara of the Oracle", "Circlet of Faith",
         # neck
-        "Animated Chain Necklace", "Choker of Enlightenment",
+        "Animated Chain Necklace", "Choker of Enlightenment", "Necklace of Necropsy",
         # shoulders
-        "Devout Mantle", "Mantle of Prophecy", "Pauldrons of Transcendence", "Shoulderpads of Faith",
+        "Burial Shawl", "Devout Mantle", "Mantle of Prophecy", "Pauldrons of Transcendence", "Shoulderpads of Faith",
         # back
         "Hide of the Wild",
         # chest
@@ -59,21 +63,29 @@ CURATED = {
         # hands
         "Gloves of Prophecy", "Handguards of Transcendence", "Gloves of Faith",
         # waist
-        "Girdle of Prophecy", "Belt of Transcendence", "Belt of Faith",
+        "Whipvine Cord", "Girdle of Prophecy", "Belt of Transcendence", "Belt of Faith",
         # legs
-        "Pants of Prophecy", "Leggings of Transcendence", "Leggings of Faith",
+        "Senior Designer's Pantaloons", "Pants of Prophecy", "Leggings of Transcendence", "Leggings of Faith",
         # feet
-        "Boots of Prophecy", "Boots of Transcendence", "Sandals of Faith",
+        "Boots of the Full Moon", "Boots of Prophecy", "Boots of Transcendence", "Sandals of Faith",
         # rings
-        "Cauterizing Band", "Pure Elementium Band",
+        "Fordring's Seal", "Band of Rumination", "Cauterizing Band", "Pure Elementium Band",
         # trinkets
-        ("Second Wind", 20), "Rejuvenating Gem", ("Royal Seal of Eldre'Thalas", 15),
+        ("Second Wind", 20), "Mindtap Talisman", ("Draconic Infused Emblem", 20), "Rejuvenating Gem",
+        ("Royal Seal of Eldre'Thalas", 15),
         # weapons
-        "Aurastone Hammer", "Lok'amir il Romathis",
+        "The Hammer of Grace", "Thaurissan's Royal Scepter", "Stormrager", "Aurastone Hammer", "Lok'amir il Romathis",
+        "Hammer of the Twisting Nether",
     ],
     "PRIEST_SHADOW": [
-        "Mantle of the Blackwing Cabal", "Ring of Spell Power", ("Talisman of Ephemeral Power", 30),
-        ("Briarwood Reed", 25), "Neltharion's Tear", "Staff of Dominance", "Robe of the Void",
+        # pre-raid
+        "Crimson Felt Hat", "Dark Advisor's Pendant", "Felcloth Shoulders", "Robe of Winter Night", "Hands of Power",
+        "Felcloth Gloves", "Skyshroud Leggings", "Maleki's Footwraps", "Songstone of Ironforge", "Eye of Orgrimmar",
+        ("Briarwood Reed", 25), "Eye of the Beast", "Scepter of the Unholy", "Spirit of Aquementas", "Skul's Ghastly Touch",
+        # raids
+        "Mish'undare, Circlet of the Mind Flayer", "Mantle of the Blackwing Cabal", "Robe of the Void", "Ring of Spell Power",
+        ("Talisman of Ephemeral Power", 30), "Neltharion's Tear", "Staff of Dominance",
+        (23207, 40),  # Mark of the Champion, the caster one (spell power against undead and demons)
     ],
 }
 
@@ -84,6 +96,9 @@ CRAFTED = {
     "Truefaith Vestments": "Crafted: Tailoring",
     "Hide of the Wild": "Crafted: Leatherworking",
     "Robe of the Void": "Crafted: Tailoring",
+    "Felcloth Shoulders": "Crafted: Tailoring",
+    "Felcloth Gloves": "Crafted: Tailoring",
+    "Robe of Winter Night": "Crafted: Tailoring",
 }
 
 # Glyphs, best first, by spec profile. "Glyph name" or ("Glyph name", "Talent it needs"). The tab shows the best

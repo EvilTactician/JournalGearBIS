@@ -185,8 +185,10 @@ for prof, lst in CURATED.items():
     pcls = CLASS_BIT[PROFILES[prof]["cls"]]
     for e in lst:
         name, value = (e, None) if isinstance(e, str) else e
-        for i in byname.get(name, []):
+        # an item id names one item where several share a name (Mark of the Champion: melee and caster)
+        for i in ([name] if isinstance(name, int) else byname.get(name, [])):
             it = items[i]
+            name = it["name"]
             if it["ItemLevel"] > 92 or not (usable_mask(it) & pcls):
                 continue
             if not sources.get(i) and name not in CRAFTED:
