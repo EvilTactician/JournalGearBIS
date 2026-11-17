@@ -38,6 +38,8 @@ end
 -----------------------------------------
 -- text
 
+local enchantTooltip, glyphTooltip, professionTooltip, ENCHANT_COLOURS
+
 local function itemName(t)
 	local name, _, quality = GetItemInfo(t.id)
 	if not name then J.QueryItem(t.id) end
@@ -90,7 +92,9 @@ function G.SourceText(src)
 		if (src.price or 0) > 0 and J.Money then t = t .. "  " .. J.Money(src.price) end
 		return t
 	elseif src.kind == "X" then
-		return src.who
+		local t = src.who .. (src.rank and (" (" .. src.rank .. ")") or "")
+		if src.where then t = t .. hint(src.where) end
+		return t
 	end
 	return ""
 end
@@ -242,6 +246,75 @@ local function build(panel)
 	end)
 	choose:SetPoint("TOPRIGHT", body, "TOPRIGHT", -8, -8)
 
+	-- consumables: a row of icons at the top right, each with how to get it on hover
+	local consumables = CreateFrame("Frame", nil, body)
+	consumables:SetSize(10, 20)
+	consumables.label = consumables:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 3)
+	consumables.label:SetText("Recommended consumables")
+	local consumableIcons = {}
+	-- A profession's own consumables (Engineering's explosives): one icon, the items in its tooltip.
+	local PROFESSION_ICONS = { [202] = "Interface\\Icons\\Trade_Engineering" }
+	function professionTooltip(owner, c)
+		local name = G.PROFESSIONS[c.skill]
+		GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMLEFT")
+		GameTooltip:AddLine(name)
+		GameTooltip:AddLine("Extras only " .. name:lower() .. " can use: not needed, but they help.", 0.8, 0.8, 0.8, true)
+		for _, it in ipairs(c.items) do
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine((GetItemInfo(it.id)) or it.name or "?", 1, 1, 1)
+			GameTooltip:AddLine(it.note, 0.8, 0.8, 0.8, true)
+			if not it.usable then
+				GameTooltip:AddLine("Needs " .. name .. " " .. it.rank .. " to use.", 1, 0.4, 0.4, true)
+			end
+			if it.sources[1] then GameTooltip:AddLine(G.SourceText(it.sources[1]), 0.5, 0.85, 1, true) end
+			if it.count > 0 then GameTooltip:AddLine("You have " .. it.count .. ".", 0.25, 1, 0.25) end
+		end
+		GameTooltip:Show()
+	end
+
+	local function consumableIcon(i)
+		if consumableIcons[i] then return consumableIcons[i] end
+		local b = CreateFrame("Button", nil, consumables)
+		b:SetSize(20, 20)
+		b:SetPoint("LEFT", consumables, "LEFT", (i - 1) * 22, 0)
+		b.icon = b:CreateTexture(nil, "ARTWORK")
+		b.icon:SetAllPoints(b)
+		b:SetScript("OnEnter", function (self)
+			local c = self.entry
+			if not c then return end
+			if c.skill then return professionTooltip(self, c) end
+			J.ShowItemTooltip(self, c.id)
+			if c.note then GameTooltip:AddLine(c.note, 0.5, 0.85, 1, true) end
+			if c.count > 0 then GameTooltip:AddLine("You have " .. c.count .. ".", 0.25, 1, 0.25) end
+			if #c.sources > 0 then
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
+				-- the ways open to you now; the locked ones only when there are none
+				local anyOpen = c.sources[1].open
+				local shown = 0
+				for _, src in ipairs(c.sources) do
+					if shown >= 3 then break end
+					if src.open or not anyOpen then
+						local t = G.SourceText(src)
+						if not src.open then t = t .. "  |cffff6060(Opens at Stage " .. src.stage .. ")|r" end
+						GameTooltip:AddLine(t, 1, 1, 1, true)
+						shown = shown + 1
+					end
+				end
+			end
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine("Shift-click links it in chat.", 0.5, 0.85, 1, true)
+			GameTooltip:Show()
+		end)
+		b:SetScript("OnLeave", function () GameTooltip:Hide() end)
+		b:SetScript("OnClick", function (self)
+			if self.entry and self.entry.id then J.HandleItemClick(self.entry.id, GetItemInfo(self.entry.id)) end
+		end)
+		consumableIcons[i] = b
+		return b
+	end
+
 	-- where to go next
 
 	local advice = J.CreateInset(body)
@@ -320,6 +393,73 @@ local function build(panel)
 	end)
 	local c = area.content
 
+	-- An enchant's tooltip: what's on now, the best you can get and how, and a better one that opens later.
+	function enchantTooltip(owner, e)
+		if not e then return end
+		GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
+		GameTooltip:AddLine("Enchant")
+		local function effect(o) return G.enchantNames[o.e] and ("  |cff9d9d9d(" .. G.enchantNames[o.e] .. ")|r") or "" end
+		local now = e.current ~= 0 and (G.enchantNames[e.current] or "an enchant this list doesn't know") or "nothing"
+		GameTooltip:AddLine("On it now: " .. now, 1, 1, 1, true)
+		local function ways(o)
+			for i, w in ipairs(o.ways) do
+				if i > 3 then break end
+				GameTooltip:AddLine(G.SourceText(w), 0.8, 0.8, 0.8, true)
+			end
+			if o.spell then
+				GameTooltip:AddLine("An enchanter with the recipe can put it on for you.", 0.8, 0.8, 0.8, true)
+			end
+			if o.level > (UnitLevel("player") or 0) then
+				GameTooltip:AddLine("Requires level " .. o.level .. ".", 1, 0.4, 0.4, true)
+			end
+		end
+		if e.pre then
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine("|cffffd200Before raids:|r " .. G.EnchantName(e.pre) .. effect(e.pre), 1, 1, 1, true)
+			if e.current == e.pre.e then GameTooltip:AddLine("You have it.", 0.25, 1, 0.25) else ways(e.pre) end
+		end
+		if e.now then
+			GameTooltip:AddLine(" ")
+			local verdict = e.state == "good" and "|cff40ff40You have the best you can get now.|r"
+				or (e.state == "weak" and "|cffffd200A better one you can get now:|r" or "|cffff6060Worth putting on:|r")
+			GameTooltip:AddLine(verdict, 1, 1, 1, true)
+			if e.state ~= "good" or e.current ~= e.now.e then
+				GameTooltip:AddLine(G.EnchantName(e.now) .. effect(e.now), 1, 1, 1, true)
+				ways(e.now)
+			end
+		end
+		local function locked(label, o)
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine("|cff9d9d9d" .. label .. "|r " .. G.EnchantName(o) .. effect(o), 1, 1, 1, true)
+			local w = o.ways[1]
+			if w and not w.open then
+				local g = w.inst and G.instances[w.inst]
+				GameTooltip:AddLine(g and ("Opens with " .. g.name .. " (Stage " .. w.stage .. ").") or ("Opens at Stage " .. w.stage .. "."),
+					1, 0.4, 0.4, true)
+			end
+			ways(o)
+		end
+		if e.next then locked("Next:", e.next) end
+		if e.later then locked(e.next and "Best later:" or "Better later:", e.later) end
+		GameTooltip:Show()
+	end
+
+	-- A glyph's tooltip: the glyph, how to get it, and why it's this one.
+	function glyphTooltip(owner, e)
+		local g = e.glyph
+		J.ShowItemTooltip(owner, g.item)
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
+		GameTooltip:AddLine("Crafted: Inscription (" .. g.rank .. "), or bought from someone who makes it.", 1, 1, 1, true)
+		if e.locked then
+			GameTooltip:AddLine("This glyph slot opens at level " .. e.unlock .. ".", 1, 0.4, 0.4, true)
+		end
+		if e.hint then GameTooltip:AddLine(e.hint .. ".", 0.8, 0.8, 0.8, true) end
+		GameTooltip:AddLine(" ")
+		GameTooltip:AddLine("Shift-click links it in chat.", 0.5, 0.85, 1, true)
+		GameTooltip:Show()
+	end
+
 	local function makeHeader()
 		local h = CreateFrame("Button", nil, c)
 		h:SetHeight(24)
@@ -348,6 +488,17 @@ local function build(panel)
 		h.state = h:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 		h.state:SetPoint("RIGHT", h, "RIGHT", -6, 0)
 		h.state:SetJustifyH("RIGHT")
+		-- the enchant for what you wear: its icon in a frame coloured by how you stand
+		h.ench = CreateFrame("Button", nil, h)
+		h.ench:SetSize(18, 18)
+		h.ench:SetPoint("LEFT", h.have, "RIGHT", 8, 0)
+		h.ench.frame = h.ench:CreateTexture(nil, "BACKGROUND")
+		h.ench.frame:SetAllPoints(h.ench)
+		h.ench.icon = h.ench:CreateTexture(nil, "ARTWORK")
+		h.ench.icon:SetPoint("TOPLEFT", h.ench, "TOPLEFT", 2, -2)
+		h.ench.icon:SetPoint("BOTTOMRIGHT", h.ench, "BOTTOMRIGHT", -2, 2)
+		h.ench:SetScript("OnEnter", function (self) enchantTooltip(self, self.enchant) end)
+		h.ench:SetScript("OnLeave", function () GameTooltip:Hide() end)
 		h:SetScript("OnEnter", function (self)
 			if not self.link then return end
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -368,7 +519,7 @@ local function build(panel)
 		r:SetHeight(34)
 		r.num = r:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 		r.num:SetPoint("TOPLEFT", r, "TOPLEFT", 4, -4)
-		r.num:SetWidth(32)
+		r.num:SetWidth(36)
 		r.num:SetJustifyH("LEFT")
 		r.icon = r:CreateTexture(nil, "ARTWORK")
 		r.icon:SetSize(28, 28)
@@ -396,12 +547,17 @@ local function build(panel)
 		r:SetScript("OnClick", function (self)
 			local e = self.entry
 			if not e then return end
+			if e.glyph then
+				J.HandleItemClick(e.glyph.item, GetItemInfo(e.glyph.item))
+				return
+			end
 			if J.HandleItemClick(e.item.id, GetItemInfo(e.item.id), e.item.quality) then return end
 			openSource(e)
 		end)
 		r:SetScript("OnEnter", function (self)
 			local e = self.entry
 			if not e then return end
+			if e.glyph then return glyphTooltip(self, e) end
 			J.ShowItemTooltip(self, e.item.id)
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
@@ -463,6 +619,8 @@ local function build(panel)
 	local ROLE = { get = "|cff40ff40Now|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
 	-- a Now or Next you're not the level for yet
 	local SOON = "|cffff9933Soon|r"
+	-- an enchant icon's frame: the best on, a weaker one, none, or only one that opens later
+	ENCHANT_COLOURS = { good = { 0.25, 1, 0.25 }, weak = { 1, 0.82, 0 }, none = { 1, 0.3, 0.3 }, later = { 0.5, 0.5, 0.5 } }
 
 	render = function ()
 		if not panel:IsVisible() then return end
@@ -521,6 +679,28 @@ local function build(panel)
 		setShown(choose, choices)
 		local p = G.profiles[v.profileKey]
 		choose:SetText((db.choice == "other" and "Other talents") or (db.choice and G.profiles[db.choice] and p.name) or "My talents")
+
+		-- consumables, left of the menu when it's there
+		local list = {}
+		for _, c in ipairs(v.consumables or {}) do table.insert(list, c) end
+		for _, p in ipairs(v.professionConsumables or {}) do
+			if #p.items > 0 and PROFESSION_ICONS[p.skill] then table.insert(list, p) end
+		end
+		consumables:ClearAllPoints()
+		if choose:IsShown() then
+			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -17)
+		else
+			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -19)
+		end
+		consumables:SetWidth(math.max(1, #list * 22 - 2))
+		for i, c in ipairs(list) do
+			local b = consumableIcon(i)
+			b.entry = c
+			b.icon:SetTexture(c.skill and PROFESSION_ICONS[c.skill] or (GetItemIcon and GetItemIcon(c.id) or J.ItemIcon(c.id)))
+			b:Show()
+		end
+		for i = #list + 1, #consumableIcons do consumableIcons[i]:Hide() end
+		setShown(consumables, #list > 0)
 
 		-- where to go next: two dungeons a line, then the raid
 		local groups = {}
@@ -581,6 +761,18 @@ local function build(panel)
 					h.icon:Hide()
 					h.have:SetText("|cff9d9d9dNothing equipped|r")
 				end
+				local ench = r.enchant
+				h.ench.enchant = ench
+				if ench then
+					local o = ench.now or ench.next or ench.later
+					h.ench.icon:SetTexture(G.EnchantIcon(o))
+					h.ench.icon:SetDesaturated(ench.state == "later")
+					local c = ENCHANT_COLOURS[ench.state]
+					h.ench.frame:SetTexture(c[1], c[2], c[3], 0.9)
+					h.ench:Show()
+				else
+					h.ench:Hide()
+				end
 				local open = 0
 				for _, e in ipairs(r.steps) do if e.open then open = open + 1 end end
 				if v.preview then
@@ -621,6 +813,61 @@ local function build(panel)
 				y = y + 6
 			end
 		end
+		-- glyphs: the best of each kind for your spec, in the order the slots open
+		if #v.rows > 0 then
+			local h = headers:Get()
+			h:ClearAllPoints()
+			h:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
+			h:SetWidth(width)
+			h.slot:SetText("Glyphs")
+			h.link, h.ench.enchant = nil, nil
+			h.icon:Hide()
+			h.ench:Hide()
+			local missing = 0
+			for _, kind in ipairs({ "major", "minor" }) do
+				for _, gs in ipairs(v.glyphs and v.glyphs[kind] or {}) do
+					if not gs.equipped and not gs.locked then missing = missing + 1 end
+				end
+			end
+			if not v.glyphs then
+				h.have:SetText("|cff9d9d9dHand-picked glyphs for this spec come in a later version.|r")
+				h.state:SetText("")
+			else
+				h.have:SetText("")
+				h.state:SetText(missing == 0 and "|cff40ff40All set|r" or (missing .. (missing == 1 and " to get" or " to get")))
+			end
+			y = y + 26
+			for _, kind in ipairs({ "major", "minor" }) do
+				for _, gs in ipairs(v.glyphs and v.glyphs[kind] or {}) do
+					local g = gs.glyph
+					local st = steps:Get()
+					st.entry = gs
+					st:ClearAllPoints()
+					st:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
+					st:SetWidth(width)
+					st.num:SetText(kind == "major" and "Major" or "Minor")
+					st.icon:SetTexture(GetItemIcon and GetItemIcon(g.item) or J.ItemIcon(g.item))
+					st.icon:SetDesaturated(gs.locked)
+					local name = GetItemInfo(g.item)
+					if not name then J.QueryItem(g.item) end
+					st.name:SetText("|cffffffff" .. (name or g.name) .. "|r")
+					st.name:SetWidth(width - 230)
+					st.source:SetText("Crafted: Inscription (" .. g.rank .. ")" .. (gs.hint and hint(gs.hint) or ""))
+					st.source:SetWidth(width - 230)
+					if gs.locked then
+						st.state:SetText("|cffff6060Requires level " .. gs.unlock .. "|r")
+					elseif gs.equipped then
+						st.state:SetText("|cff40ff40Equipped|r")
+					else
+						st.state:SetText("|cffff9933Missing|r")
+					end
+					st.how:SetText("")
+					if gs.locked then st.band:SetTexture(0.5, 0.1, 0.1, 0.12) else st.band:SetTexture(1, 1, 1, 0.03) end
+					y = y + 36
+				end
+			end
+			y = y + 6
+		end
 		area:SetContentHeight(y)
 		setShown(empty, #v.rows == 0)
 	end
@@ -637,12 +884,16 @@ local function build(panel)
 		J.Debounce("gearbis-render", delay or 0.3, function () if shown() then render() end end)
 	end
 
+	-- what changes the list; enchanting what you wear (UNIT_INVENTORY_CHANGED) and glyphs too, only while the
+	-- tab shows
 	local events = CreateFrame("Frame")
 	for _, e in ipairs({ "PLAYER_EQUIPMENT_CHANGED", "BAG_UPDATE", "PLAYER_LEVEL_UP", "ACTIVE_TALENT_GROUP_CHANGED",
-			"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "QUEST_QUERY_COMPLETE" }) do
+			"CHARACTER_POINTS_CHANGED", "PLAYER_TALENT_UPDATE", "QUEST_QUERY_COMPLETE", "UNIT_INVENTORY_CHANGED",
+			"GLYPH_ADDED", "GLYPH_REMOVED", "GLYPH_UPDATED" }) do
 		events:RegisterEvent(e)
 	end
-	events:SetScript("OnEvent", function (self, event)
+	events:SetScript("OnEvent", function (self, event, unit)
+		if event == "UNIT_INVENTORY_CHANGED" and unit ~= "player" then return end
 		if event == "QUEST_QUERY_COMPLETE" then
 			local done = {}
 			if GetQuestsCompleted then GetQuestsCompleted(done) end

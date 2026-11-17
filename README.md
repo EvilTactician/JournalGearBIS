@@ -1,7 +1,7 @@
-# Journal: Gear 0.1.8
+# Journal: Gear 0.1.13
 
 > [!WARNING]
-> **Early alpha (version 0.1.8-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.13-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.1.8-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.1.13-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -28,6 +28,30 @@ three steps from what you're wearing:
 
 Once you have the best you can get, the slot says **Best you can get now**, and if nothing in Classic beats
 what you're wearing, it says **Best in Slot until The Burning Crusade**.
+
+## Enchants, glyphs and consumables
+
+- **Enchants:** next to what you wear in a slot, a small icon shows the best enchant for it. Its frame is
+  **green** when you have it, **yellow** when a better one is there to get, **red** when there's no
+  enchant and one is worth putting on, and **grey** when only a locked one beats what you have. Its tooltip
+  says what's on it now, the best you can get and exactly how: the enchanter's recipe and where it comes
+  from, an arcanum's quest, a reputation and standing, the stage that opens it. When the best needs a raid,
+  it also names the best you can get **before raids**, and when the best opens later, the **next** step on
+  the way (Lesser Arcanum of Voracity at level 50 before Death's Embrace).
+- **Stat caps** count: past the hit cap (and expertise and armor penetration caps), more of that stat is
+  worth nothing, so an enchant that gives it loses out.
+- **Glyphs:** at the bottom of the list, the three major and three minor glyphs for your spec: the best you
+  can use, never the same glyph twice. The ones you have count whichever socket they're in. A slot you haven't opened yet says **Requires level N** in red.
+  Glyphs that need a talent you don't have give way to the next, with a note naming the talent. During
+  Classic, Inscription stops at 300, so glyphs that need more open at a later stage.
+- **Recommended consumables:** a row of icons at the top: the potions, elixirs, food, poisons and oils for
+  your spec. Hover one for how to get it now (and, for poisons, which hand it goes on). If you're an
+  engineer, an Engineering icon at the end lists the explosives only engineers can use.
+- **Profession gear:** gear only a profession can wear, such as Engineering goggles, only shows when you
+  have the profession at the skill it needs, and only when it's clearly better than what you can get
+  otherwise: it's often costly and hard to make.
+
+Glyphs and consumables are hand-picked, so for now they're there for **Rogue** and **Priest**.
 
 ## On your gear list: Roll Need
 
@@ -140,8 +164,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 
 | Version | What's in it |
 | --- | --- |
-| 0.1.0 to 0.1.7-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips. |
-| **0.1.8-alpha** (now) | Quest steps open the quest in the Journal's Quests tab. |
+| 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
+| **0.1.9 to 0.1.13-alpha** (now) | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.2.0-alpha | Rogue and Priest finished, with the next big features. |
 | 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
@@ -177,24 +201,24 @@ Nothing needs installing on the server beyond those two modules.
   step. `{ 11815, 45 }` also gives an item whose strength is a proc or use effect (Hand of Justice) a
   value, in the spec's own units.
 - **`Profiles.lua`**: what each stat is worth to each spec, and which weapons it uses.
-- **`Data.lua`**: generated from the realm's database; don't edit it by hand. Regenerate it with the
-  tools below.
+- **`Data.lua`** and **`Extras.lua`**: generated from the realm's database; don't edit them by hand.
+  Regenerate them with the tools below. Glyphs, consumables and proc enchants' values are hand-picked in
+  `tools/curated.py`.
 
 ## Regenerating the data (tools)
 
-`tools/` builds `Data.lua`, `Profiles.lua` and `Curated.lua` from AzerothCore's world database and
+`tools/` builds `Data.lua`, `Extras.lua`, `Profiles.lua` and `Curated.lua` from AzerothCore's world database and
 mod-individual-progression's SQL. If you regenerate, edit `profiles.py` and `curated.py` there rather than
 the Lua copies. You need Python 3 and:
 
 - the `data/sql/base/db_world` folder of [azerothcore-wotlk](https://github.com/azerothcore/azerothcore-wotlk)
   (set `GEARBIS_AC` to it)
 - the `data/sql/world/base` folder of mod-individual-progression (`GEARBIS_MOD`)
-- `Spell.dbc` and `AreaTable.dbc`: `python3 tools/rangezip.py <file>` fetches just that file from
-  AzerothCore's client-data release
+- these DBC files: `python3 tools/rangezip.py <file>` fetches just that file from AzerothCore's
+  client-data release
 
 ```
-python3 tools/rangezip.py Spell.dbc
-python3 tools/rangezip.py AreaTable.dbc
+for f in Spell AreaTable SpellItemEnchantment SkillLineAbility GlyphProperties; do python3 tools/rangezip.py $f.dbc; done
 python3 tools/sqlload.py     # a few minutes: loads the tables and applies the module's changes
 python3 tools/extract.py     # where every item comes from
 python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
@@ -205,8 +229,10 @@ python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
 - **Stat weights are rules of thumb.** Hand-picked items fix the cases weights get wrong (set bonuses,
   procs). For classes without hand-picked items yet, the list is a good stat-for-stat path rather than a
   theorycrafted one.
-- **Crafted items** aren't in the world database, so only hand-picked ones show up (Devilsaur, Truefaith
-  Vestments, Hide of the Wild).
+- **Crafted gear** comes from hand-picked items (Devilsaur, Truefaith Vestments, Hide of the Wild) and
+  profession gear (Engineering goggles); other crafted gear isn't on the lists yet.
+- **Consumables found only in the open world** (Winterfall Firewater) have a note in place of a source:
+  only instance drops, quests, vendors and crafting are worked out.
 - **Random-enchant items** you wear ("of the Monkey") are read from their tooltip, in English.
 - **Bank items** aren't checked, only your bags.
 - **Realm settings** aren't visible to an addon, such as `AllowEarlyDungeonSet2`. The lists assume

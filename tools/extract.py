@@ -115,6 +115,38 @@ def classic_gear(e):
             and it["RequiredLevel"] <= 60 and it["ItemLevel"] >= 35)
 
 
+# Beyond gear, the items extras.py needs sources for: enchants that come as an item (arcanums, signets, armor
+# kits, scopes), the curated consumables, gear only a profession can wear (Engineering goggles and trinkets), and
+# the recipes that make them. Classic items only: ids below The Burning Crusade's.
+from crafts import Crafts, CLASSIC_CAP
+from curated import CONSUMABLES, PROFESSION_CONSUMABLES
+crafts = Crafts(BUILD, R, items)
+CLASSIC_ID = 23728
+
+
+def enchant_item(it):
+    sp = crafts.spells.get(it.get("spellid_1") or 0)
+    return bool(sp) and it.get("spelltrigger_1") == 0 and 53 in sp[71:74]
+
+
+def profession_gear(it):
+    return (it["InventoryType"] in EQUIP and (it.get("RequiredSkill") or 0) in (164, 165, 197, 202) and it["Quality"] >= 2
+            and it["ItemLevel"] <= 92 and it["RequiredLevel"] <= 60 and it["ItemLevel"] >= 35)
+
+
+consumable_names = {e if isinstance(e, str) else e[0] for lst in list(CONSUMABLES.values()) + list(PROFESSION_CONSUMABLES.values())
+                    for e in lst}
+EXTRA = {i for i, it in items.items() if i < CLASSIC_ID and not it["name"].startswith(("Monster", "Test", "Deprecated"))
+         and (enchant_item(it) or profession_gear(it) or it["name"] in consumable_names)}
+for sid, ench in [(sid, e) for e, sids in crafts.enchants.items() for sid in sids] + [(sid, None) for i in list(EXTRA) for sid in crafts.creates.get(i, [])]:
+    if sid in crafts.recipe and (crafts.rank(sid) or 0) <= CLASSIC_CAP:
+        EXTRA.add(crafts.recipe[sid])
+
+
+def wanted(e):
+    return classic_gear(e) or e in EXTRA
+
+
 sources = collections.defaultdict(list)   # item -> [source]
 drops_of = collections.defaultdict(dict)  # item -> {inst: chance} for token detection (any item)
 
@@ -132,7 +164,7 @@ for e, maps in list(cmaps.items()) + [(k, {v}) for k, v in SUMMONED.items()]:
             if ch < 0.004:
                 continue
             drops_of[it][ik] = max(drops_of[it].get(ik, 0), ch)
-            if classic_gear(it):
+            if wanted(it):
                 sources[it].append({"k": "D", "i": ik, "n": c["name"], "c": round(ch, 4), "rank": c["rank"]})
 
 for e, maps in gmaps.items():
@@ -145,7 +177,7 @@ for e, maps in gmaps.items():
             if ch < 0.004:
                 continue
             drops_of[it][m] = max(drops_of[it].get(m, 0), ch)
-            if classic_gear(it):
+            if wanted(it):
                 sources[it].append({"k": "C", "i": m, "n": g["name"], "c": round(ch, 4)})
 
 # Item containers (e.g. tier bags / Cache of the Firelord style items that are opened)
@@ -157,11 +189,32 @@ for e, rows in group_loot("item_loot_template").items():
     for it, ch in loot.items():
         for ik, och in origin.items():
             drops_of[it][ik] = max(drops_of[it].get(ik, 0), ch * och)
-            if classic_gear(it) and ch * och >= 0.004:
+            if wanted(it) and ch * och >= 0.004:
                 sources[it].append({"k": "D", "i": ik, "n": items[e]["name"], "c": round(ch * och, 4)})
 
 # ---------------------------------------------------------------- quests
 RAIDS = {k for k, v in INSTANCES.items() if v[1]}
+
+# Items you can get outside a raid too: world drops (creatures out in the world), dungeon drops, vendors and
+# crafting. A quest only needs a raid when one of its items comes from nowhere else (Black Diamonds and
+# librams drop in Molten Core, but also in Blackrock Depths and the world).
+world_drops, _lootcache, _world = set(), {}, collections.defaultdict(set)
+for r in R("creature"):
+    _world[r["id1"]].add(r["map"])
+for e, maps in _world.items():
+    c = ctpl.get(e)
+    if not c or not c["lootid"] or not (maps & {0, 1}):
+        continue
+    if c["lootid"] not in _lootcache:
+        _lootcache[c["lootid"]] = [it for it, ch in resolve(CLT.get(c["lootid"], [])).items() if ch >= 0.0005]
+    world_drops.update(_lootcache[c["lootid"]])
+sold = {r["item"] for r in R("npc_vendor")}
+
+
+def raid_only(it):
+    where = drops_of.get(it, {})
+    return (any(k in RAIDS for k in where) and all(k in RAIDS for k in where) and it not in world_drops
+            and it not in sold and not crafts.creates.get(it))
 # Quests filed under an instance (their zone is the instance's area): they're done there.
 QUEST_ZONE = {19: 309, 2717: 409, 2677: 469, 2159: 249, 3429: 509, 3428: 531, 3456: 533, 2017: 329, 2057: 289,
               1584: 230, 1583: 229, 2557: 429, 1477: 109, 2100: 349, 1176: 209, 1337: 70}
@@ -222,7 +275,7 @@ def quest_via(qid, depth=0, seen=None):
     q = quests[qid]
     via, stage = None, 0
     for ri in [q.get("RequiredItemId%d" % i) for i in range(1, 7)] + [q.get("StartItem")]:
-        for ik in drops_of.get(ri or 0, {}):
+        for ik in (drops_of.get(ri or 0, {}) if raid_only(ri or 0) else {}):
             if ik in RAIDS and (via is None or INSTANCES[ik][3] > stage):
                 via, stage = ik, INSTANCES[ik][3]
     if via is None:
@@ -347,7 +400,7 @@ for q in quests.values():
     if not quest_ok(q) or needs_world_epic(q):
         continue
     rewards = [(q.get("RewardItem%d" % i) or 0) for i in range(1, 5)] + [(q.get("RewardChoiceItemID%d" % i) or 0) for i in range(1, 7)]
-    rewards = [x for x in rewards if x and classic_gear(x)]
+    rewards = [x for x in rewards if x and wanted(x)]
     if not rewards:
         continue
     title = q.get("LogTitle") or ""
@@ -392,7 +445,7 @@ for r in R("creature"):
     continent[r["id1"]].add(r["map"])
 for r in R("npc_vendor"):
     it, e = r["item"], r["entry"]
-    if not classic_gear(it) or r.get("ExtendedCost"):
+    if not wanted(it) or r.get("ExtendedCost"):
         continue
     if not (continent.get(e, set()) & {0, 1}):
         continue
@@ -404,7 +457,13 @@ for r in R("npc_vendor"):
                         "rep": x["RequiredReputationFaction"], "rank": x["RequiredReputationRank"],
                         "st": FACTION_STAGE.get(x["RequiredReputationFaction"], 0)})
 
-pickle.dump({"sources": dict(sources), "instances": INSTANCES}, open(os.path.join(BUILD, "sources.pkl"), "wb"))
+# ---------------------------------------------------------------- crafted (the extras: consumables, kits, profession gear)
+for i in sorted(EXTRA):
+    for skill, rank, sid, recipe in crafts.made_by(i):
+        if rank <= CLASSIC_CAP:
+            sources[i].append({"k": "X", "skill": skill, "rank": rank, "spell": sid, "recipe": recipe})
+
+pickle.dump({"sources": dict(sources), "instances": INSTANCES, "extra": sorted(EXTRA)}, open(os.path.join(BUILD, "sources.pkl"), "wb"))
 print("items with sources:", len(sources))
 cnt = collections.Counter(s["k"] for v in sources.values() for s in v)
 print(cnt)

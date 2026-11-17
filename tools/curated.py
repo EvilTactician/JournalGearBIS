@@ -85,3 +85,61 @@ CRAFTED = {
     "Hide of the Wild": "Crafted: Leatherworking",
     "Robe of the Void": "Crafted: Tailoring",
 }
+
+# Glyphs, best first, by spec profile. "Glyph name" or ("Glyph name", "Talent it needs"). The tab shows the best
+# three of each kind you can use (your level, your stage's Inscription, your talents); one that needs a talent you
+# don't have gives way to the next, with a note under it.
+ROGUE_MINOR = ["Glyph of Vanish", "Glyph of Safe Fall", "Glyph of Distract", "Glyph of Blurred Speed", "Glyph of Pick Pocket"]
+PRIEST_MINOR = ["Glyph of Fortitude", "Glyph of Fading", "Glyph of Levitate", "Glyph of Shadow Protection"]
+GLYPHS = {
+    "ROGUE_SWORDS": {
+        "major": ["Glyph of Slice and Dice", "Glyph of Sinister Strike",
+                  "Glyph of Eviscerate", "Glyph of Expose Armor", "Glyph of Evasion"],
+        "minor": ROGUE_MINOR,
+    },
+    "ROGUE_DAGGERS": {
+        "major": [("Glyph of Mutilate", "Mutilate"), "Glyph of Slice and Dice", "Glyph of Eviscerate", "Glyph of Backstab",
+                  "Glyph of Garrote", "Glyph of Evasion"],
+        "minor": ROGUE_MINOR,
+    },
+    "PRIEST_HEAL": {
+        "major": ["Glyph of Prayer of Healing", "Glyph of Power Word: Shield", "Glyph of Flash Heal", "Glyph of Renew",
+                  "Glyph of Fear Ward", "Glyph of Inner Fire"],
+        "minor": PRIEST_MINOR,
+    },
+    "PRIEST_SHADOW": {
+        "major": [("Glyph of Shadow", "Shadowform"), "Glyph of Mind Flay", "Glyph of Shadow Word: Pain", "Glyph of Fade",
+                  "Glyph of Inner Fire"],
+        "minor": ["Glyph of Fortitude", "Glyph of Shadow Protection", "Glyph of Fading", "Glyph of Levitate"],
+    },
+}
+
+# Recommended consumables, by spec profile: "Item name" or ("Item name", "a note for its tooltip").
+ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Juju Power", "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants."),
+                     ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
+                     "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
+CONSUMABLES = {
+    "ROGUE_SWORDS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand.")]
+    + ROGUE_CONSUMABLES,
+    "ROGUE_DAGGERS": [("Deadly Poison V", "Put it on your main hand."), ("Instant Poison VI", "Put it on your off hand.")]
+    + ROGUE_CONSUMABLES,
+    "PRIEST_HEAL": ["Flask of Distilled Wisdom", ("Brilliant Mana Oil", "Put it on your weapon."), "Mageblood Elixir",
+                    "Nightfin Soup", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
+    "PRIEST_SHADOW": ["Flask of Supreme Power", "Greater Arcane Elixir", "Elixir of Shadow Power",
+                      ("Brilliant Wizard Oil", "Put it on your weapon."), "Runn Tum Tuber Surprise", "Major Mana Potion",
+                      ("Demonic Rune", "Costs some health.")],
+}
+
+# Enchants whose worth is a proc the stat weights can't see: name -> value in the profile's units, by profile.
+ENCHANT_PROCS = {
+    "Crusader": {"ROGUE_SWORDS": 35, "ROGUE_DAGGERS": 35},
+    "Fiery Weapon": {"ROGUE_SWORDS": 12, "ROGUE_DAGGERS": 12},
+}
+
+# Consumables only a profession can use, by profession: shown as the profession's icon at the end of the
+# consumables row, with these in its tooltip, only when you have the profession. ("Item name", "what it's for")
+PROFESSION_CONSUMABLES = {
+    "Engineering": [("Goblin Sapper Charge", "A big burst of fire damage around you; it hurts you too."),
+                    ("Dense Dynamite", "Thrown fire damage in an area."),
+                    ("Thorium Grenade", "Thrown damage in an area that stuns for 3 seconds.")],
+}

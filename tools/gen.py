@@ -7,6 +7,7 @@ sys.path.insert(0, HERE)
 from sqlload import Table  # noqa
 from profiles import PROFILES, BY_TREE, CLASS_BIT, WEAPON_SKILL, ARMOR_SKILL
 from curated import CURATED, CRAFTED
+from crafts import PROFESSIONS
 
 db = pickle.load(open(os.path.join(BUILD, "db.pkl"), "rb"))
 SRC = pickle.load(open(os.path.join(BUILD, "sources.pkl"), "rb"))
@@ -202,6 +203,8 @@ for pk, prof in PROFILES.items():
     buckets = collections.defaultdict(list)
     for i, srcs in sources.items():
         it = items[i]
+        if it["InventoryType"] not in SLOT_OF:
+            continue  # consumables, enchants and recipes: extras.py's
         if it["RequiredLevel"] < 40 and it["ItemLevel"] < 50:
             continue
         if not (usable_mask(it) & pcls):
@@ -246,7 +249,7 @@ def ltable(d):
                             for k, v in sorted(d.items())) + " }"
 
 
-def src_lua(i):
+def src_lua(i, crafted=True):
     out = []
     per_inst = collections.defaultdict(list)
     for s in sources.get(i, []):
@@ -272,6 +275,11 @@ def src_lua(i):
             out.append("{ \"V\", %s, %d, %d, %d, %d }" % (lstr(name), s["price"] or 0, s["rep"] or 0, s["rank"] or 0, s["st"]))
     if items[i]["name"] in CRAFTED:
         out.append("{ \"X\", %s }" % lstr(CRAFTED[items[i]["name"]]))
+    elif crafted:
+        for s in sources.get(i, []):
+            if s["k"] == "X":
+                out.append("{ \"X\", %s, %d, %d }" % (lstr("Crafted: " + PROFESSIONS[s["skill"]]), s["skill"], s["rank"]))
+                break
     return "{ " + ", ".join(out) + " }"
 
 
@@ -290,7 +298,8 @@ L.append("--              { \"Q\", quest, \"title\", instance it needs or 0, sta
 L.append("--                     Alliance chain, Horde chain, classes (bit mask, 0 = all) }")
 L.append("--                a chain: { first quest, \"its title\", quest givers, 1 if they're all trainers, quests in it }")
 L.append("--              { \"V\", \"vendor\", price in copper, faction, standing, stage }")
-L.append("--              { \"X\", \"how it's made\" }")
+L.append("--              { \"X\", \"how it's made\", profession, skill }")
+L.append("--   profession gear (Engineering goggles) adds: profession and skill needed to wear it, after sources")
 L.append("")
 L.append("JournalGearBIS = JournalGearBIS or {}")
 L.append("local G = JournalGearBIS")
@@ -307,9 +316,10 @@ for i in sorted(keep):
     it = items[i]
     races = it["AllowableRace"] if it["AllowableRace"] not in (-1, 0) and (it["AllowableRace"] & 0x2FF) != 0x2FF else 0
     uniq = 1 if (it.get("maxcount") or 0) == 1 else 0
-    L.append("\t[%d] = { %s, %d, %d, %d, %d, %d, %d, %d, %d, %s, %s }," % (
+    prof = ", %d, %d" % (it["RequiredSkill"], it["RequiredSkillRank"]) if (it.get("RequiredSkill") or 0) else ""
+    L.append("\t[%d] = { %s, %d, %d, %d, %d, %d, %d, %d, %d, %s, %s%s }," % (
         i, lstr(it["name"]), it["InventoryType"], it["class"] * 100 + it["subclass"], it["ItemLevel"], it["RequiredLevel"],
-        it["Quality"], usable_mask(it), races, uniq, ltable(stats(it)), src_lua(i)))
+        it["Quality"], usable_mask(it), races, uniq, ltable(stats(it)), src_lua(i), prof))
 L.append("}")
 L.append("")
 L.append("-- Raid drops you hand in for an item (tier tokens, Head of Onyxia): token = { items it can become }.")
@@ -375,3 +385,249 @@ for prof, lst in curated.items():
 C.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Curated.lua"), "w").write("\n".join(C) + "\n")
 print("done", file=sys.stderr)
+
+# ---------------------------------------------------------------- Extras.lua: enchants, glyphs, consumables
+from crafts import Crafts, CLASSIC_CAP
+from curated import GLYPHS, CONSUMABLES, ENCHANT_PROCS, PROFESSION_CONSUMABLES
+crafts = Crafts(BUILD, lambda t: db[t].rows, items, SPELLS)
+ENCH, ench_str, _ = dbc_load(os.path.join(BUILD, "dbc", "SpellItemEnchantment.dbc"))
+GLYPH_PROPS = dbc_load(os.path.join(BUILD, "dbc", "GlyphProperties.dbc"))[0]
+EXTRA = set(SRC.get("extra", []))
+CLASSIC_ID, CLASSIC_SPELL = 23728, 26000  # the first ids of The Burning Crusade's items and profession spells
+ARMOR_SLOTS = {1: "HEAD", 3: "SHOULDER", 5: "CHEST", 20: "CHEST", 6: "WAIST", 7: "LEGS", 8: "FEET", 9: "WRIST", 10: "HANDS",
+               16: "BACK", 11: "FINGER"}
+TWO_HAND, RANGED_GUNS = {1, 5, 6, 8, 10}, {2, 3, 18}
+
+
+def stage_of_rank(rank):
+    """The stage a profession reaches a skill at: Artisan (300) before 8, Master (375) before 13."""
+    return 0 if rank <= 300 else (8 if rank <= 375 else 13)
+
+
+def enchant_stats(e):
+    """What an enchant gives, in the profile stat keys; 'proc' names a proc ENCHANT_PROCS can value."""
+    r = ENCH.get(e)
+    s = collections.defaultdict(float)
+    if not r:
+        return s, None
+    proc = None
+    for k in range(3):
+        kind, pts, arg = r[2 + k], i32(r[5 + k]), r[11 + k]
+        if kind == 5 and arg in STAT:
+            s[STAT[arg]] += pts
+        elif kind == 3:
+            spell_stats(arg, s)
+        elif kind == 2:
+            s["wdmg"] += pts
+        elif kind == 4 and arg == 0:
+            s["armor"] += pts
+        elif kind == 1:
+            proc = ench_str(r[14])
+    return s, proc
+
+
+def enchant_slots(sid):
+    """The slots a spell can enchant: armor slots, 'SHIELD', 'WEAPON', '2H' (two-handers only) or 'RANGED'."""
+    r = SPELLS.get(sid)
+    if not r:
+        return set()
+    cls, sub, inv = i32(r[68]), r[69], r[70]
+    if cls == 4:
+        out = {name for bit, name in ARMOR_SLOTS.items() if inv & (1 << bit)}
+        if sub & (1 << 6) and not inv:
+            out.add("SHIELD")
+        return out
+    if cls == 2:
+        subs = {b for b in range(21) if sub & (1 << b)}
+        if subs and subs <= RANGED_GUNS:
+            return {"RANGED"}
+        if subs and subs <= TWO_HAND:
+            return {"TWOHAND"}
+        return {"WEAPON"}
+    return set()
+
+
+def recipe_way(skill, rank, sid, recipe, label=None):
+    """{ "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", the recipe's instance }."""
+    stage, where, inst = stage_of_rank(rank), "from a trainer", 0
+    for s in sources.get(recipe, []):
+        if s["k"] == "V":
+            stage = max(stage, s["st"])
+            where = "recipe sold by %s" % s["n"]
+            if s["rep"]:
+                where += " (%s)" % ["Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted"][s["rank"]]
+            break
+        if s["k"] in ("D", "C"):
+            where = "recipe drops in %s" % INSTANCES[s["i"]][0]
+            stage, inst = max(stage, INSTANCES[s["i"]][3]), s["i"]
+            break
+        if s["k"] == "Q":
+            where = "recipe from the quest %s" % s["n"]
+            stage = max(stage, s["st"])
+            break
+    else:
+        if recipe:
+            where = "from a recipe"
+    return "{ \"X\", %s, %d, %d, %d, %s, %d }" % (lstr(label or ("Crafted: " + PROFESSIONS[skill])), skill, rank, stage, lstr(where), inst)
+
+
+extra_items = set()
+options = collections.defaultdict(list)   # slot -> [lua]
+known = set()
+
+# enchants an enchanter puts on (the realm's Classic recipes, up to Artisan)
+for e in sorted(crafts.enchants):
+    # Classic's own recipes: The Burning Crusade and Wrath added a few at 300 and below
+    ways = [w for w in crafts.enchanted_by(e) if w[0] == 333 and w[1] <= CLASSIC_CAP and w[2] < CLASSIC_SPELL
+            and (not w[3] or w[3] < CLASSIC_ID)]
+    if not ways or e not in ENCH:
+        continue
+    known.add(e)
+    skill, rank, sid, recipe = ways[0]
+    for slot in enchant_slots(sid):
+        options[slot].append("{ e = %d, spell = %d, level = %d, ways = { %s } }" % (e, sid, ENCH[e][37], recipe_way(skill, rank, sid, recipe, "Enchanting")))
+
+# enchants that come as an item (arcanums, signets, armor kits, scopes)
+for i in sorted(EXTRA):
+    it = items[i]
+    sid = it.get("spellid_1") or 0
+    sp = SPELLS.get(sid)
+    if not sp or it.get("spelltrigger_1") != 0 or 53 not in sp[71:74] or not sources.get(i):
+        continue
+    e = sp[110 + list(sp[71:74]).index(53)]
+    if e not in ENCH:
+        continue
+    known.add(e)
+    extra_items.add(i)
+    allow = it["AllowableClass"]
+    classes = 0 if allow in (-1, 0, 32767, 262143) else allow
+    for slot in enchant_slots(sid):
+        options[slot].append("{ e = %d, item = %d, level = %d, classes = %d }" % (
+            e, i, max(ENCH[e][37], it["RequiredLevel"] or 0), classes))
+
+X = []
+X.append("-- Enchants, glyphs and consumables for JournalGearBIS, generated from the realm's world database and the")
+X.append("-- client's DBC files (tools/gen.py). Don't edit by hand: tools/curated.py has the hand-picked lists.")
+X.append("--")
+X.append("--   enchants[slot] = { { e = enchant, spell = enchanting spell or item = the item that puts it on,")
+X.append("--                        level = level needed, classes = bit mask (0 = all), ways = { source, ... } } }")
+X.append("--                    slots: armor slots, SHIELD, WEAPON (any weapon), TWOHAND (two-handers) and RANGED (bows, guns)")
+X.append("--   enchantStats[enchant] = { stats } (wdmg = weapon damage), with proc = value by profile for procs")
+X.append("--   extraItems[id] = { name, quality, required level, sources } (sources as in Data.lua)")
+X.append("--   enchantNames[enchant] = \"what it gives\"")
+X.append("--   glyphs[profile] = { major = { { item, glyph spell, Inscription skill, stage, level, \"talent\", \"name\" } },")
+X.append("--                       minor = { ... } }, best first")
+X.append("--   consumables[profile] = { { item, \"note\" } }")
+X.append("--   professionConsumables[profession] = { { item, skill needed to use it, \"what it's for\" } }")
+X.append("")
+X.append("local G = JournalGearBIS")
+X.append("")
+X.append("G.enchants = {")
+for slot in sorted(options):
+    X.append("\t%s = {" % slot)
+    for o in options[slot]:
+        X.append("\t\t%s," % o)
+    X.append("\t},")
+X.append("}")
+X.append("")
+X.append("G.enchantStats = {")
+for e in sorted(known):
+    st, proc = enchant_stats(e)
+    st = {k: (round(v, 1) if v != int(v) else int(v)) for k, v in st.items() if v}
+    if proc and proc in ENCHANT_PROCS:
+        st["proc"] = 1
+    X.append("\t[%d] = %s, -- %s" % (e, ltable(st), ench_str(ENCH[e][14])))
+X.append("}")
+X.append("")
+X.append("G.enchantNames = {")
+for e in sorted(known):
+    X.append("\t[%d] = %s," % (e, lstr(ench_str(ENCH[e][14]))))
+X.append("}")
+X.append("")
+X.append("G.enchantProcs = {")
+for e in sorted(known):
+    proc = enchant_stats(e)[1]
+    if proc in ENCHANT_PROCS:
+        X.append("\t[%d] = %s, -- %s" % (e, ltable(ENCHANT_PROCS[proc]), proc))
+X.append("}")
+
+# glyphs
+X.append("")
+X.append("G.glyphs = {")
+for prof, kinds in GLYPHS.items():
+    X.append("\t%s = {" % prof)
+    for kind in ("major", "minor"):
+        rows = []
+        for entry in kinds[kind]:
+            name, talent = (entry, "") if isinstance(entry, str) else entry
+            for i in byname.get(name, []):
+                it = items[i]
+                if it["class"] != 16:
+                    continue
+                sp = SPELLS.get(it.get("spellid_1") or 0)
+                gp = sp and next((GLYPH_PROPS.get(sp[110 + k]) for k in range(3) if sp[71 + k] == 74), None)
+                ways = crafts.made_by(i)
+                if not gp or not ways:
+                    continue
+                rank = ways[0][1]
+                rows.append("{ %d, %d, %d, %d, %d, %s, %s }," % (i, gp[1], rank, stage_of_rank(rank), it["RequiredLevel"], lstr(talent), lstr(name)))
+                break
+            else:
+                print("glyph not found:", name, file=sys.stderr)
+        X.append("\t\t%s = {" % kind)
+        for row in rows:
+            X.append("\t\t\t%s" % row)
+        X.append("\t\t},")
+    X.append("\t},")
+X.append("}")
+
+# consumables
+X.append("")
+X.append("G.consumables = {")
+for prof, lst in CONSUMABLES.items():
+    X.append("\t%s = {" % prof)
+    for entry in lst:
+        name, note = (entry, "") if isinstance(entry, str) else entry
+        ids = [i for i in byname.get(name, []) if i in EXTRA]
+        if not ids:
+            print("consumable not found:", name, file=sys.stderr)
+            continue
+        extra_items.add(ids[0])
+        X.append("\t\t{ %d, %s }, -- %s" % (ids[0], lstr(note), name))
+    X.append("\t},")
+X.append("}")
+
+
+X.append("")
+X.append("G.professionConsumables = {")
+for prof, lst in PROFESSION_CONSUMABLES.items():
+    skill = next(k for k, v in PROFESSIONS.items() if v == prof)
+    X.append("\t[%d] = { -- %s" % (skill, prof))
+    for name, note in lst:
+        ids = [i for i in byname.get(name, []) if i in EXTRA]
+        if not ids:
+            print("profession consumable not found:", name, file=sys.stderr)
+            continue
+        extra_items.add(ids[0])
+        X.append("\t\t{ %d, %d, %s }, -- %s" % (ids[0], items[ids[0]]["RequiredSkillRank"] or 0, lstr(note), name))
+    X.append("\t},")
+X.append("}")
+
+
+def extra_src_lua(i):
+    out = [src_lua(i, False)[2:-2]]
+    for s in sources.get(i, []):
+        if s["k"] == "X":
+            out.append(recipe_way(s["skill"], s["rank"], s["spell"], s["recipe"]))
+            break
+    return "{ " + ", ".join(o for o in out if o) + " }"
+
+
+X.append("")
+X.append("G.extraItems = {")
+for i in sorted(extra_items):
+    it = items[i]
+    X.append("\t[%d] = { %s, %d, %d, %s }," % (i, lstr(it["name"]), it["Quality"], it["RequiredLevel"] or 0, extra_src_lua(i)))
+X.append("}")
+open(os.path.join(HERE, "..", "JournalGearBIS", "Extras.lua"), "w").write("\n".join(X) + "\n")
+print("extras: %d enchants, %d items" % (len(known), len(extra_items)), file=sys.stderr)

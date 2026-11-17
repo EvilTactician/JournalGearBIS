@@ -12,7 +12,8 @@
 --                     Alliance chain, Horde chain, classes (bit mask, 0 = all) }
 --                a chain: { first quest, "its title", quest givers, 1 if they're all trainers, quests in it }
 --              { "V", "vendor", price in copper, faction, standing, stage }
---              { "X", "how it's made" }
+--              { "X", "how it's made", profession, skill }
+--   profession gear (Engineering goggles) adds: profession and skill needed to wear it, after sources
 
 JournalGearBIS = JournalGearBIS or {}
 local G = JournalGearBIS
@@ -180,12 +181,10 @@ G.items = {
 	[10195] = { "Crusader's Shield", 14, 406, 55, 50, 2, 67, 0, 0, { armor = 1691, bv = 29 }, { { "C", 230, 0.007, "Dark Coffer" } } },
 	[10204] = { "Heavy Lamellar Shield", 14, 406, 55, 50, 2, 67, 0, 0, { armor = 1691, bv = 29 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" } } },
 	[10212] = { "Elegant Cloak", 16, 401, 57, 52, 2, 1503, 0, 0, { armor = 37 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 289, 0.027, "Old Treasure Chest" } } },
-	[10216] = { "Elegant Belt", 6, 401, 58, 53, 2, 1503, 0, 0, { armor = 42 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 230, 0.005, "Dark Coffer" }, { "C", 289, 0.027, "Old Treasure Chest" } } },
 	[10219] = { "Elegant Circlet", 1, 401, 60, 55, 2, 1503, 0, 0, { armor = 63 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 329, 0.01, "Ramstein the Gorger" }, { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 230, 0.005, "Dark Coffer" }, { "C", 289, 0.023, "Old Treasure Chest" } } },
 	[10224] = { "Nightshade Cloak", 16, 401, 57, 52, 2, 1503, 0, 0, { armor = 37 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 289, 0.031, "Old Treasure Chest" } } },
 	[10225] = { "Nightshade Gloves", 10, 402, 59, 54, 2, 1103, 0, 0, { armor = 95 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 230, 0.005, "Dark Coffer" }, { "C", 289, 0.012, "Old Treasure Chest" } } },
 	[10228] = { "Nightshade Spaulders", 3, 402, 60, 55, 2, 1103, 0, 0, { armor = 115 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 329, 0.01, "Ramstein the Gorger" }, { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 289, 0.039, "Old Treasure Chest" } } },
-	[10233] = { "Engraved Girdle", 6, 403, 57, 52, 2, 71, 0, 0, { armor = 173 }, { { "C", 230, 0.007, "Dark Coffer" }, { "C", 289, 0.042, "Old Treasure Chest" } } },
 	[10235] = { "Engraved Helm", 1, 403, 59, 54, 2, 71, 0, 0, { armor = 258 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 289, 0.039, "Old Treasure Chest" } } },
 	[10240] = { "Heavy Lamellar Chestpiece", 5, 404, 55, 50, 2, 3, 0, 0, { armor = 524 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" } } },
 	[10247] = { "Master's Boots", 8, 401, 63, 58, 2, 1503, 0, 0, { armor = 56 }, { { "D", 249, 0.009, "Onyxia" }, { "D", 469, 0.009, "Nefarian" }, { "D", 309, 0.009, "Gahz'ranka" } } },
@@ -248,11 +247,9 @@ G.items = {
 	[10740] = { "Centurion Legplates", 7, 404, 53, 0, 2, 3, 0, 0, { agi = 15, armor = 443, str = 15 }, { { "Q", 3566, "Rise, Obsidion!", 0, 0, 1101, 52, 40, { 3367, "Suntara Stones", 1, 0, 5 }, { 3566, "Rise, Obsidion!", 1, 0, 1 }, 0 } } },
 	[10741] = { "Lordrec Helmet", 1, 402, 53, 0, 2, 1103, 0, 0, { agi = 16, armor = 113, spi = 3, sta = 10 }, { { "Q", 3566, "Rise, Obsidion!", 0, 0, 1101, 52, 40, { 3367, "Suntara Stones", 1, 0, 5 }, { 3566, "Rise, Obsidion!", 1, 0, 1 }, 0 } } },
 	[10742] = { "Dragonflight Leggings", 7, 401, 51, 0, 2, 1503, 0, 0, { agi = 13, armor = 58, spi = 14, str = 6 }, { { "Q", 3463, "Set Them Ablaze!", 0, 0, 0, 52, 40, { 3441, "Divine Retribution", 1, 0, 8 }, { 3441, "Divine Retribution", 1, 0, 8 }, 0 } } },
-	[10745] = { "Kaylari Shoulders", 3, 402, 50, 0, 2, 1103, 0, 0, { armor = 99, sta = 10, str = 11 }, { { "Q", 3378, "Prayer to Elune", 0, 0, 1101, 50, 40, { 3377, "Prayer to Elune", 1, 0, 2 }, { 3378, "Prayer to Elune", 1, 0, 1 }, 0 } } },
 	[10746] = { "Runesteel Vambraces", 9, 404, 50, 0, 2, 3, 0, 0, { armor = 210, sta = 11, str = 2 }, { { "Q", 3378, "Prayer to Elune", 0, 0, 1101, 50, 40, { 3377, "Prayer to Elune", 1, 0, 2 }, { 3378, "Prayer to Elune", 1, 0, 1 }, 0 } } },
 	[10749] = { "Avenguard Helm", 1, 404, 54, 0, 3, 3, 0, 0, { agi = 5, armor = 461, spi = 10, sta = 25 }, { { "Q", 3528, "The God Hakkar", 0, 0, 0, 53, 40, { 3520, "Screecher Spirits", 1, 0, 4 }, { 3520, "Screecher Spirits", 1, 0, 4 }, 0 } } },
 	[10750] = { "Lifeforce Dirk", 13, 215, 54, 0, 3, 1501, 0, 0, { speed = 1.6, sta = 11, wdps = 35.9 }, { { "Q", 3528, "The God Hakkar", 0, 0, 0, 53, 40, { 3520, "Screecher Spirits", 1, 0, 4 }, { 3520, "Screecher Spirits", 1, 0, 4 }, 0 } } },
-	[10751] = { "Gemburst Circlet", 1, 401, 54, 0, 3, 1503, 0, 0, { agi = 5, armor = 63, int = 17, spi = 18, sta = 9 }, { { "Q", 3528, "The God Hakkar", 0, 0, 0, 53, 40, { 3520, "Screecher Spirits", 1, 0, 4 }, { 3520, "Screecher Spirits", 1, 0, 4 }, 0 } } },
 	[10779] = { "Demon's Blood", 12, 400, 60, 0, 2, 1503, 0, 0, { def = 5 }, { { "Q", 3628, "You Are Rakh'likh, Demon", 0, 0, 0, 60, 45, { 2783, "Petty Squabbles", 1, 0, 19 }, { 2784, "Fall From Grace", 1, 0, 22 }, 0 } } },
 	[10783] = { "Atal'ai Spaulders", 3, 402, 52, 47, 3, 1103, 0, 0, { armor = 193 }, { { "D", 109, 0.217, "Zul'Lor, Zolo, Gasher and others" } } },
 	[10784] = { "Atal'ai Breastplate", 5, 403, 52, 47, 3, 71, 0, 0, { ap = 22, armor = 311 }, { { "D", 109, 0.167, "Zul'Lor, Zolo, Gasher and others" } } },
@@ -349,7 +346,7 @@ G.items = {
 	[11863] = { "White Bone Shredder", 22, 213, 52, 0, 2, 1101, 0, 0, { agi = 7, speed = 1.4, str = 4, wdps = 31.1 }, { { "Q", 4300, "Bone-Bladed Weapons", 0, 0, 0, 52, 48, { 4300, "Bone-Bladed Weapons", 1, 0, 1 }, { 4300, "Bone-Bladed Weapons", 1, 0, 1 }, 0 } } },
 	[11864] = { "White Bone Spear", 17, 206, 52, 0, 2, 1031, 0, 0, { int = 3, speed = 2.7, sta = 21, wdps = 40.4 }, { { "Q", 4300, "Bone-Bladed Weapons", 0, 0, 0, 52, 48, { 4300, "Bone-Bladed Weapons", 1, 0, 1 }, { 4300, "Bone-Bladed Weapons", 1, 0, 1 }, 0 } } },
 	[11865] = { "Rancor Boots", 8, 401, 53, 0, 2, 1503, 0, 0, { agi = 12, armor = 47, int = 11 }, { { "Q", 4136, "Ribbly Screwspigot", 230, 0, 0, 53, 48, { 4324, "Yuka Screwspigot", 1, 0, 2 }, { 4324, "Yuka Screwspigot", 1, 0, 2 }, 0 } } },
-	[11866] = { "Nagmara's Whipping Belt", 6, 402, 55, 0, 3, 1103, 0, 0, { armor = 89, spi = 13, sta = 14, str = 8 }, { { "Q", 4201, "The Love Potion", 533, 6, 0, 54, 50, { 4201, "The Love Potion", 1, 0, 1 }, { 4201, "The Love Potion", 1, 0, 1 }, 0 } } },
+	[11866] = { "Nagmara's Whipping Belt", 6, 402, 55, 0, 3, 1103, 0, 0, { armor = 89, spi = 13, sta = 14, str = 8 }, { { "Q", 4201, "The Love Potion", 230, 0, 0, 54, 50, { 4201, "The Love Potion", 1, 0, 1 }, { 4201, "The Love Potion", 1, 0, 1 }, 0 } } },
 	[11867] = { "Maddening Gauntlets", 10, 403, 53, 0, 2, 71, 0, 0, { agi = 5, armor = 180, str = 15 }, { { "Q", 3825, "Ogre Head On A Stick = Party", 0, 0, 1101, 53, 48, { 3823, "Extinguish the Firegut", 1, 0, 3 }, { 3825, "Ogre Head On A Stick = Party", 1, 0, 1 }, 0 } } },
 	[11868] = { "Choking Band", 11, 400, 53, 0, 2, 1503, 0, 0, { spi = 13 }, { { "Q", 3825, "Ogre Head On A Stick = Party", 0, 0, 1101, 53, 48, { 3823, "Extinguish the Firegut", 1, 0, 3 }, { 3825, "Ogre Head On A Stick = Party", 1, 0, 1 }, 0 } } },
 	[11870] = { "Oblivion Orb", 23, 400, 54, 0, 2, 1503, 0, 0, { spi = 11, sta = 4 }, { { "Q", 4510, "Calm Before the Storm", 0, 0, 1101, 54, 50, { 992, "Gadgetzan Water Survey", 1, 0, 11 }, { 4510, "Calm Before the Storm", 1, 0, 1 }, 0 }, { "Q", 4511, "Calm Before the Storm", 0, 0, 690, 54, 50, { 4511, "Calm Before the Storm", 1, 0, 1 }, { 4493, "March of the Silithid", 1, 0, 5 }, 0 } } },
@@ -367,7 +364,6 @@ G.items = {
 	[11909] = { "Excavator's Utility Belt", 6, 402, 55, 0, 2, 1103, 0, 0, { armor = 81, int = 16, sta = 4 }, { { "Q", 3882, "Roll the Bones", 0, 0, 0, 51, 49, { 3882, "Roll the Bones", 1, 0, 1 }, { 3882, "Roll the Bones", 1, 0, 1 }, 0 } } },
 	[11910] = { "Bejeweled Legguards", 7, 404, 55, 0, 2, 3, 0, 0, { armor = 459, dodge = 12, spi = 8, sta = 15 }, { { "Q", 4491, "A Little Help From My Friends", 0, 0, 0, 55, 50, { 4492, "Lost!", 1, 0, 2 }, { 4492, "Lost!", 1, 0, 2 }, 0 } } },
 	[11911] = { "Treetop Leggings", 7, 401, 55, 0, 2, 1503, 0, 0, { armor = 62, spi = 18, sta = 8, str = 8 }, { { "Q", 4491, "A Little Help From My Friends", 0, 0, 0, 55, 50, { 4492, "Lost!", 1, 0, 2 }, { 4492, "Lost!", 1, 0, 2 }, 0 } } },
-	[11913] = { "Clayridge Helm", 1, 403, 55, 0, 2, 71, 0, 0, { agi = 16, armor = 242, spi = 15 }, { { "Q", 4491, "A Little Help From My Friends", 0, 0, 0, 55, 50, { 4492, "Lost!", 1, 0, 2 }, { 4492, "Lost!", 1, 0, 2 }, 0 } } },
 	[11915] = { "Shizzle's Drizzle Blocker", 14, 406, 55, 0, 2, 67, 0, 0, { armor = 1691, bv = 29, sta = 1, str = 13 }, { { "Q", 4503, "Shizzle's Flyer", 0, 0, 0, 51, 49, { 4503, "Shizzle's Flyer", 1, 0, 1 }, { 4503, "Shizzle's Flyer", 1, 0, 1 }, 0 } } },
 	[11917] = { "Shizzle's Nozzle Wiper", 9, 401, 55, 0, 2, 1503, 0, 0, { armor = 31, int = 12, spi = 3, sta = 3 }, { { "Q", 4503, "Shizzle's Flyer", 0, 0, 0, 51, 49, { 4503, "Shizzle's Flyer", 1, 0, 1 }, { 4503, "Shizzle's Flyer", 1, 0, 1 }, 0 } } },
 	[11918] = { "Grotslab Gloves", 10, 403, 55, 0, 2, 71, 0, 0, { agi = 12, armor = 186, int = 12 }, { { "Q", 4501, "Beware of Pterrordax", 0, 0, 0, 55, 49, { 4501, "Beware of Pterrordax", 1, 0, 1 }, { 4501, "Beware of Pterrordax", 1, 0, 1 }, 0 } } },
@@ -386,7 +382,7 @@ G.items = {
 	[11932] = { "Guiding Stave of Wisdom", 17, 210, 59, 54, 3, 1493, 0, 0, { sp = 28, speed = 3.3, spi = 10, sta = 11, wdps = 50.5 }, { { "D", 230, 0.099, "Emperor Dagran Thaurissan" } } },
 	[11933] = { "Imperial Jewel", 2, 400, 60, 55, 3, 1503, 0, 0, { ap = 32, sta = 7 }, { { "D", 230, 0.099, "Emperor Dagran Thaurissan" } } },
 	[11935] = { "Magmus Stone", 23, 400, 58, 53, 3, 1503, 0, 0, { spi = 4, sta = 7 }, { { "D", 230, 0.2, "Magmus" } } },
-	[11962] = { "Manacle Cuffs", 9, 401, 55, 0, 3, 1503, 0, 0, { armor = 34, int = 15, sta = 6 }, { { "Q", 4201, "The Love Potion", 533, 6, 0, 54, 50, { 4201, "The Love Potion", 1, 0, 1 }, { 4201, "The Love Potion", 1, 0, 1 }, 0 } } },
+	[11962] = { "Manacle Cuffs", 9, 401, 55, 0, 3, 1503, 0, 0, { armor = 34, int = 15, sta = 6 }, { { "Q", 4201, "The Love Potion", 230, 0, 0, 54, 50, { 4201, "The Love Potion", 1, 0, 1 }, { 4201, "The Love Potion", 1, 0, 1 }, 0 } } },
 	[11963] = { "Penance Spaulders", 3, 402, 53, 0, 2, 1103, 0, 0, { agi = 8, armor = 104, spi = 7, sta = 11 }, { { "Q", 4136, "Ribbly Screwspigot", 230, 0, 0, 53, 48, { 4324, "Yuka Screwspigot", 1, 0, 2 }, { 4324, "Yuka Screwspigot", 1, 0, 2 }, 0 } } },
 	[11964] = { "Swiftstrike Cudgel", 13, 204, 55, 0, 2, 1115, 0, 0, { hit = 10, speed = 1.6, wdps = 32.5 }, { { "Q", 4126, "Hurley Blackbreath", 230, 0, 1101, 55, 50, { 4128, "Ragnar Thunderbrew", 1, 0, 2 }, { 4126, "Hurley Blackbreath", 1, 0, 1 }, 0 }, { "Q", 4134, "Lost Thunderbrew Recipe", 230, 0, 0, 55, 50, { 4133, "Vivian Lagrave", 1, 0, 2 }, { 4133, "Vivian Lagrave", 1, 0, 2 }, 0 } } },
 	[12000] = { "Limb Cleaver", 17, 201, 55, 0, 2, 71, 0, 0, { speed = 2.4, sta = 6, str = 21, wdps = 42.7 }, { { "Q", 4126, "Hurley Blackbreath", 230, 0, 1101, 55, 50, { 4128, "Ragnar Thunderbrew", 1, 0, 2 }, { 4126, "Hurley Blackbreath", 1, 0, 1 }, 0 }, { "Q", 4134, "Lost Thunderbrew Recipe", 230, 0, 0, 55, 50, { 4133, "Vivian Lagrave", 1, 0, 2 }, { 4133, "Vivian Lagrave", 1, 0, 2 }, 0 } } },
@@ -776,8 +772,8 @@ G.items = {
 	[15806] = { "Mirah's Song", 13, 207, 61, 0, 3, 399, 0, 0, { agi = 9, speed = 1.8, str = 9, wdps = 40 }, { { "Q", 5384, "Kirtonos the Herald", 289, 0, 0, 60, 55, { 5382, "Doctor Theolen Krastinov, the Butcher", 1, 0, 3 }, { 5382, "Doctor Theolen Krastinov, the Butcher", 1, 0, 3 }, 0 } } },
 	[15812] = { "Orchid Amice", 3, 401, 56, 0, 2, 1503, 0, 0, { armor = 54, int = 15, spi = 3, sta = 4, str = 4 }, { { "Q", 4971, "A Matter of Time", 0, 0, 0, 56, 53, { 4971, "A Matter of Time", 1, 0, 1 }, { 4971, "A Matter of Time", 1, 0, 1 }, 0 } } },
 	[15814] = { "Hameya's Slayer", 13, 207, 60, 0, 2, 399, 0, 0, { speed = 2, wdps = 35.8 }, { { "Q", 6024, "Hameya's Plea", 0, 0, 0, 60, 54, { 6024, "Hameya's Plea", 1, 0, 1 }, { 6024, "Hameya's Plea", 1, 0, 1 }, 0 } } },
-	[15822] = { "Shadowskin Spaulders", 3, 402, 55, 0, 2, 1103, 0, 0, { agi = 18, armor = 108 }, { { "Q", 6031, "Runecloth", 533, 6, 0, 55, 50, { 6031, "Runecloth", 1, 1, 1 }, { 6031, "Runecloth", 1, 1, 1 }, 0 } } },
-	[15823] = { "Bricksteel Gauntlets", 10, 403, 55, 0, 2, 71, 0, 0, { armor = 186, str = 18 }, { { "Q", 6031, "Runecloth", 533, 6, 0, 55, 50, { 6031, "Runecloth", 1, 1, 1 }, { 6031, "Runecloth", 1, 1, 1 }, 0 } } },
+	[15822] = { "Shadowskin Spaulders", 3, 402, 55, 0, 2, 1103, 0, 0, { agi = 18, armor = 108 }, { { "Q", 6031, "Runecloth", 0, 0, 0, 55, 50, { 6031, "Runecloth", 1, 1, 1 }, { 6031, "Runecloth", 1, 1, 1 }, 0 } } },
+	[15823] = { "Bricksteel Gauntlets", 10, 403, 55, 0, 2, 71, 0, 0, { armor = 186, str = 18 }, { { "Q", 6031, "Runecloth", 0, 0, 0, 55, 50, { 6031, "Runecloth", 1, 1, 1 }, { 6031, "Runecloth", 1, 1, 1 }, 0 } } },
 	[15824] = { "Astoria Robes", 20, 401, 59, 0, 2, 1503, 0, 0, { armor = 76, int = 20, spi = 10, str = 5 }, { { "Q", 4701, "Put Her Down", 229, 0, 0, 59, 55, { 4701, "Put Her Down", 1, 0, 1 }, { 4701, "Put Her Down", 1, 0, 1 }, 0 }, { "Q", 4724, "The Pack Mistress", 229, 0, 690, 59, 55, { 4724, "The Pack Mistress", 1, 0, 1 }, { 4724, "The Pack Mistress", 1, 0, 1 }, 0 } } },
 	[15825] = { "Traphook Jerkin", 5, 402, 59, 0, 2, 1103, 0, 0, { agi = 24, armor = 152, str = 5 }, { { "Q", 4701, "Put Her Down", 229, 0, 0, 59, 55, { 4701, "Put Her Down", 1, 0, 1 }, { 4701, "Put Her Down", 1, 0, 1 }, 0 }, { "Q", 4724, "The Pack Mistress", 229, 0, 690, 59, 55, { 4724, "The Pack Mistress", 1, 0, 1 }, { 4724, "The Pack Mistress", 1, 0, 1 }, 0 } } },
 	[15827] = { "Jadescale Breastplate", 5, 403, 59, 0, 2, 71, 0, 0, { armor = 317, spi = 7, sta = 23 }, { { "Q", 4701, "Put Her Down", 229, 0, 0, 59, 55, { 4701, "Put Her Down", 1, 0, 1 }, { 4701, "Put Her Down", 1, 0, 1 }, 0 }, { "Q", 4724, "The Pack Mistress", 229, 0, 690, 59, 55, { 4724, "The Pack Mistress", 1, 0, 1 }, { 4724, "The Pack Mistress", 1, 0, 1 }, 0 } } },
@@ -792,8 +788,9 @@ G.items = {
 	[15930] = { "Imperial Red Scepter", 23, 400, 56, 51, 2, 1503, 0, 0, { agi = 2, int = 12, sta = 4 }, { { "C", 329, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 229, 0.015, "Large Solid Chest, Large Mithril Bound Chest" }, { "C", 230, 0.007, "Dark Coffer" } } },
 	[15931] = { "Arcane Star", 23, 400, 61, 56, 2, 1503, 0, 0, { int = 10, spi = 8, sta = 5 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 329, 0.01, "Ramstein the Gorger" } } },
 	[15943] = { "Imbued Shield", 14, 406, 61, 56, 2, 67, 0, 0, { armor = 1861, bv = 35, sta = 14, str = 3 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 329, 0.01, "Ramstein the Gorger" } } },
+	[15999] = { "Spellpower Goggles Xtreme Plus", 1, 401, 54, 0, 2, 1503, 0, 0, { armor = 57, sp = 27 }, { { "X", "Crafted: Engineering", 202, 270 } }, 202, 270 },
 	[16058] = { "Fordring's Seal", 11, 400, 63, 0, 3, 1503, 0, 0, { int = 5, sp = 20, sta = 4 }, { { "Q", 5944, "In Dreams", 0, 0, 0, 60, 52, { 5542, "Demon Dogs", 1, 0, 9 }, { 5542, "Demon Dogs", 1, 0, 9 }, 0 } } },
-	[16309] = { "Drakefire Amulet", 2, 400, 63, 50, 3, 1503, 0, 1, { sta = 10 }, { { "Q", 6502, "Drakefire Amulet", 229, 0, 1101, 60, 50, { 4182, "Dragonkin Menace", 1, 0, 16 }, { 6502, "Drakefire Amulet", 1, 0, 1 }, 0 }, { "Q", 6602, "Blood of the Black Dragon Champion", 469, 2, 690, 60, 55, { 6602, "Blood of the Black Dragon Champion", 1, 0, 1 }, { 4903, "Warlord's Command", 1, 0, 12 }, 0 } } },
+	[16309] = { "Drakefire Amulet", 2, 400, 63, 50, 3, 1503, 0, 1, { sta = 10 }, { { "Q", 6502, "Drakefire Amulet", 229, 0, 1101, 60, 50, { 4182, "Dragonkin Menace", 1, 0, 16 }, { 6502, "Drakefire Amulet", 1, 0, 1 }, 0 }, { "Q", 6602, "Blood of the Black Dragon Champion", 229, 0, 690, 60, 55, { 6602, "Blood of the Black Dragon Champion", 1, 0, 1 }, { 4903, "Warlord's Command", 1, 0, 12 }, 0 } } },
 	[16409] = { "Knight-Lieutenant's Lamellar Sabatons", 8, 404, 63, 58, 3, 2, 0, 1, { agi = 6, armor = 452, int = 7, sta = 16, str = 15 }, { { "V", "Captain Dirgehammer <Armor Quartermaster>", 42068, 0, 0, 0 } } },
 	[16410] = { "Knight-Lieutenant's Lamellar Gauntlets", 10, 404, 63, 58, 3, 2, 0, 1, { armor = 410, sta = 16, str = 15 }, { { "V", "Captain Dirgehammer <Armor Quartermaster>", 28152, 0, 0, 0 } } },
 	[16433] = { "Knight-Captain's Lamellar Breastplate", 5, 404, 63, 58, 3, 2, 0, 1, { agi = 8, armor = 657, crit = 14, sta = 25, str = 9 }, { { "V", "Captain Dirgehammer <Armor Quartermaster>", 58457, 0, 0, 0 } } },
@@ -1094,6 +1091,7 @@ G.items = {
 	[18102] = { "Dragonrider Boots", 8, 401, 63, 58, 3, 1503, 0, 0, { armor = 61, int = 16, sp = 18, sta = 5 }, { { "D", 2291, 0.093, "Warchief Rend Blackhand" } } },
 	[18103] = { "Band of Rumination", 11, 400, 63, 58, 3, 1503, 0, 0, { crit = 14, mp5 = 6 }, { { "D", 2291, 0.093, "Warchief Rend Blackhand" } } },
 	[18104] = { "Feralsurge Girdle", 6, 403, 63, 58, 3, 71, 0, 1, { armor = 208, int = 10, mp5 = 10, sta = 9 }, { { "D", 2291, 0.093, "Warchief Rend Blackhand" } } },
+	[18168] = { "Force Reactive Disk", 14, 406, 65, 60, 4, 67, 0, 0, { armor = 2548, bv = 44, sta = 11 }, { { "X", "Crafted: Engineering", 202, 300 } }, 202, 300 },
 	[18203] = { "Eskhandar's Right Claw", 21, 213, 66, 60, 4, 1101, 0, 1, { agi = 4, speed = 1.5, wdps = 48 }, { { "D", 409, 0.2, "Magmadar" } } },
 	[18205] = { "Eskhandar's Collar", 2, 400, 71, 60, 4, 1503, 0, 1, { crit = 14, dodge = 12, sta = 17 }, { { "D", 249, 0.25, "Onyxia" } } },
 	[18289] = { "Barbed Thorn Necklace", 2, 400, 56, 51, 3, 1503, 0, 0, { int = 6, nature = 17, sta = 7 }, { { "D", 429, 0.073, "Warpwood Crusher, Warpwood Tangler, Warpwood Treant and others" } } },
@@ -1264,7 +1262,6 @@ G.items = {
 	[18803] = { "Finkle's Lava Dredger", 17, 205, 70, 60, 4, 1091, 0, 0, { int = 24, mp5 = 11, speed = 2.9, sta = 25, wdps = 67.1 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18805] = { "Core Hound Tooth", 13, 215, 70, 60, 4, 1501, 0, 0, { ap = 20, crit = 14, speed = 1.6, sta = 9, wdps = 51.2 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18806] = { "Core Forged Greaves", 8, 404, 70, 60, 4, 3, 0, 0, { armor = 634, def = 6, sta = 28 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
-	[18807] = { "Helm of Latent Power", 1, 403, 62, 0, 3, 71, 0, 0, { armor = 297, crit = 14, int = 14, sp = 14, spi = 12, sta = 12 }, { { "Q", 7668, "The Darkreaver Menace", 0, 0, 0, 60, 58, { 7668, "The Darkreaver Menace", 0, 0, 1 }, { 7668, "The Darkreaver Menace", 0, 0, 1 }, 64 } } },
 	[18808] = { "Gloves of the Hypnotic Flame", 10, 401, 70, 60, 4, 1503, 0, 0, { armor = 67, fire = 23, int = 19, sp = 9, spi = 8, sta = 18 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18809] = { "Sash of Whispered Secrets", 6, 401, 71, 60, 4, 1503, 0, 0, { armor = 61, shadow = 33, sta = 20 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
 	[18810] = { "Wild Growth Spaulders", 3, 402, 71, 60, 4, 1103, 0, 0, { armor = 159, int = 12, sp = 33, spi = 10, sta = 11 }, { { "C", 409, 0.2, "Cache of the Firelord" } } },
@@ -1505,6 +1502,8 @@ G.items = {
 	[19982] = { "Duskbat Drape", 16, 401, 52, 0, 3, 1503, 0, 0, { agi = 14, armor = 37 }, { { "Q", 8236, "The Azure Key", 0, 0, 0, 52, 50, { 8233, "A Simple Request", 8, 1, 4 }, { 8233, "A Simple Request", 8, 1, 4 }, 8 } } },
 	[19984] = { "Ebon Mask", 1, 402, 52, 0, 3, 1103, 0, 0, { ap = 36, armor = 122, crit = 14, sta = 11 }, { { "Q", 8236, "The Azure Key", 0, 0, 0, 52, 50, { 8233, "A Simple Request", 8, 1, 4 }, { 8233, "A Simple Request", 8, 1, 4 }, 8 } } },
 	[19993] = { "Hoodoo Hunting Bow", 15, 202, 68, 60, 3, 13, 0, 0, { agi = 10, speed = 2.8, sta = 4, wdps = 35 }, { { "D", 309, 0.5, "Wushoolay" } } },
+	[19998] = { "Bloodvine Lens", 1, 402, 65, 60, 3, 1103, 0, 0, { armor = 147, crit = 28, sta = 12 }, { { "X", "Crafted: Engineering", 202, 300 } }, 202, 300 },
+	[19999] = { "Bloodvine Goggles", 1, 401, 65, 60, 3, 1503, 0, 0, { armor = 75, crit = 14, hit = 16, mp5 = 11 }, { { "X", "Crafted: Engineering", 202, 300 } }, 202, 300 },
 	[20032] = { "Flowing Ritual Robes", 20, 401, 65, 60, 4, 1503, 0, 1, { armor = 100, int = 23, sp = 22, spi = 24, sta = 15 }, { { "D", 309, 0.167, "High Priestess Mar'li" } } },
 	[20033] = { "Zandalar Demoniac's Robe", 20, 401, 65, 0, 4, 256, 0, 1, { armor = 100, hit = 8, sp = 27, sta = 35 }, { { "Q", 8077, "Paragons of Power: The Demoniac's Robes", 309, 3, 0, 60, 60, { 8077, "Paragons of Power: The Demoniac's Robes", 1, 0, 1 }, { 8077, "Paragons of Power: The Demoniac's Robes", 1, 0, 1 }, 256 } } },
 	[20034] = { "Zandalar Illusionist's Robe", 20, 401, 65, 0, 4, 128, 0, 1, { armor = 100, hit = 8, int = 24, sp = 27, sta = 23 }, { { "Q", 8069, "Paragons of Power: The Illusionist's Robes", 309, 3, 0, 60, 60, { 8069, "Paragons of Power: The Illusionist's Robes", 1, 0, 1 }, { 8069, "Paragons of Power: The Illusionist's Robes", 1, 0, 1 }, 128 } } },
@@ -1513,7 +1512,7 @@ G.items = {
 	[20038] = { "Mandokir's Sting", 15, 202, 66, 60, 4, 13, 0, 0, { agi = 11, speed = 2.6, sta = 8, wdps = 37.5 }, { { "D", 309, 0.083, "Bloodlord Mandokir" } } },
 	[20082] = { "Woestave", 26, 219, 52, 0, 3, 400, 0, 0, { shadow = 11, speed = 1.9, sta = 3, wdps = 51.3 }, { { "Q", 8257, "Blood of Morphaz", 0, 0, 0, 52, 50, { 8254, "Cenarion Aid", 18, 1, 4 }, { 8254, "Cenarion Aid", 18, 1, 4 }, 16 } } },
 	[20083] = { "Hunting Spear", 17, 206, 52, 0, 3, 1031, 0, 0, { crit = 14, mp5 = 6, speed = 3.1, sta = 17, wdps = 45 }, { { "Q", 8232, "The Green Drake", 0, 0, 0, 52, 50, { 8152, "REUSE", 0, 0, 5 }, { 8152, "REUSE", 0, 0, 5 }, 4 } } },
-	[20134] = { "Skyfury Helm", 1, 403, 62, 0, 4, 71, 0, 0, { armor = 324, crit = 42, spi = 12, sta = 14, str = 13 }, { { "Q", 8258, "The Darkreaver Menace", 309, 3, 690, 60, 58, { 8258, "The Darkreaver Menace", 1, 1, 1 }, { 7667, "Material Assistance", 1, 1, 2 }, 64 }, { "Q", 8259, "A More Fitting Reward", 0, 0, 0, 60, 58, { 8259, "A More Fitting Reward", 0, 0, 1 }, { 8259, "A More Fitting Reward", 0, 0, 1 }, 64 } } },
+	[20134] = { "Skyfury Helm", 1, 403, 62, 0, 4, 71, 0, 0, { armor = 324, crit = 42, spi = 12, sta = 14, str = 13 }, { { "Q", 8258, "The Darkreaver Menace", 0, 0, 690, 60, 58, { 8258, "The Darkreaver Menace", 1, 1, 1 }, { 7667, "Material Assistance", 1, 1, 2 }, 64 }, { "Q", 8259, "A More Fitting Reward", 0, 0, 0, 60, 58, { 8259, "A More Fitting Reward", 0, 0, 1 }, { 8259, "A More Fitting Reward", 0, 0, 1 }, 64 } } },
 	[20213] = { "Belt of Shrunken Heads", 6, 404, 70, 0, 3, 3, 0, 0, { agi = 7, armor = 408, sta = 11, str = 23 }, { { "Q", 8201, "A Collection of Heads", 309, 3, 0, 60, 58, { 8201, "A Collection of Heads", 1, 0, 1 }, { 8201, "A Collection of Heads", 1, 0, 1 }, 0 } } },
 	[20215] = { "Belt of Shriveled Heads", 6, 403, 70, 0, 3, 71, 0, 0, { agi = 11, armor = 230, int = 11, spi = 7, sta = 18 }, { { "Q", 8201, "A Collection of Heads", 309, 3, 0, 60, 58, { 8201, "A Collection of Heads", 1, 0, 1 }, { 8201, "A Collection of Heads", 1, 0, 1 }, 0 } } },
 	[20216] = { "Belt of Preserved Heads", 6, 402, 70, 0, 3, 1103, 0, 0, { agi = 15, armor = 108, hit = 10, sta = 11, str = 14 }, { { "Q", 8201, "A Collection of Heads", 309, 3, 0, 60, 58, { 8201, "A Collection of Heads", 1, 0, 1 }, { 8201, "A Collection of Heads", 1, 0, 1 }, 0 } } },
@@ -1527,14 +1526,14 @@ G.items = {
 	[20264] = { "Peacekeeper Gauntlets", 10, 404, 68, 60, 4, 3, 0, 0, { armor = 482, int = 12, mp5 = 5, sp = 32, sta = 7 }, { { "D", 309, 0.143, "Hakkar" } } },
 	[20265] = { "Peacekeeper Boots", 8, 404, 68, 60, 3, 3, 0, 0, { armor = 486, int = 12, mp5 = 8, sp = 12, sta = 10 }, { { "D", 309, 0.143, "High Priestess Jeklik" } } },
 	[20266] = { "Peacekeeper Leggings", 7, 404, 68, 60, 3, 3, 0, 0, { armor = 618, int = 18, mp5 = 9, sp = 20, sta = 14 }, { { "D", 309, 0.143, "High Priest Thekal" } } },
-	[20369] = { "Azurite Fists", 10, 403, 52, 0, 3, 71, 0, 0, { agi = 6, armor = 195, crit = 14, int = 7, spi = 6, sta = 7 }, { { "Q", 8413, "Da Voodoo", 409, 0, 0, 52, 50, { 8410, "Elemental Mastery", 12, 1, 3 }, { 8410, "Elemental Mastery", 12, 1, 3 }, 64 } } },
+	[20369] = { "Azurite Fists", 10, 403, 52, 0, 3, 71, 0, 0, { agi = 6, armor = 195, crit = 14, int = 7, spi = 6, sta = 7 }, { { "Q", 8413, "Da Voodoo", 0, 0, 0, 52, 50, { 8410, "Elemental Mastery", 12, 1, 3 }, { 8410, "Elemental Mastery", 12, 1, 3 }, 64 } } },
 	[20504] = { "Lightforged Blade", 17, 208, 52, 47, 3, 7, 0, 0, { holy = 16, speed = 3.3, sta = 9, str = 9, wdps = 44.8 }, { { "Q", 8418, "Forging the Mightstone", 0, 0, 1101, 52, 50, { 8415, "Chillwind Point", 1, 1, 4 }, { 8418, "Forging the Mightstone", 1, 0, 1 }, 2 } } },
 	[20505] = { "Chivalrous Signet", 11, 400, 52, 0, 3, 1503, 0, 0, { int = 7, sp = 8, sta = 7, str = 7 }, { { "Q", 8418, "Forging the Mightstone", 0, 0, 1101, 52, 50, { 8415, "Chillwind Point", 1, 1, 4 }, { 8418, "Forging the Mightstone", 1, 0, 1 }, 2 } } },
 	[20517] = { "Razorsteel Shoulders", 3, 404, 52, 0, 3, 3, 0, 0, { agi = 10, armor = 410, hit = 10, sta = 9, str = 10 }, { { "Q", 8425, "Voodoo Feathers", 0, 0, 0, 52, 50, { 8417, "A Troubled Spirit", 7, 1, 4 }, { 8417, "A Troubled Spirit", 7, 1, 4 }, 1 } } },
 	[20521] = { "Fury Visor", 1, 404, 52, 0, 3, 3, 0, 0, { armor = 445, crit = 14, hit = 10, str = 18 }, { { "Q", 8425, "Voodoo Feathers", 0, 0, 0, 52, 50, { 8417, "A Troubled Spirit", 7, 1, 4 }, { 8417, "A Troubled Spirit", 7, 1, 4 }, 1 } } },
-	[20530] = { "Robes of Servitude", 20, 401, 52, 0, 3, 1503, 0, 0, { armor = 75, fire = 23, int = 10, shadow = 23, sta = 15 }, { { "Q", 8422, "Trolls of a Feather", 309, 3, 0, 52, 50, { 8419, "An Imp's Request", 12, 1, 3 }, { 8419, "An Imp's Request", 12, 1, 3 }, 256 } } },
-	[20536] = { "Soul Harvester", 17, 210, 52, 0, 3, 1493, 0, 0, { hit = 8, shadow = 24, speed = 3.3, sta = 16, wdps = 44.8 }, { { "Q", 8422, "Trolls of a Feather", 309, 3, 0, 52, 50, { 8419, "An Imp's Request", 12, 1, 3 }, { 8419, "An Imp's Request", 12, 1, 3 }, 256 } } },
-	[20556] = { "Wildstaff", 17, 210, 52, 0, 3, 1493, 0, 0, { crit = 14, hit = 10, int = 9, speed = 2.5, sta = 10, str = 10, wdps = 45 }, { { "Q", 8413, "Da Voodoo", 409, 0, 0, 52, 50, { 8410, "Elemental Mastery", 12, 1, 3 }, { 8410, "Elemental Mastery", 12, 1, 3 }, 64 } } },
+	[20530] = { "Robes of Servitude", 20, 401, 52, 0, 3, 1503, 0, 0, { armor = 75, fire = 23, int = 10, shadow = 23, sta = 15 }, { { "Q", 8422, "Trolls of a Feather", 0, 0, 0, 52, 50, { 8419, "An Imp's Request", 12, 1, 3 }, { 8419, "An Imp's Request", 12, 1, 3 }, 256 } } },
+	[20536] = { "Soul Harvester", 17, 210, 52, 0, 3, 1493, 0, 0, { hit = 8, shadow = 24, speed = 3.3, sta = 16, wdps = 44.8 }, { { "Q", 8422, "Trolls of a Feather", 0, 0, 0, 52, 50, { 8419, "An Imp's Request", 12, 1, 3 }, { 8419, "An Imp's Request", 12, 1, 3 }, 256 } } },
+	[20556] = { "Wildstaff", 17, 210, 52, 0, 3, 1493, 0, 0, { crit = 14, hit = 10, int = 9, speed = 2.5, sta = 10, str = 10, wdps = 45 }, { { "Q", 8413, "Da Voodoo", 0, 0, 0, 52, 50, { 8410, "Elemental Mastery", 12, 1, 3 }, { 8410, "Elemental Mastery", 12, 1, 3 }, 64 } } },
 	[20646] = { "Sandstrider's Mark", 15, 202, 59, 0, 2, 13, 0, 0, { speed = 2.6, sta = 8, wdps = 24.2 }, { { "Q", 8283, "Wanted - Deathclasp, Terror of the Sands", 0, 4, 0, 59, 54, { 8283, "Wanted - Deathclasp, Terror of the Sands", 1, 0, 1 }, { 8283, "Wanted - Deathclasp, Terror of the Sands", 1, 0, 1 }, 0 } } },
 	[20647] = { "Black Crystal Dagger", 21, 215, 59, 0, 2, 1501, 0, 1, { int = 3, mp5 = 5, speed = 1.8, wdps = 35.3 }, { { "Q", 8283, "Wanted - Deathclasp, Terror of the Sands", 0, 4, 0, 59, 54, { 8283, "Wanted - Deathclasp, Terror of the Sands", 1, 0, 1 }, { 8283, "Wanted - Deathclasp, Terror of the Sands", 1, 0, 1 }, 0 } } },
 	[20649] = { "Sunprism Pendant", 2, 400, 60, 0, 2, 1503, 0, 1, { agi = 12, sta = 7 }, { { "Q", 8321, "Vyral the Vile", 0, 4, 0, 60, 60, { 8320, "Twilight Geolords", 1, 0, 2 }, { 8320, "Twilight Geolords", 1, 0, 2 }, 0 } } },
@@ -1590,7 +1589,6 @@ G.items = {
 	[21273] = { "Blessed Qiraji Acolyte Staff", 17, 210, 79, 60, 4, 1493, 0, 1, { crit = 14, hit = 16, int = 33, sp = 76, speed = 3, sta = 32, wdps = 59.8 }, { { "Q", 8790, "Imperial Qiraji Regalia", 531, 4, 0, 60, 60, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, 0 } } },
 	[21275] = { "Blessed Qiraji Augur Staff", 17, 210, 79, 60, 4, 1493, 0, 1, { int = 24, mp5 = 19, sp = 76, speed = 3, sta = 23, wdps = 59.8 }, { { "Q", 8790, "Imperial Qiraji Regalia", 531, 4, 0, 60, 60, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, { 8790, "Imperial Qiraji Regalia", 1, 0, 1 }, 0 } } },
 	[21316] = { "Leggings of the Ursa", 7, 404, 55, 0, 2, 3, 0, 0, { armor = 459, crit = 14, str = 17 }, { { "Q", 8461, "Deadwood of the North", 0, 0, 0, 55, 45, { 8461, "Deadwood of the North", 1, 0, 1 }, { 8461, "Deadwood of the North", 1, 0, 1 }, 0 } } },
-	[21317] = { "Helm of the Pathfinder", 1, 402, 55, 0, 2, 1103, 0, 0, { armor = 117, crit = 14, sta = 17 }, { { "Q", 8461, "Deadwood of the North", 0, 0, 0, 55, 45, { 8461, "Deadwood of the North", 1, 0, 1 }, { 8461, "Deadwood of the North", 1, 0, 1 }, 0 } } },
 	[21318] = { "Earth Warder's Gloves", 10, 401, 58, 0, 2, 1503, 0, 0, { armor = 47, sp = 22 }, { { "Q", 8464, "Winterfall Activity", 0, 0, 0, 58, 45, { 8464, "Winterfall Activity", 1, 0, 1 }, { 8464, "Winterfall Activity", 1, 0, 1 }, 0 } } },
 	[21319] = { "Gloves of the Pathfinder", 10, 402, 58, 0, 2, 1103, 0, 0, { agi = 12, armor = 94, str = 13 }, { { "Q", 8464, "Winterfall Activity", 0, 0, 0, 58, 45, { 8464, "Winterfall Activity", 1, 0, 1 }, { 8464, "Winterfall Activity", 1, 0, 1 }, 0 } } },
 	[21320] = { "Vest of the Den Watcher", 5, 403, 58, 0, 2, 71, 0, 0, { agi = 20, armor = 313, sta = 12 }, { { "Q", 8464, "Winterfall Activity", 0, 0, 0, 58, 45, { 8464, "Winterfall Activity", 1, 0, 1 }, { 8464, "Winterfall Activity", 1, 0, 1 }, 0 } } },
@@ -1718,12 +1716,12 @@ G.items = {
 	[21506] = { "Pendant of the Shifting Sands", 2, 400, 70, 60, 4, 1503, 0, 0, { def = 6, sta = 21, str = 14 }, { { "Q", 8791, "The Fall of Ossirian", 509, 4, 0, 60, 60, { 8791, "The Fall of Ossirian", 0, 0, 1 }, { 8791, "The Fall of Ossirian", 0, 0, 1 }, 0 } } },
 	[21507] = { "Amulet of the Shifting Sands", 2, 400, 70, 60, 4, 1503, 0, 0, { mp5 = 8, sp = 25 }, { { "Q", 8791, "The Fall of Ossirian", 509, 4, 0, 60, 60, { 8791, "The Fall of Ossirian", 0, 0, 1 }, { 8791, "The Fall of Ossirian", 0, 0, 1 }, 0 } } },
 	[21517] = { "Gnomish Turban of Psychic Might", 1, 401, 75, 60, 4, 1503, 0, 0, { armor = 93, int = 31, mp5 = 11, sta = 17 }, { { "Q", 8620, "The Only Prescription", 0, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 13 }, { 8286, "What Tomorrow Brings", 1, 0, 13 }, 0 } } },
-	[21520] = { "Ravencrest's Legacy", 13, 207, 76, 60, 4, 399, 0, 1, { agi = 9, speed = 2.1, sta = 14, str = 13, wdps = 57.4 }, { { "Q", 8745, "Treasure of the Timeless One", 309, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
-	[21521] = { "Runesword of the Red", 21, 207, 76, 60, 4, 399, 0, 1, { int = 9, sp = 64, speed = 2.2, spi = 7, sta = 17, wdps = 41.3 }, { { "Q", 8745, "Treasure of the Timeless One", 309, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
-	[21522] = { "Shadowsong's Sorrow", 13, 215, 76, 60, 4, 1501, 0, 1, { agi = 13, speed = 1.7, sta = 14, str = 9, wdps = 57.4 }, { { "Q", 8745, "Treasure of the Timeless One", 309, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
-	[21523] = { "Fang of Korialstrasz", 21, 215, 76, 60, 4, 1501, 0, 1, { int = 14, sp = 64, speed = 1.8, spi = 13, sta = 9, wdps = 41.5 }, { { "Q", 8745, "Treasure of the Timeless One", 309, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
-	[21526] = { "Band of Icy Depths", 11, 400, 77, 60, 4, 1503, 0, 1, { sta = 19 }, { { "Q", 8729, "The Wrath of Neptulon", 309, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 13 }, { 8286, "What Tomorrow Brings", 1, 0, 13 }, 0 } } },
-	[21527] = { "Darkwater Robes", 20, 401, 77, 60, 4, 1503, 0, 0, { armor = 117, frost = 39, int = 17, sta = 17 }, { { "Q", 8729, "The Wrath of Neptulon", 309, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 13 }, { 8286, "What Tomorrow Brings", 1, 0, 13 }, 0 } } },
+	[21520] = { "Ravencrest's Legacy", 13, 207, 76, 60, 4, 399, 0, 1, { agi = 9, speed = 2.1, sta = 14, str = 13, wdps = 57.4 }, { { "Q", 8745, "Treasure of the Timeless One", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
+	[21521] = { "Runesword of the Red", 21, 207, 76, 60, 4, 399, 0, 1, { int = 9, sp = 64, speed = 2.2, spi = 7, sta = 17, wdps = 41.3 }, { { "Q", 8745, "Treasure of the Timeless One", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
+	[21522] = { "Shadowsong's Sorrow", 13, 215, 76, 60, 4, 1501, 0, 1, { agi = 13, speed = 1.7, sta = 14, str = 9, wdps = 57.4 }, { { "Q", 8745, "Treasure of the Timeless One", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
+	[21523] = { "Fang of Korialstrasz", 21, 215, 76, 60, 4, 1501, 0, 1, { int = 14, sp = 64, speed = 1.8, spi = 13, sta = 9, wdps = 41.5 }, { { "Q", 8745, "Treasure of the Timeless One", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 15 }, { 8286, "What Tomorrow Brings", 1, 0, 15 }, 0 } } },
+	[21526] = { "Band of Icy Depths", 11, 400, 77, 60, 4, 1503, 0, 1, { sta = 19 }, { { "Q", 8729, "The Wrath of Neptulon", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 13 }, { 8286, "What Tomorrow Brings", 1, 0, 13 }, 0 } } },
+	[21527] = { "Darkwater Robes", 20, 401, 77, 60, 4, 1503, 0, 0, { armor = 117, frost = 39, int = 17, sta = 17 }, { { "Q", 8729, "The Wrath of Neptulon", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 13 }, { 8286, "What Tomorrow Brings", 1, 0, 13 }, 0 } } },
 	[21529] = { "Amulet of Shadow Shielding", 2, 400, 77, 60, 4, 1503, 0, 0, { spi = 7, sta = 18 }, { { "Q", 8730, "Nefarius's Corruption", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 8 }, { 8286, "What Tomorrow Brings", 1, 0, 8 }, 0 } } },
 	[21530] = { "Onyx Embedded Leggings", 7, 403, 77, 60, 4, 71, 0, 0, { agi = 23, armor = 427, int = 17, sta = 23 }, { { "Q", 8730, "Nefarius's Corruption", 469, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 8 }, { 8286, "What Tomorrow Brings", 1, 0, 8 }, 0 } } },
 	[21581] = { "Gauntlets of Annihilation", 10, 404, 88, 60, 4, 3, 0, 0, { armor = 615, crit = 14, hit = 10, sta = 15, str = 35 }, { { "D", 531, 0.21, "C'Thun" } } },
@@ -2204,21 +2202,14 @@ G.items = {
 
 -- Raid drops you hand in for an item (tier tokens, Head of Onyxia): token = { items it can become }.
 G.tokens = {
-	[7067] = { 20369, 20556 }, -- Elemental Earth
-	[7068] = { 20369, 20556 }, -- Elemental Fire
-	[8846] = { 11866, 11962 }, -- Gromsblood
 	[12361] = { 21520, 21521, 21522, 21523, 21526, 21527, 22699, 22700, 22701, 22702, 22707 }, -- Blue Sapphire
 	[12363] = { 22495, 22502, 22503, 22510, 22511, 22518, 22519 }, -- Arcane Crystal
-	[12800] = { 20134, 21520, 21521, 21522, 21523, 21526, 21527 }, -- Azerothian Diamond
-	[14047] = { 15822, 15823 }, -- Runecloth
+	[12800] = { 21520, 21521, 21522, 21523, 21526, 21527 }, -- Azerothian Diamond
 	[14227] = { 22652, 22654, 22655, 22658 }, -- Ironweb Spider Silk
-	[14256] = { 20530, 20536 }, -- Felcloth
-	[16786] = { 16309 }, -- Black Dragonspawn Eye
 	[17329] = { 18398, 18399 }, -- Hand of Lucifron
 	[17330] = { 18398, 18399 }, -- Hand of Sulfuron
 	[17331] = { 18398, 18399 }, -- Hand of Gehennas
 	[17332] = { 18398, 18399 }, -- Hand of Shazzrah
-	[18335] = { 20134 }, -- Pristine Black Diamond
 	[18422] = { 18403, 18404, 18406 }, -- Head of Onyxia
 	[18423] = { 18403, 18404, 18406 }, -- Head of Onyxia
 	[18562] = { 21242, 21244, 21268, 21269, 21272, 21273, 21275, 21520, 21521, 21522, 21523, 21526, 21527 }, -- Elementium Ore
