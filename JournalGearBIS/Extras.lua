@@ -10,6 +10,7 @@
 --   glyphs[profile] = { major = { { item, glyph spell, Inscription skill, stage, level, "talent", "name" } },
 --                       minor = { ... } }, best first
 --   consumables[profile] = { { item, "note" } }
+--   professionConsumables[profession] = { { item, skill needed to use it, "what it's for" } }
 
 local G = JournalGearBIS
 
@@ -668,6 +669,14 @@ G.consumables = {
 	},
 }
 
+G.professionConsumables = {
+	[202] = { -- Engineering
+		{ 10646, 205, "A big burst of fire damage around you; it hurts you too." }, -- Goblin Sapper Charge
+		{ 18641, 250, "Thrown fire damage in an area." }, -- Dense Dynamite
+		{ 15993, 260, "Thrown damage in an area that stuns for 3 seconds." }, -- Thorium Grenade
+	},
+}
+
 G.extraItems = {
 	[2304] = { "Light Armor Kit", 1, 1, { { "D", 70, 0.25, "Olaf" } } },
 	[2313] = { "Medium Armor Kit", 1, 5, { { "D", 70, 0.25, "Olaf" }, { "Q", 125, "The Lost Tools", 0, 0, 1101, 16, 15, { 125, "The Lost Tools", 1, 0, 1 }, { 125, "The Lost Tools", 1, 0, 1 }, 0 }, { "Q", 448, "Report to Hadrec", 0, 0, 0, 16, 10, { 437, "The Dead Fields", 1, 0, 6 }, { 437, "The Dead Fields", 1, 0, 6 }, 0 }, { "X", "Crafted: Leatherworking", 165, 100, 0, "from a trainer", 0 } } },
@@ -687,6 +696,7 @@ G.extraItems = {
 	[9264] = { "Elixir of Shadow Power", 1, 40, { { "X", "Crafted: Alchemy", 171, 250, 0, "recipe sold by Maria Lumere", 0 } } },
 	[10546] = { "Deadly Scope", 1, 30, { { "X", "Crafted: Engineering", 202, 210, 0, "recipe sold by Knaz Blunderflame", 0 } } },
 	[10548] = { "Sniper Scope", 1, 40, { { "X", "Crafted: Engineering", 202, 240, 1, "recipe drops in Onyxia's Lair", 249 } } },
+	[10646] = { "Goblin Sapper Charge", 1, 0, { { "X", "Crafted: Engineering", 202, 205, 0, "from a trainer", 0 } } },
 	[11622] = { "Lesser Arcanum of Rumination", 2, 0, { { "Q", 4463, "Libram of Rumination", 0, 0, 0, 55, 50, { 4463, "Libram of Rumination", 1, 0, 1 }, { 4463, "Libram of Rumination", 1, 0, 1 }, 0 } } },
 	[11642] = { "Lesser Arcanum of Constitution", 2, 0, { { "Q", 4481, "Libram of Constitution", 0, 0, 0, 55, 50, { 4481, "Libram of Constitution", 1, 0, 1 }, { 4481, "Libram of Constitution", 1, 0, 1 }, 0 } } },
 	[11643] = { "Lesser Arcanum of Tenacity", 2, 0, { { "Q", 4482, "Libram of Tenacity", 0, 0, 0, 55, 50, { 4482, "Libram of Tenacity", 1, 0, 1 }, { 4482, "Libram of Tenacity", 1, 0, 1 }, 0 } } },
@@ -709,6 +719,7 @@ G.extraItems = {
 	[13928] = { "Grilled Squid", 1, 35, { { "X", "Crafted: Cooking", 185, 240, 0, "recipe sold by Gikkix", 0 } } },
 	[13931] = { "Nightfin Soup", 1, 35, { { "X", "Crafted: Cooking", 185, 250, 0, "recipe sold by Gikkix", 0 } } },
 	[15564] = { "Rugged Armor Kit", 1, 40, { { "X", "Crafted: Leatherworking", 165, 250, 0, "from a trainer", 0 } } },
+	[15993] = { "Thorium Grenade", 1, 0, { { "X", "Crafted: Engineering", 202, 260, 0, "recipe sold by Sovik", 0 } } },
 	[18169] = { "Flame Mantle of the Dawn", 2, 0, { { "V", "Argent Quartermaster Hasana <The Argent Dawn>", 100000, 529, 6, 0 }, { "V", "Argent Quartermaster Lightspark <The Argent Dawn>", 100000, 529, 6, 0 }, { "V", "Quartermaster Miranda Breechlock <The Argent Dawn>", 100000, 529, 6, 0 } } },
 	[18170] = { "Frost Mantle of the Dawn", 2, 0, { { "V", "Argent Quartermaster Hasana <The Argent Dawn>", 100000, 529, 6, 0 }, { "V", "Argent Quartermaster Lightspark <The Argent Dawn>", 100000, 529, 6, 0 }, { "V", "Quartermaster Miranda Breechlock <The Argent Dawn>", 100000, 529, 6, 0 } } },
 	[18171] = { "Arcane Mantle of the Dawn", 2, 0, { { "V", "Argent Quartermaster Hasana <The Argent Dawn>", 100000, 529, 6, 0 }, { "V", "Argent Quartermaster Lightspark <The Argent Dawn>", 100000, 529, 6, 0 }, { "V", "Quartermaster Miranda Breechlock <The Argent Dawn>", 100000, 529, 6, 0 } } },
@@ -721,6 +732,7 @@ G.extraItems = {
 	[18329] = { "Arcanum of Rapidity", 2, 0, { { "Q", 7483, "Libram of Rapidity", 429, 0, 0, 60, 57, { 7483, "Libram of Rapidity", 1, 0, 1 }, { 7483, "Libram of Rapidity", 1, 0, 1 }, 0 } } },
 	[18330] = { "Arcanum of Focus", 2, 0, { { "Q", 7484, "Libram of Focus", 429, 0, 0, 60, 57, { 7484, "Libram of Focus", 1, 0, 1 }, { 7484, "Libram of Focus", 1, 0, 1 }, 0 } } },
 	[18331] = { "Arcanum of Protection", 2, 0, { { "Q", 7485, "Libram of Protection", 429, 0, 0, 60, 57, { 7485, "Libram of Protection", 1, 0, 1 }, { 7485, "Libram of Protection", 1, 0, 1 }, 0 } } },
+	[18641] = { "Dense Dynamite", 1, 0, { { "X", "Crafted: Engineering", 202, 250, 0, "from a trainer", 0 } } },
 	[19782] = { "Presence of Might", 3, 60, { { "Q", 8184, "Presence of Might", 309, 3, 0, 60, 58, { 8184, "Presence of Might", 1, 0, 1 }, { 8184, "Presence of Might", 1, 0, 1 }, 1 } } },
 	[19783] = { "Syncretist's Sigil", 3, 60, { { "Q", 8185, "Syncretist's Sigil", 309, 3, 0, 60, 58, { 8185, "Syncretist's Sigil", 1, 0, 1 }, { 8185, "Syncretist's Sigil", 1, 0, 1 }, 2 } } },
 	[19784] = { "Death's Embrace", 3, 60, { { "Q", 8186, "Death's Embrace", 309, 3, 0, 60, 58, { 8186, "Death's Embrace", 1, 0, 1 }, { 8186, "Death's Embrace", 1, 0, 1 }, 8 } } },

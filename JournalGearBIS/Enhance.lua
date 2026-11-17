@@ -292,6 +292,30 @@ function G.ConsumablesFor()
 	return out
 end
 
+-- Consumables only a profession can use, for the professions you have: { { skill = profession, items =
+-- { { id, rank (skill to use it), usable, note, sources, name, count } } } }.
+function G.ProfessionConsumablesFor()
+	local out = {}
+	for skill, list in pairs(G.professionConsumables or {}) do
+		local have = P.skills and P.skills[skill]
+		if have then
+			local entry = { skill = skill, items = {} }
+			for _, t in ipairs(list) do
+				local x = G.extraItems[t[1]]
+				local srcs = {}
+				for _, s in ipairs(x and x[4] or {}) do
+					local src = G.ReadSource(s)
+					if src then table.insert(srcs, src) end
+				end
+				table.insert(entry.items, { id = t[1], rank = t[2], usable = have >= t[2], note = t[3], sources = srcs,
+					name = x and x[1], count = GetItemCount and GetItemCount(t[1]) or 0 })
+			end
+			table.insert(out, entry)
+		end
+	end
+	return out
+end
+
 -----------------------------------------
 -- into the view
 
@@ -303,6 +327,7 @@ function G.Build(...)
 		for _, r in ipairs(v.rows) do r.enchant = G.EnchantFor(r, room) end
 		v.glyphs = G.GlyphsFor()
 		v.consumables = G.ConsumablesFor()
+		v.professionConsumables = G.ProfessionConsumablesFor()
 	end
 	return v, why
 end

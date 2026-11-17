@@ -1,7 +1,7 @@
-# Journal: Gear 0.1.12
+# Journal: Gear 0.1.13
 
 > [!WARNING]
-> **Early alpha (version 0.1.12-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.13-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.1.12-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.1.13-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -45,7 +45,8 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   Glyphs that need a talent you don't have give way to the next, with a note naming the talent. During
   Classic, Inscription stops at 300, so glyphs that need more open at a later stage.
 - **Recommended consumables:** a row of icons at the top: the potions, elixirs, food, poisons and oils for
-  your spec. Hover one for how to get it now (and, for poisons, which hand it goes on).
+  your spec. Hover one for how to get it now (and, for poisons, which hand it goes on). If you're an
+  engineer, an Engineering icon at the end lists the explosives only engineers can use.
 - **Profession gear:** gear only a profession can wear, such as Engineering goggles, only shows when you
   have the profession at the skill it needs, and only when it's clearly better than what you can get
   otherwise: it's often costly and hard to make.
@@ -164,7 +165,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | Version | What's in it |
 | --- | --- |
 | 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
-| **0.1.9 to 0.1.12-alpha** (now) | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
+| **0.1.9 to 0.1.13-alpha** (now) | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.2.0-alpha | Rogue and Priest finished, with the next big features. |
 | 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |

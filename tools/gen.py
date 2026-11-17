@@ -388,7 +388,7 @@ print("done", file=sys.stderr)
 
 # ---------------------------------------------------------------- Extras.lua: enchants, glyphs, consumables
 from crafts import Crafts, CLASSIC_CAP
-from curated import GLYPHS, CONSUMABLES, ENCHANT_PROCS
+from curated import GLYPHS, CONSUMABLES, ENCHANT_PROCS, PROFESSION_CONSUMABLES
 crafts = Crafts(BUILD, lambda t: db[t].rows, items, SPELLS)
 ENCH, ench_str, _ = dbc_load(os.path.join(BUILD, "dbc", "SpellItemEnchantment.dbc"))
 GLYPH_PROPS = dbc_load(os.path.join(BUILD, "dbc", "GlyphProperties.dbc"))[0]
@@ -518,6 +518,7 @@ X.append("--   enchantNames[enchant] = \"what it gives\"")
 X.append("--   glyphs[profile] = { major = { { item, glyph spell, Inscription skill, stage, level, \"talent\", \"name\" } },")
 X.append("--                       minor = { ... } }, best first")
 X.append("--   consumables[profile] = { { item, \"note\" } }")
+X.append("--   professionConsumables[profession] = { { item, skill needed to use it, \"what it's for\" } }")
 X.append("")
 X.append("local G = JournalGearBIS")
 X.append("")
@@ -593,6 +594,22 @@ for prof, lst in CONSUMABLES.items():
             continue
         extra_items.add(ids[0])
         X.append("\t\t{ %d, %s }, -- %s" % (ids[0], lstr(note), name))
+    X.append("\t},")
+X.append("}")
+
+
+X.append("")
+X.append("G.professionConsumables = {")
+for prof, lst in PROFESSION_CONSUMABLES.items():
+    skill = next(k for k, v in PROFESSIONS.items() if v == prof)
+    X.append("\t[%d] = { -- %s" % (skill, prof))
+    for name, note in lst:
+        ids = [i for i in byname.get(name, []) if i in EXTRA]
+        if not ids:
+            print("profession consumable not found:", name, file=sys.stderr)
+            continue
+        extra_items.add(ids[0])
+        X.append("\t\t{ %d, %d, %s }, -- %s" % (ids[0], items[ids[0]]["RequiredSkillRank"] or 0, lstr(note), name))
     X.append("\t},")
 X.append("}")
 

@@ -38,7 +38,7 @@ end
 -----------------------------------------
 -- text
 
-local enchantTooltip, glyphTooltip, ENCHANT_COLOURS
+local enchantTooltip, glyphTooltip, professionTooltip, ENCHANT_COLOURS
 
 local function itemName(t)
 	local name, _, quality = GetItemInfo(t.id)
@@ -253,6 +253,26 @@ local function build(panel)
 	consumables.label:SetPoint("BOTTOMRIGHT", consumables, "TOPRIGHT", 0, 3)
 	consumables.label:SetText("Recommended consumables")
 	local consumableIcons = {}
+	-- A profession's own consumables (Engineering's explosives): one icon, the items in its tooltip.
+	local PROFESSION_ICONS = { [202] = "Interface\\Icons\\Trade_Engineering" }
+	function professionTooltip(owner, c)
+		local name = G.PROFESSIONS[c.skill]
+		GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMLEFT")
+		GameTooltip:AddLine(name)
+		GameTooltip:AddLine("Extras only " .. name:lower() .. " can use: not needed, but they help.", 0.8, 0.8, 0.8, true)
+		for _, it in ipairs(c.items) do
+			GameTooltip:AddLine(" ")
+			GameTooltip:AddLine((GetItemInfo(it.id)) or it.name or "?", 1, 1, 1)
+			GameTooltip:AddLine(it.note, 0.8, 0.8, 0.8, true)
+			if not it.usable then
+				GameTooltip:AddLine("Needs " .. name .. " " .. it.rank .. " to use.", 1, 0.4, 0.4, true)
+			end
+			if it.sources[1] then GameTooltip:AddLine(G.SourceText(it.sources[1]), 0.5, 0.85, 1, true) end
+			if it.count > 0 then GameTooltip:AddLine("You have " .. it.count .. ".", 0.25, 1, 0.25) end
+		end
+		GameTooltip:Show()
+	end
+
 	local function consumableIcon(i)
 		if consumableIcons[i] then return consumableIcons[i] end
 		local b = CreateFrame("Button", nil, consumables)
@@ -263,6 +283,7 @@ local function build(panel)
 		b:SetScript("OnEnter", function (self)
 			local c = self.entry
 			if not c then return end
+			if c.skill then return professionTooltip(self, c) end
 			J.ShowItemTooltip(self, c.id)
 			if c.note then GameTooltip:AddLine(c.note, 0.5, 0.85, 1, true) end
 			if c.count > 0 then GameTooltip:AddLine("You have " .. c.count .. ".", 0.25, 1, 0.25) end
@@ -288,7 +309,7 @@ local function build(panel)
 		end)
 		b:SetScript("OnLeave", function () GameTooltip:Hide() end)
 		b:SetScript("OnClick", function (self)
-			if self.entry then J.HandleItemClick(self.entry.id, GetItemInfo(self.entry.id)) end
+			if self.entry and self.entry.id then J.HandleItemClick(self.entry.id, GetItemInfo(self.entry.id)) end
 		end)
 		consumableIcons[i] = b
 		return b
@@ -660,7 +681,11 @@ local function build(panel)
 		choose:SetText((db.choice == "other" and "Other talents") or (db.choice and G.profiles[db.choice] and p.name) or "My talents")
 
 		-- consumables, left of the menu when it's there
-		local list = v.consumables or {}
+		local list = {}
+		for _, c in ipairs(v.consumables or {}) do table.insert(list, c) end
+		for _, p in ipairs(v.professionConsumables or {}) do
+			if #p.items > 0 and PROFESSION_ICONS[p.skill] then table.insert(list, p) end
+		end
 		consumables:ClearAllPoints()
 		if choose:IsShown() then
 			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -17)
@@ -671,7 +696,7 @@ local function build(panel)
 		for i, c in ipairs(list) do
 			local b = consumableIcon(i)
 			b.entry = c
-			b.icon:SetTexture(GetItemIcon and GetItemIcon(c.id) or J.ItemIcon(c.id))
+			b.icon:SetTexture(c.skill and PROFESSION_ICONS[c.skill] or (GetItemIcon and GetItemIcon(c.id) or J.ItemIcon(c.id)))
 			b:Show()
 		end
 		for i = #list + 1, #consumableIcons do consumableIcons[i]:Hide() end

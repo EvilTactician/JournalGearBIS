@@ -135,3 +135,11 @@ ENCHANT_PROCS = {
     "Crusader": {"ROGUE_SWORDS": 35, "ROGUE_DAGGERS": 35},
     "Fiery Weapon": {"ROGUE_SWORDS": 12, "ROGUE_DAGGERS": 12},
 }
+
+# Consumables only a profession can use, by profession: shown as the profession's icon at the end of the
+# consumables row, with these in its tooltip, only when you have the profession. ("Item name", "what it's for")
+PROFESSION_CONSUMABLES = {
+    "Engineering": [("Goblin Sapper Charge", "A big burst of fire damage around you; it hurts you too."),
+                    ("Dense Dynamite", "Thrown fire damage in an area."),
+                    ("Thorium Grenade", "Thrown damage in an area that stuns for 3 seconds.")],
+}
