@@ -1,7 +1,7 @@
-# Journal: Gear 0.1.14
+# Journal: Gear 0.1.15
 
 > [!WARNING]
-> **Early alpha (version 0.1.14-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.1.15-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.1.14-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.1.15-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -40,12 +40,14 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   the way (Lesser Arcanum of Voracity at level 50 before Death's Embrace).
 - **Stat caps** count: past the hit cap (and expertise and armor penetration caps), more of that stat is
   worth nothing, so an enchant that gives it loses out.
-- **Glyphs:** at the bottom of the list, the three major and three minor glyphs for your spec: the best you
-  can use, never the same glyph twice. The ones you have count whichever socket they're in. A slot you haven't opened yet says **Requires level N** in red.
+- **Glyphs:** at the bottom of the list, the three major and three minor glyphs for your spec, best first:
+  the best you can use, never the same glyph twice. The ones you have count whichever socket they're in;
+  a missing one says which weaker glyph of yours to swap out. A slot you haven't opened yet says **Requires level N** in red.
   Glyphs that need a talent you don't have give way to the next, with a note naming the talent. During
   Classic, Inscription stops at 300, so glyphs that need more open at a later stage.
 - **Recommended consumables:** a row of icons at the top: the potions, elixirs, food, poisons and oils for
-  your spec. Hover one for how to get it now (and, for poisons, which hand it goes on). If you're an
+  your spec. Hover one for how to get it now (and, for poisons, which hand it goes on). Elixirs say which
+  others they don't stack with: one battle and one guardian elixir at a time, and a flask counts as both. If you're an
   engineer, an Engineering icon at the end lists the explosives only engineers can use.
 - **Profession gear:** gear only a profession can wear, such as Engineering goggles, only shows when you
   have the profession at the skill it needs, and only when it's clearly better than what you can get
@@ -112,7 +114,9 @@ They're compared with the weaker of the two you wear, so an upgrade over either 
 ## Which list you see
 
 The list follows your **active talents**: the tree you've put the most points in picks the spec, and the
-weapons that go with it (a Combat rogue gets swords and maces, Assassination and Subtlety get daggers).
+weapons that go with it (a Combat rogue gets swords and maces, Assassination and Subtlety get daggers),
+leaning toward the right speed for each hand (a slow main hand and quick off hand for Combat, a quick
+off-hand dagger for the others).
 With no talent points spent yet, the list asks you to assign them and shows a typical list for your
 class meanwhile (Combat for a rogue). The menu at the top right only appears when there's a choice to make: with **dual spec** it shows your
 other talents' list, compared with what you're wearing now (probably your active spec's gear), and a
@@ -167,7 +171,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | --- | --- |
 | 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
-| **0.1.14-alpha** (now) | Rogue and Priest lists re-checked against current Classic guides and the realm. |
+| **0.1.14 to 0.1.15-alpha** (now) | Rogue and Priest lists re-checked against current Classic guides and the realm. |
 | 0.2.0-alpha | Rogue and Priest finished, with the next big features. |
 | 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
@@ -180,6 +184,8 @@ different stage for a raid on your realm, the tab uses the realm's.
   your progression stage, each raid's stage on your realm, and the boss and quest pages it opens from it.
 - **[mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression)** on the
   realm. Without it, every raid counts as open.
+- **[DragonUI](https://github.com/EvilTactician/wow-addon-DragonUI)** (my fork), recommended: the tab is
+  built and tested with it. It may well work without, but if something looks out of place, that's why.
 
 Nothing needs installing on the server beyond those two modules.
 
@@ -232,7 +238,8 @@ python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
   procs). For classes without hand-picked items yet, the list is a good stat-for-stat path rather than a
   theorycrafted one.
 - **Crafted gear** comes from hand-picked items (Devilsaur, Truefaith Vestments, Hide of the Wild) and
-  profession gear (Engineering goggles); other crafted gear isn't on the lists yet.
+  profession gear (Engineering goggles); other crafted gear isn't on the lists yet. Crafted gear that binds
+  on pickup (Truefaith Vestments, Robe of the Void) only shows for a crafter of that profession.
 - **Consumables found only in the open world** (Winterfall Firewater) have a note in place of a source:
   only instance drops, quests, vendors and crafting are worked out.
 - **Random-enchant items** you wear ("of the Monkey") are read from their tooltip, in English.

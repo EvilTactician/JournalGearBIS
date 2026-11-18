@@ -392,9 +392,12 @@ local function readSource(s)
 		src.who, src.price, src.rep, src.rank, src.stage = s[2], s[3], s[4], s[5], s[6]
 		src.tier = TIER_EASY
 	elseif kind == "X" then
-		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", its instance }
-		src.who, src.skill, src.rank, src.stage, src.where, src.tier = s[2], s[3], s[4], s[5] or 0, s[6], TIER_EASY
+		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", its instance,
+		-- 1 when it binds on pickup (only a crafter with the skill can have it) }
+		src.who, src.skill, src.rank, src.stage, src.tier = s[2], s[3], s[4], s[5] or 0, TIER_EASY
+		src.where = s[6] ~= "" and s[6] or nil
 		src.recipeInst = s[7] ~= 0 and s[7] or nil
+		src.bop = s[8] == 1
 	else
 		return nil
 	end
@@ -450,25 +453,52 @@ local function curatedFor(profileKey)
 end
 
 -- A candidate: { item, value, sources, src (the one shown), tier, open, lock }
+-- How much of a weapon's value its speed keeps in a hand, by the profile's preference: { speed, per second,
+-- "slow" or "fast" }; at most a tenth off.
+local function speedFactor(pref, speed)
+	if not pref or not speed or speed <= 0 then return 1 end
+	local off = pref[3] == "slow" and (pref[1] - speed) or (speed - pref[1])
+	if off <= 0 then return 1 end
+	return 1 - math.min(0.1, off * pref[2])
+end
+
 local function candidate(t, prof, rowKey, curated)
 	if t.prof and (P.skills[t.prof] or 0) < (t.profRank or 0) then return nil end
 	local srcs = sourcesOf(t)
+	-- Bind on Pickup crafts: only for a crafter of that profession (locked until the skill's there)
+	local craftLock
+	for i = #srcs, 1, -1 do
+		local s = srcs[i]
+		if s.bop and s.skill then
+			local have = P.skills[s.skill]
+			if not have then
+				table.remove(srcs, i)
+			elseif have < (s.rank or 0) then
+				craftLock = "Needs " .. (G.PROFESSIONS[s.skill] or "the profession") .. " " .. s.rank
+			end
+		end
+	end
 	if #srcs == 0 then return nil end
 	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey))
 	local pick = curated[t.id]
 	if pick then
 		if type(pick) == "number" then value = math.max(value, pick) end
 		value = value * CURATED_BONUS
+	elseif prof.speed and (rowKey == "MH" or rowKey == "OH") then
+		-- the right speed for the hand (hand-picked items already are)
+		value = value * speedFactor(prof.speed[rowKey == "MH" and "mh" or "oh"], t.stats.speed)
 	end
 	if value <= 0 then return nil end
 	local src = srcs[1]
 	local c = { item = t, value = value, sources = srcs, src = src, tier = src.tier, curated = pick and true or false }
 	local need = math.max(t.req, src.need or 0)
 	c.stage, c.need = src.stage, need
-	c.open = src.open and need <= P.level
+	c.open = src.open and need <= P.level and not craftLock
 	-- Soon: open at your stage, but you're not the level for it yet
 	c.soon = src.open and need > P.realLevel
-	if need > P.level and src.open then
+	if craftLock then
+		c.lock = craftLock
+	elseif need > P.level and src.open then
 		c.lock = "Requires level " .. need
 	elseif not src.open then
 		local g = src.inst and G.instances[src.inst]
@@ -692,11 +722,17 @@ function G.BuildPairRow(row, prof, profileKey)
 	end
 	table.sort(pool, function (a, b) return a.value > b.value end)
 
-	-- the two best in slot, and the two best you can get now
+	-- the two best in slot, and the two best you can get now: the best without raiding first (a dungeon or
+	-- quest ring), then the best of all
 	local finals, now = {}, {}
+	local preRaid
 	for _, c in ipairs(pool) do
 		if #finals < 2 then table.insert(finals, c) end
-		if c.open and #now < 2 then table.insert(now, c) end
+		if c.open and not preRaid and (c.tier or 0) < TIER_RAID then preRaid = c end
+	end
+	if preRaid then table.insert(now, preRaid) end
+	for _, c in ipairs(pool) do
+		if c.open and #now < 2 and c ~= preRaid then table.insert(now, c) end
 	end
 	local isFinal = {}
 	for _, c in ipairs(finals) do isFinal[c] = true end

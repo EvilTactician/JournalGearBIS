@@ -10,6 +10,7 @@
 --   glyphs[profile] = { major = { { item, glyph spell, Inscription skill, stage, level, "talent", "name" } },
 --                       minor = { ... } }, best first
 --   consumables[profile] = { { item, "note" } }
+--   elixirs[item] = 1 battle elixir, 2 guardian elixir, 3 both (a flask): one of each at a time
 --   professionConsumables[profession] = { { item, skill needed to use it, "what it's for" } }
 
 local G = JournalGearBIS
@@ -632,7 +633,7 @@ G.glyphs = {
 G.consumables = {
 	ROGUE_SWORDS = {
 		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
-		{ 20844, "Put it on your off hand." }, -- Deadly Poison V
+		{ 20844, "Put it on your off hand, the faster weapon." }, -- Deadly Poison V
 		{ 13452, "" }, -- Elixir of the Mongoose
 		{ 12451, "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants." }, -- Juju Power
 		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
@@ -641,8 +642,8 @@ G.consumables = {
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	ROGUE_DAGGERS = {
-		{ 20844, "Put it on your main hand." }, -- Deadly Poison V
-		{ 8928, "Put it on your off hand." }, -- Instant Poison VI
+		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
+		{ 20844, "Put it on your off hand, the faster dagger." }, -- Deadly Poison V
 		{ 13452, "" }, -- Elixir of the Mongoose
 		{ 12451, "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants." }, -- Juju Power
 		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
@@ -667,6 +668,17 @@ G.consumables = {
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
 	},
+}
+
+G.elixirs = {
+	[9264] = 1, -- Elixir of Shadow Power
+	[12451] = 1, -- Juju Power
+	[12820] = 1, -- Winterfall Firewater
+	[13452] = 1, -- Elixir of the Mongoose
+	[13454] = 1, -- Greater Arcane Elixir
+	[13511] = 3, -- Flask of Distilled Wisdom
+	[13512] = 3, -- Flask of Supreme Power
+	[20007] = 2, -- Mageblood Elixir
 }
 
 G.professionConsumables = {

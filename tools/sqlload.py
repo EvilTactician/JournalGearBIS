@@ -11,7 +11,7 @@ MOD = os.environ.get("GEARBIS_MOD", "mod-individual-progression/data/sql/world/b
 TABLES = ["item_template", "creature_template", "creature", "creature_loot_template", "reference_loot_template",
           "gameobject_loot_template", "gameobject_template", "gameobject", "quest_template", "npc_vendor",
           "creature_queststarter", "gameobject_queststarter", "item_loot_template", "instance_encounters",
-          "quest_template_addon", "conditions", "trainer_spell", "skill_discovery_template", "game_event_creature"]
+          "quest_template_addon", "conditions", "trainer_spell", "skill_discovery_template", "game_event_creature", "spell_group"]
 # Columns we never need (saves memory on the big tables)
 KEEP = {
     "creature": {"guid", "id1", "map"},

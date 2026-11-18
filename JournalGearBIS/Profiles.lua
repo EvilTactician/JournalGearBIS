@@ -7,13 +7,15 @@
 --            staff, "tank" a one-hander and shield, "hunter" melee stat stick and a bow, gun or crossbow.
 --   mh / oh: weapon subclasses allowed in that hand (4 mace, 7 sword, 13 fist, 15 dagger); none = any.
 --   ranged:  "ranged" bows, guns, crossbows and thrown; "wand"; "relic" (libram, idol or totem).
+--   speed:   per hand, { speed, worth per second away from it, "slow" or "fast" }: a weapon quicker ("fast":
+--            slower) than that loses that much of its value per second, up to a tenth. Not hand-picked items.
 
 local G = JournalGearBIS
 
 G.profiles = {
-	ROGUE_SWORDS = { class = "ROGUE", name = "Swords & maces", role = "Melee damage", weapons = "dw", ranged = "ranged", mh = { [4] = true, [7] = true, [13] = true }, oh = { [4] = true, [7] = true, [13] = true, [15] = true },
+	ROGUE_SWORDS = { class = "ROGUE", name = "Swords & maces", role = "Melee damage", weapons = "dw", ranged = "ranged", mh = { [4] = true, [7] = true, [13] = true }, oh = { [4] = true, [7] = true, [13] = true, [15] = true }, speed = { mh = { 2.6, 0.08, "slow" }, oh = { 1.5, 0.08, "fast" } },
 		weights = { agi = 1.6, ap = 1, arp = 0.3, crit = 1.3, dps = 9, exp = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, odps = 4, rdps = 0.5, sta = 0.1, str = 1, wskill = 0.5 } },
-	ROGUE_DAGGERS = { class = "ROGUE", name = "Daggers", role = "Melee damage", weapons = "dw", ranged = "ranged", mh = { [15] = true }, oh = { [4] = true, [7] = true, [13] = true, [15] = true },
+	ROGUE_DAGGERS = { class = "ROGUE", name = "Daggers", role = "Melee damage", weapons = "dw", ranged = "ranged", mh = { [15] = true }, oh = { [4] = true, [7] = true, [13] = true, [15] = true }, speed = { mh = { 1.8, 0.05, "slow" }, oh = { 1.4, 0.15, "fast" } },
 		weights = { agi = 1.6, ap = 1, arp = 0.3, crit = 1.3, dps = 9, exp = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, odps = 4, rdps = 0.5, sta = 0.1, str = 1, wskill = 0.5 } },
 	WARRIOR_ARMS = { class = "WARRIOR", name = "Arms", role = "Melee damage", weapons = "2h", ranged = "ranged",
 		weights = { agi = 1, ap = 1, arp = 0.3, crit = 1.3, dps = 12, exp = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, rdps = 0.3, sta = 0.1, str = 2, wskill = 0.5 } },

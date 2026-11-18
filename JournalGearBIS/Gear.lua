@@ -94,6 +94,7 @@ function G.SourceText(src)
 	elseif src.kind == "X" then
 		local t = src.who .. (src.rank and (" (" .. src.rank .. ")") or "")
 		if src.where then t = t .. hint(src.where) end
+		if src.bop then t = t .. hint("binds on pickup: you make it yourself") end
 		return t
 	end
 	return ""
@@ -286,6 +287,26 @@ local function build(panel)
 			if c.skill then return professionTooltip(self, c) end
 			J.ShowItemTooltip(self, c.id)
 			if c.note then GameTooltip:AddLine(c.note, 0.5, 0.85, 1, true) end
+			-- elixirs: one battle and one guardian at a time; a flask counts as both
+			local kind = G.elixirs and G.elixirs[c.id]
+			if kind then
+				local clash, flask = {}, false
+				for _, o in ipairs(self.list or {}) do
+					local ok = o ~= c and o.id and G.elixirs[o.id]
+					if ok and G.band(ok, kind) ~= 0 then
+						table.insert(clash, (GetItemInfo(o.id)) or o.name or "?")
+						if ok == 3 then flask = true end
+					end
+				end
+				GameTooltip:AddLine(kind == 3 and "A flask: it counts as both a battle and a guardian elixir."
+					or (kind == 1 and "A battle elixir: one at a time." or "A guardian elixir: one at a time."), 1, 0.82, 0, true)
+				if #clash > 0 then
+					GameTooltip:AddLine("Doesn't stack with " .. table.concat(clash, ", ") .. ".", 1, 0.4, 0.4, true)
+				end
+				if flask and kind ~= 3 then
+					GameTooltip:AddLine("The cheaper choice when you're not using the flask.", 0.8, 0.8, 0.8, true)
+				end
+			end
 			if c.count > 0 then GameTooltip:AddLine("You have " .. c.count .. ".", 0.25, 1, 0.25) end
 			if #c.sources > 0 then
 				GameTooltip:AddLine(" ")
@@ -455,6 +476,7 @@ local function build(panel)
 			GameTooltip:AddLine("This glyph slot opens at level " .. e.unlock .. ".", 1, 0.4, 0.4, true)
 		end
 		if e.hint then GameTooltip:AddLine(e.hint .. ".", 0.8, 0.8, 0.8, true) end
+		if e.swap then GameTooltip:AddLine("Better than your " .. e.swap .. ": swap it out.", 1, 0.82, 0, true) end
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine("Shift-click links it in chat.", 0.5, 0.85, 1, true)
 		GameTooltip:Show()
@@ -695,7 +717,7 @@ local function build(panel)
 		consumables:SetWidth(math.max(1, #list * 22 - 2))
 		for i, c in ipairs(list) do
 			local b = consumableIcon(i)
-			b.entry = c
+			b.entry, b.list = c, list
 			b.icon:SetTexture(c.skill and PROFESSION_ICONS[c.skill] or (GetItemIcon and GetItemIcon(c.id) or J.ItemIcon(c.id)))
 			b:Show()
 		end

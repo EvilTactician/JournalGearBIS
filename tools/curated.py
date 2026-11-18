@@ -134,9 +134,9 @@ ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Juju Power", "A repeatable ques
                      ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
 CONSUMABLES = {
-    "ROGUE_SWORDS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand.")]
+    "ROGUE_SWORDS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand, the faster weapon.")]
     + ROGUE_CONSUMABLES,
-    "ROGUE_DAGGERS": [("Deadly Poison V", "Put it on your main hand."), ("Instant Poison VI", "Put it on your off hand.")]
+    "ROGUE_DAGGERS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand, the faster dagger.")]
     + ROGUE_CONSUMABLES,
     "PRIEST_HEAL": ["Flask of Distilled Wisdom", ("Brilliant Mana Oil", "Put it on your weapon."), "Mageblood Elixir",
                     "Nightfin Soup", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],

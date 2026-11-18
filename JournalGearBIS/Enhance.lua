@@ -252,15 +252,33 @@ function G.GlyphsFor()
 				end
 			end
 		end
-		-- The ones you have take the sockets you've opened, whichever socket they're in; the rest fill the
-		-- others, then the sockets still to open.
-		table.sort(slots, function (a, b)
-			if (a.equipped and 1 or 0) ~= (b.equipped and 1 or 0) then return a.equipped and true or false end
-			return a.order < b.order
-		end)
+		-- Best first, whichever socket you have them in. One you have counts as Equipped wherever it sits; one you
+		-- don't is Missing while you have a socket for it (swap out a weaker one), else locked until the next opens.
+		local count = open and open[kind] or 0
+		if not open then
+			for _, lvl in ipairs(G.GLYPH_LEVELS[kind]) do if P.realLevel >= lvl then count = count + 1 end end
+		end
+		local missing = 0
 		for i, s in ipairs(slots) do
 			s.unlock = G.GLYPH_LEVELS[kind][i]
-			if open then s.locked = i > open[kind] else s.locked = P.realLevel < s.unlock end
+			s.locked = false
+			if not s.equipped then
+				missing = missing + 1
+				s.locked = i > count
+			end
+		end
+		-- a weaker one you have, to swap for a missing one (each weaker one once)
+		local taken = {}
+		for _, s in ipairs(slots) do
+			if not s.equipped and not s.locked then
+				for k = #slots, 1, -1 do
+					local w = slots[k]
+					if w.equipped and not taken[k] and w.order > s.order and k > count then
+						s.swap, taken[k] = w.glyph.name, true
+						break
+					end
+				end
+			end
 		end
 		out[kind] = slots
 	end
