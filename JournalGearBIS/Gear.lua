@@ -440,7 +440,19 @@ local function build(panel)
 			if c.count > 0 then GameTooltip:AddLine("You have " .. c.count .. ".", 0.25, 1, 0.25) end
 			if #c.sources > 0 then
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
+				-- the two best in slot for the main hand: which wins, and against what
+			local cmp = e.handsCompare
+			if cmp then
+				if e.item.inv == 17 then
+					GameTooltip:AddLine((cmp.twoWins and "Better than " or "Not quite as good as ") .. cmp.one
+						.. (cmp.off and (" with " .. cmp.off) or " with the best off-hand") .. ".", 1, 0.82, 0, true)
+				else
+					GameTooltip:AddLine("With " .. (cmp.off or "the best off-hand") .. ", "
+						.. (cmp.twoWins and "not quite as good as the two-hander" or "better than the two-hander")
+						.. ". Until you have that, this and an off-hand are the way.", 1, 0.82, 0, true)
+				end
+			end
+			GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
 				-- the ways open to you now; the locked ones only when there are none
 				local anyOpen = c.sources[1].open
 				local shown = 0
@@ -998,7 +1010,10 @@ local function build(panel)
 					-- the main hand mixes one- and two-handers: which this one is
 					local hands = ""
 					if r.mixedHands then
-						hands = e.item.inv == 17 and "  |cff9d9d9d(two-hand)|r" or "  |cff9d9d9d(one-hand, with an off-hand)|r"
+						local cmp = e.handsCompare
+						local wins = cmp and ((e.item.inv == 17) == cmp.twoWins)
+						hands = (e.item.inv == 17 and "two-hand" or "one-hand, with an off-hand") .. (wins and ": the better choice" or "")
+						hands = "  |cff9d9d9d(" .. hands .. ")|r"
 					end
 					st.name:SetText(itemName(e.item) .. hands)
 					st.name:SetWidth(width - 230)

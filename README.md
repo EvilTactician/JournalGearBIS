@@ -1,7 +1,7 @@
-# Journal: Gear 0.2.5
+# Journal: Gear 0.2.6
 
 > [!WARNING]
-> **Early alpha (version 0.2.5-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.2.6-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest** and **Druid** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.2.5-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.2.6-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -139,7 +139,9 @@ only has two-handers, which is why there's no off-hand row then, and the ranged 
 **Relic** or **Wand** for the classes that use those. When a caster's main hand mixes the two, each step
 says whether it's a two-hander or a one-hander that goes with an off-hand, the off-hand row says it's
 "With a one-hander only", and a two-hander as best in slot (Atiesh) comes with the best one-hander too, so
-the off-hand row keeps going until you have the staff.
+the off-hand row keeps going until you have the staff. The better of the two in the end (the two-hander, or
+the one-hander with the best off-hand) says so. The list follows what you wear: with a one-hander on, the
+off-hand row stays even when the only upgrade left is a two-hander; with the two-hander on, it goes.
 
 **Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
 damage past 54.8 per second into feral attack power (14 for each point above it). Only two-handers get
@@ -206,7 +208,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.1.14 to 0.1.19-alpha | Rogue and Priest lists re-checked against current Classic guides and the realm. |
 | 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
-| 0.2.1 to **0.2.5-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
+| 0.2.1 to **0.2.6-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
 | 0.3.0-alpha | Druid finished. |
 | 0.4.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |

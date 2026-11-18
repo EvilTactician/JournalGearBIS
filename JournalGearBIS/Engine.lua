@@ -1040,6 +1040,19 @@ function G.Build(choice, stage)
 				alt.equipped = false
 				alt.inBags = P.bags[alt.item.id] ~= nil
 				table.insert(mh.steps, #mh.steps, alt)
+				-- which wins in the end: the two-hander, or the one-hander with the best off-hand
+				-- the best off-hand: the row's best in slot, or what you wear when nothing beats it
+				local ohName, ohValue = nil, 0
+				if ohRow and ohRow.final then
+					ohName, ohValue = ohRow.final.item.name, ohRow.final.value
+				elseif ohRow and ohRow.owned.strong then
+					local w = ohRow.owned.strong.worn
+					ohName, ohValue = w and w.link and GetItemInfo(w.link) or nil, ohRow.owned.value
+				end
+				local pairValue = alt.value - (ohRef or 0) + ohValue
+				local cmp = { one = alt.item.name, off = ohName,
+					twoWins = mh.final.value >= pairValue }
+				mh.final.handsCompare, alt.handsCompare = cmp, cmp
 			end
 		end
 		-- Mixed: each step says which it is, and the off-hand row says it's only for the one-handers.
@@ -1056,6 +1069,8 @@ function G.Build(choice, stage)
 			if c.item.inv ~= 17 then twoHand = false end
 		end
 		if mh and #mh.steps == 0 then twoHand = not P.preview and P.worn[16] and P.worn[16].twoHand end
+		-- you wear a one-hander now: its off-hand still counts until you have the two-hander
+		if twoHand and not P.preview and P.worn[16] and not P.worn[16].twoHand then twoHand = false end
 		if twoHand then
 			for i, r in ipairs(rows) do
 				if r.row.key == "OH" then
