@@ -302,12 +302,13 @@ local function scanOwned()
 	local opened = {}
 	local i = 1
 	while i <= (GetNumSkillLines and GetNumSkillLines() or 0) do
-		local name, header, expanded, rank = GetSkillLineInfo(i)
+		local name, header, expanded, rank, _, modifier = GetSkillLineInfo(i)
 		if header and not expanded and ExpandSkillHeader then
 			opened[name] = true
 			ExpandSkillHeader(i)
 		elseif not header and byName[name] then
-			P.skills[byName[name]] = rank or 0
+			-- with bonuses from gear and enchants (Finkle's Skinner takes Skinning past 300)
+			P.skills[byName[name]] = (rank or 0) + (modifier or 0)
 		end
 		i = i + 1
 	end

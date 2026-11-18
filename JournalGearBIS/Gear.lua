@@ -82,9 +82,6 @@ function G.SourceText(src)
 		elseif (src.givers or 1) == 0 and not g then
 			t = t .. hint("starts from an item")
 		end
-		if src.prof then
-			t = t .. hint("needs " .. (G.PROFESSIONS[src.prof] or "a profession") .. " " .. (src.profRank or 0))
-		end
 		if g and G.IsRaid(g) then return t .. hint("needs an item from " .. place(g, "|cff9d9d9d")) end
 		if g then return t .. hint(place(g, "|cff9d9d9d")) end
 		return t
@@ -363,7 +360,7 @@ local function build(panel)
 		if result == "exists" then
 			DEFAULT_CHAT_FRAME:AddMessage(tag .. b.name .. " is already in DragonUI's talent builds.")
 		elseif result then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "saved " .. b.name .. " to DragonUI's talent builds.")
+			DEFAULT_CHAT_FRAME:AddMessage(tag .. "Saved " .. b.name .. " to DragonUI's talent builds.")
 		else
 			DEFAULT_CHAT_FRAME:AddMessage(tag .. "DragonUI didn't save the build" .. (err and (": " .. err) or "") .. ".")
 		end
@@ -778,13 +775,16 @@ local function build(panel)
 		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
-	-- A row's name for this list: "Two-hand" when the list only has two-handers or you wear one (that's why
-	-- there's no off-hand row), and "Relic" or "Wand" for the ranged slot of classes that use those.
-	function rowName(row, prof)
+	-- A row's name for this list: "Two-hand" when the list only has two-handers (that's why there's no off-hand
+	-- row), and "Relic" or "Wand" for the ranged slot of classes that use those.
+	function rowName(row, prof, steps)
 		if row.key == "MH" then
-			local link = GetInventoryItemLink("player", 16)
-			local equipLoc = link and select(9, GetItemInfo(link))
-			if prof.weapons == "2h" or equipLoc == "INVTYPE_2HWEAPON" then return "Two-hand" end
+			-- Two-hand only when every step is one: then the off-hand row is hidden too
+			local all2h = steps and #steps > 0
+			for _, e in ipairs(steps or {}) do
+				if e.item.inv ~= 17 then all2h = false end
+			end
+			if prof.weapons == "2h" or all2h then return "Two-hand" end
 		elseif row.key == "RANGED" then
 			if prof.ranged == "relic" then return "Relic" end
 			if prof.ranged == "wand" then return "Wand" end
@@ -931,7 +931,7 @@ local function build(panel)
 				h:ClearAllPoints()
 				h:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 				h:SetWidth(width)
-				h.slot:SetText(rowName(r.row, v.profile))
+				h.slot:SetText(rowName(r.row, v.profile, r.steps))
 				local have = r.owned.weak or r.owned.strong
 				h.link = have and have.worn.link
 				if have then

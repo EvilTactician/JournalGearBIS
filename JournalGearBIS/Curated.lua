@@ -347,5 +347,6 @@ G.curated = {
 
 -- A line for a hand-picked item's tooltip: optional extras and odd ways to get them.
 G.curatedNotes = {
+	[12757] = "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast itself drops. The hide comes about 1 skin in 50.", -- Breastplate of Bloodthirst
 	[9449] = "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit of damage; you'd need several.", -- Manual Crowd Pummeler
 }

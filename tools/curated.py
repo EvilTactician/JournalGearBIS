@@ -201,6 +201,8 @@ GLYPHS = {
 
 # A line under a hand-picked item's tooltip, for the ones worth a word: optional extras and odd ways to get them.
 CURATED_NOTES = {
+    "Breastplate of Bloodthirst": "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast "
+                                  "itself drops. The hide comes about 1 skin in 50.",
     "Manual Crowd Pummeler": "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit "
                              "of damage; you'd need several.",
 }

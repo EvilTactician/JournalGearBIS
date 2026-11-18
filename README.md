@@ -1,7 +1,7 @@
-# Journal: Gear 0.2.3
+# Journal: Gear 0.2.4
 
 > [!WARNING]
-> **Early alpha (version 0.2.3-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.2.4-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest** and **Druid** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.2.3-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.2.4-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -135,7 +135,7 @@ default, since only tanks take it. The list you picked stays picked until you pi
 
 **Weapons that suit the role:** a melee or tank list never offers a caster's weapon (intellect and spell
 power with no fighting stats), however much damage it does. The weapon row says **Two-hand** when the list
-only has two-handers or you wear one, which is why there's no off-hand row then, and the ranged row says
+only has two-handers, which is why there's no off-hand row then, and the ranged row says
 **Relic** or **Wand** for the classes that use those.
 
 **Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
@@ -180,7 +180,8 @@ different stage for a raid on your realm, the tab uses the realm's.
   anything only a world event brings (the Darkmoon Faire's vendors, the Scourge Invasion's bosses).
 - **Odd ways to get things** count too: bosses the realm summons rather than spawns (Gyth, and the six that
   take turns in Blackrock Depths' Ring of Law, each counted as a sixth of a chance), quests that need
-  something skinned (Breastplate of Bloodthirst, which only shows for skinners), and, for hand-picked items
+  something skinned (Breastplate of Bloodthirst, which only shows for skinners, counting skill from gear
+  like Finkle's Skinner), and, for hand-picked items
   with no other way to get them, random world drops (Idol of the Moon), marked Easy, Medium or Hard by how
   many kills they take.
 - **Item stats**, including the *Equip:* lines (attack power, crit, hit, spell power and the rest), come
@@ -198,7 +199,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.1.14 to 0.1.19-alpha | Rogue and Priest lists re-checked against current Classic guides and the realm. |
 | 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
-| 0.2.1 to **0.2.3-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
+| 0.2.1 to **0.2.4-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
 | 0.3.0-alpha | Druid finished. |
 | 0.4.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
