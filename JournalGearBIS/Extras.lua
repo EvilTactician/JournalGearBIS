@@ -10,6 +10,7 @@
 --   glyphs[profile] = { major = { { item, glyph spell, Inscription skill, stage, level, "talent", "name" } },
 --                       minor = { ... } }, best first
 --   consumables[profile] = { { item, "note" } }
+--   elixirs[item] = 1 battle elixir, 2 guardian elixir, 3 both (a flask): one of each at a time
 --   professionConsumables[profession] = { { item, skill needed to use it, "what it's for" } }
 
 local G = JournalGearBIS
@@ -631,42 +632,48 @@ G.glyphs = {
 
 G.consumables = {
 	ROGUE_SWORDS = {
-		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
-		{ 20844, "Put it on your off hand." }, -- Deadly Poison V
 		{ 13452, "" }, -- Elixir of the Mongoose
-		{ 12451, "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants." }, -- Juju Power
 		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
+		{ 20844, "Put it on your off hand, the faster weapon." }, -- Deadly Poison V
 		{ 13928, "" }, -- Grilled Squid
 		{ 7676, "" }, -- Thistle Tea
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	ROGUE_DAGGERS = {
-		{ 20844, "Put it on your main hand." }, -- Deadly Poison V
-		{ 8928, "Put it on your off hand." }, -- Instant Poison VI
 		{ 13452, "" }, -- Elixir of the Mongoose
-		{ 12451, "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants." }, -- Juju Power
 		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
+		{ 20844, "Put it on your off hand, the faster dagger." }, -- Deadly Poison V
 		{ 13928, "" }, -- Grilled Squid
 		{ 7676, "" }, -- Thistle Tea
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	PRIEST_HEAL = {
 		{ 13511, "" }, -- Flask of Distilled Wisdom
-		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
 		{ 20007, "" }, -- Mageblood Elixir
+		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
 		{ 13931, "" }, -- Nightfin Soup
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
 	},
 	PRIEST_SHADOW = {
 		{ 13512, "" }, -- Flask of Supreme Power
-		{ 13454, "" }, -- Greater Arcane Elixir
 		{ 9264, "" }, -- Elixir of Shadow Power
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
 	},
+}
+
+G.elixirs = {
+	[9264] = 1, -- Elixir of Shadow Power
+	[12820] = 1, -- Winterfall Firewater
+	[13452] = 1, -- Elixir of the Mongoose
+	[13511] = 3, -- Flask of Distilled Wisdom
+	[13512] = 3, -- Flask of Supreme Power
+	[20007] = 2, -- Mageblood Elixir
 }
 
 G.professionConsumables = {
@@ -706,14 +713,12 @@ G.extraItems = {
 	[11647] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11648] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11649] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
-	[12451] = { "Juju Power", 1, 0, { { "Q", 4802, "Winterfall E'ko", 0, 0, 0, 60, 55, { 969, "Luck Be With You", 1, 0, 3 }, { 969, "Luck Be With You", 1, 0, 3 }, 0 } } },
 	[12645] = { "Thorium Shield Spike", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 275, 0, "from a recipe", 0 } } },
 	[12662] = { "Demonic Rune", 2, 0, { { "D", 229, 0.1, "Burning Felguard" }, { "D", 309, 0.163, "Mad Servant" }, { "D", 429, 0.52, "Wildspawn Trickster, Wildspawn Rogue, Wildspawn Shadowstalker and others" }, { "D", 329, 0.08, "Balnazzar" } } },
 	[12820] = { "Winterfall Firewater", 1, 45, {  } },
 	[13444] = { "Major Mana Potion", 1, 49, { { "D", 229, 1, "Quartermaster Zigris, Chromatic Dragonspawn, Spirestone Warlord and others" }, { "D", 309, 0.172, "Hakkari Witch Doctor, Gurubashi Headhunter, Hakkari Blood Priest and others" }, { "D", 289, 0.197, "Unstable Corpse, Reanimated Corpse, Scholomance Student and others" }, { "D", 329, 0.263, "Malor the Zealous, Crimson Monk, Stonespine and others" }, { "D", 409, 0.029, "Flamewaker Protector, Flamewaker Priest, Flamewaker" }, { "D", 429, 0.22, "Tsu'zee, Gordok Brute, Gordok Mage-Lord and others" }, { "D", 469, 0.123, "Death Talon Wyrmguard, Blackwing Technician, Death Talon Captain and others" }, { "D", 2291, 0.02, "Goraluk Anvilcrack, Jed Runewatcher" }, { "D", 249, 0.012, "Onyxian Warder" }, { "Q", 8278, "Noggle's Last Hope", 0, 4, 0, 57, 54, { 8277, "Deadly Desert Venom", 1, 0, 2 }, { 8277, "Deadly Desert Venom", 1, 0, 2 }, 0 }, { "Q", 8470, "Deadwood Ritual Totem", 0, 0, 0, 55, 45, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 8471, "Winterfall Ritual Totem", 0, 0, 0, 56, 50, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 9419, "Scouring the Desert", 0, 5, 1101, 60, 1, { 9415, "Report to Marshal Bluewall", 1, 0, 2 }, { 9419, "Scouring the Desert", 1, 0, 1 }, 0 }, { "Q", 9422, "Scouring the Desert", 0, 5, 0, 60, 55, { 9422, "Scouring the Desert", 1, 0, 1 }, { 9416, "Report to General Kirika", 1, 0, 2 }, 0 }, { "X", "Crafted: Alchemy", 171, 295, 0, "recipe drops in Scholomance", 289 } } },
 	[13446] = { "Major Healing Potion", 1, 45, { { "D", 229, 1, "Quartermaster Zigris, Chromatic Dragonspawn, Spirestone Warlord and others" }, { "D", 309, 0.32, "Hakkari Witch Doctor, Gurubashi Headhunter, Hakkari Blood Priest and others" }, { "D", 230, 0.426, "Ograbisi, Jaz, Shill Dinger and others" }, { "D", 289, 0.36, "Unstable Corpse, Reanimated Corpse, Scholomance Student and others" }, { "D", 329, 0.467, "Crimson Monk, Stonespine, Hearthsinger Forresten and others" }, { "D", 409, 0.059, "Flamewaker Protector, Flamewaker Priest, Flamewaker" }, { "D", 429, 0.434, "Tsu'zee, Gordok Brute, Gordok Mage-Lord and others" }, { "D", 469, 0.224, "Death Talon Wyrmguard, Blackwing Technician, Death Talon Captain and others" }, { "D", 2291, 0.04, "Goraluk Anvilcrack, Jed Runewatcher" }, { "D", 249, 0.017, "Onyxian Warder" }, { "Q", 8278, "Noggle's Last Hope", 0, 4, 0, 57, 54, { 8277, "Deadly Desert Venom", 1, 0, 2 }, { 8277, "Deadly Desert Venom", 1, 0, 2 }, 0 }, { "Q", 8470, "Deadwood Ritual Totem", 0, 0, 0, 55, 45, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 8471, "Winterfall Ritual Totem", 0, 0, 0, 56, 50, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 9052, "Bloodpetal Poison", 0, 0, 0, 52, 50, { 9063, "Torwa Pathfinder", 9, 1, 2 }, { 9063, "Torwa Pathfinder", 9, 1, 2 }, 1024 }, { "Q", 9419, "Scouring the Desert", 0, 5, 1101, 60, 1, { 9415, "Report to Marshal Bluewall", 1, 0, 2 }, { 9419, "Scouring the Desert", 1, 0, 1 }, 0 }, { "Q", 9422, "Scouring the Desert", 0, 5, 0, 60, 55, { 9422, "Scouring the Desert", 1, 0, 1 }, { 9416, "Report to General Kirika", 1, 0, 2 }, 0 }, { "X", "Crafted: Alchemy", 171, 275, 0, "recipe sold by Evie Whirlbrew", 0 } } },
 	[13452] = { "Elixir of the Mongoose", 1, 46, { { "Q", 8282, "Noggle's Lost Satchel", 0, 4, 0, 58, 54, { 8277, "Deadly Desert Venom", 1, 0, 3 }, { 8277, "Deadly Desert Venom", 1, 0, 3 }, 0 }, { "X", "Crafted: Alchemy", 171, 280, 0, "from a recipe", 0 } } },
-	[13454] = { "Greater Arcane Elixir", 1, 47, { { "X", "Crafted: Alchemy", 171, 285, 0, "from a recipe", 0 } } },
 	[13511] = { "Flask of Distilled Wisdom", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "from a recipe", 0 } } },
 	[13512] = { "Flask of Supreme Power", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "recipe sold by Alurmi (Exalted)", 0 } } },
 	[13928] = { "Grilled Squid", 1, 35, { { "X", "Crafted: Cooking", 185, 240, 0, "recipe sold by Gikkix", 0 } } },

@@ -368,8 +368,8 @@ local function readSource(s)
 		local g = G.instances[src.inst]
 		if not g then return nil end
 		src.stage = G.InstanceStage(src.inst)
-		src.raid = g.raid
-		src.tier = g.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
+		src.raid = G.IsRaid(g)
+		src.tier = src.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
 	elseif kind == "Q" then
 		src.quest, src.who, src.inst, src.stage, src.races, src.qlevel = s[2], s[3], s[4] ~= 0 and s[4] or nil, s[5], s[6], s[7]
 		-- the chain as your faction starts it: { first quest, title, quest givers, all trainers, quests in it }
@@ -383,7 +383,7 @@ local function readSource(s)
 		if src.inst then
 			local g = G.instances[src.inst]
 			src.stage = math.max(src.stage, G.InstanceStage(src.inst))
-			src.raid = g and g.raid
+			src.raid = g and G.IsRaid(g)
 			src.tier = src.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
 		else
 			src.tier = TIER_EASY
@@ -392,9 +392,12 @@ local function readSource(s)
 		src.who, src.price, src.rep, src.rank, src.stage = s[2], s[3], s[4], s[5], s[6]
 		src.tier = TIER_EASY
 	elseif kind == "X" then
-		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", its instance }
-		src.who, src.skill, src.rank, src.stage, src.where, src.tier = s[2], s[3], s[4], s[5] or 0, s[6], TIER_EASY
+		-- crafted: { "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", its instance,
+		-- 1 when it binds on pickup (only a crafter with the skill can have it) }
+		src.who, src.skill, src.rank, src.stage, src.tier = s[2], s[3], s[4], s[5] or 0, TIER_EASY
+		src.where = s[6] ~= "" and s[6] or nil
 		src.recipeInst = s[7] ~= 0 and s[7] or nil
+		src.bop = s[8] == 1
 	else
 		return nil
 	end
@@ -403,6 +406,18 @@ local function readSource(s)
 	src.ok = src.open and (src.need or 0) <= P.level
 	return src
 end
+
+-- How far up the way to gear a candidate is: 0 without raiding (quests, dungeons, crafts, vendors), 1 a small
+-- raid, the usual last stop before the big raids, 2 a big raid. The small raids are named, not found by group
+-- size: in Classic only Upper Blackrock Spire. The Burning Crusade and Wrath lists choose their own (Karazhan
+-- comes before the big raids; in Wrath every raid has a 10-player size, so none counts as a stop on the way).
+G.SMALL_RAIDS = { [2291] = true }
+local function rung(c)
+	if (c.tier or 0) < TIER_RAID then return 0 end
+	if c.src and c.src.inst and G.SMALL_RAIDS[c.src.inst] then return 1 end
+	return 2
+end
+G.Rung = rung
 
 -- How hard a source is: 1 easy, 2 medium, 3 hard.
 function G.Difficulty(src)
@@ -450,25 +465,52 @@ local function curatedFor(profileKey)
 end
 
 -- A candidate: { item, value, sources, src (the one shown), tier, open, lock }
+-- How much of a weapon's value its speed keeps in a hand, by the profile's preference: { speed, per second,
+-- "slow" or "fast" }; at most a tenth off.
+local function speedFactor(pref, speed)
+	if not pref or not speed or speed <= 0 then return 1 end
+	local off = pref[3] == "slow" and (pref[1] - speed) or (speed - pref[1])
+	if off <= 0 then return 1 end
+	return 1 - math.min(0.1, off * pref[2])
+end
+
 local function candidate(t, prof, rowKey, curated)
 	if t.prof and (P.skills[t.prof] or 0) < (t.profRank or 0) then return nil end
 	local srcs = sourcesOf(t)
+	-- Bind on Pickup crafts: only for a crafter of that profession (locked until the skill's there)
+	local craftLock
+	for i = #srcs, 1, -1 do
+		local s = srcs[i]
+		if s.bop and s.skill then
+			local have = P.skills[s.skill]
+			if not have then
+				table.remove(srcs, i)
+			elseif have < (s.rank or 0) then
+				craftLock = "Needs " .. (G.PROFESSIONS[s.skill] or "the profession") .. " " .. s.rank
+			end
+		end
+	end
 	if #srcs == 0 then return nil end
 	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey))
 	local pick = curated[t.id]
 	if pick then
 		if type(pick) == "number" then value = math.max(value, pick) end
 		value = value * CURATED_BONUS
+	elseif prof.speed and (rowKey == "MH" or rowKey == "OH") then
+		-- the right speed for the hand (hand-picked items already are)
+		value = value * speedFactor(prof.speed[rowKey == "MH" and "mh" or "oh"], t.stats.speed)
 	end
 	if value <= 0 then return nil end
 	local src = srcs[1]
 	local c = { item = t, value = value, sources = srcs, src = src, tier = src.tier, curated = pick and true or false }
 	local need = math.max(t.req, src.need or 0)
 	c.stage, c.need = src.stage, need
-	c.open = src.open and need <= P.level
+	c.open = src.open and need <= P.level and not craftLock
 	-- Soon: open at your stage, but you're not the level for it yet
 	c.soon = src.open and need > P.realLevel
-	if need > P.level and src.open then
+	if craftLock then
+		c.lock = craftLock
+	elseif need > P.level and src.open then
 		c.lock = "Requires level " .. need
 	elseif not src.open then
 		local g = src.inst and G.instances[src.inst]
@@ -640,9 +682,17 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 
 	-- Shown: what to get now (the easy way in and the best you can get), then what opens next (one: you
 	-- can't get it yet anyway), then the best in slot; three at most.
+	-- The second is the best you can get, unless the first is from a dungeon and a small raid has a step: then
+	-- that one, so the way up goes dungeon, small raid, big raid (each disappears once you have it).
+	local second = steps[#steps]
+	if #steps >= 2 and rung(steps[1]) == 0 then
+		for i = 2, #steps do
+			if rung(steps[i]) == 1 then second = steps[i]; break end
+		end
+	end
 	local shown = {}
 	if #steps >= 1 then table.insert(shown, steps[1]) end
-	if #steps >= 2 then table.insert(shown, steps[#steps]) end
+	if #steps >= 2 then table.insert(shown, second) end
 	for _, c in ipairs(chain) do
 		if #shown < SHOWN - 1 and c ~= final then table.insert(shown, c) end
 		break
@@ -692,11 +742,24 @@ function G.BuildPairRow(row, prof, profileKey)
 	end
 	table.sort(pool, function (a, b) return a.value > b.value end)
 
-	-- the two best in slot, and the two best you can get now
+	-- the two best in slot, and the two best you can get now, one step up the way at a time: the best without
+	-- raiding first (a dungeon or quest ring), then a better one from a small raid, else the best of all. With
+	-- nothing left without raiding, the small raid's comes first and the best of all second.
 	local finals, now = {}, {}
+	local best = {}
 	for _, c in ipairs(pool) do
 		if #finals < 2 then table.insert(finals, c) end
-		if c.open and #now < 2 then table.insert(now, c) end
+		local k = c.open and rung(c)
+		if k and not best[k] then best[k] = c end
+	end
+	local first = best[0] or best[1]
+	if first then
+		table.insert(now, first)
+		local up = best[1]
+		if first == best[0] and up and up.value > first.value then table.insert(now, up) end
+	end
+	for _, c in ipairs(pool) do
+		if c.open and #now < 2 and c ~= first then table.insert(now, c) end
 	end
 	local isFinal = {}
 	for _, c in ipairs(finals) do isFinal[c] = true end
@@ -748,8 +811,9 @@ function G.BuildPairRow(row, prof, profileKey)
 	}
 end
 
--- Where to go next: the dungeons with the most for you, and the best raid (Upper Blackrock Spire is one; the
--- Journal has Lower Blackrock Spire as a dungeon, though the two share a map). Each upgrade counts by how
+-- Where to go next: the dungeons with the most for you, and the raids (Upper Blackrock Spire is a small one,
+-- shown before the big ones while it has upgrades; the Journal has Lower Blackrock Spire as a dungeon, though
+-- the two share a map). Each upgrade counts by how
 -- likely it is to drop and how big it is, against what you wear (an empty slot against the best you can get
 -- now, so a weak item isn't a full upgrade). Items your list shows count fully, hand-picked ones a bit
 -- more, other upgrades a quarter; a place with lots of likely upgrades can still come first.

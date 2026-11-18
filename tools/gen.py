@@ -185,8 +185,10 @@ for prof, lst in CURATED.items():
     pcls = CLASS_BIT[PROFILES[prof]["cls"]]
     for e in lst:
         name, value = (e, None) if isinstance(e, str) else e
-        for i in byname.get(name, []):
+        # an item id names one item where several share a name (Mark of the Champion: melee and caster)
+        for i in ([name] if isinstance(name, int) else byname.get(name, [])):
             it = items[i]
+            name = it["name"]
             if it["ItemLevel"] > 92 or not (usable_mask(it) & pcls):
                 continue
             if not sources.get(i) and name not in CRAFTED:
@@ -249,6 +251,10 @@ def ltable(d):
                             for k, v in sorted(d.items())) + " }"
 
 
+from crafts import Crafts as _Crafts
+early_crafts = _Crafts(BUILD, lambda t: db[t].rows, items, SPELLS)
+
+
 def src_lua(i, crafted=True):
     out = []
     per_inst = collections.defaultdict(list)
@@ -274,7 +280,12 @@ def src_lua(i, crafted=True):
             name = s["n"] + (" <%s>" % s["sub"] if s["sub"] else "")
             out.append("{ \"V\", %s, %d, %d, %d, %d }" % (lstr(name), s["price"] or 0, s["rep"] or 0, s["rank"] or 0, s["st"]))
     if items[i]["name"] in CRAFTED:
-        out.append("{ \"X\", %s }" % lstr(CRAFTED[items[i]["name"]]))
+        way = next(iter(early_crafts.made_by(i)), None)
+        if way and items[i].get("bonding") == 1:
+            # Bind on Pickup: only a crafter with the skill can have it
+            out.append("{ \"X\", %s, %d, %d, 0, \"\", 0, 1 }" % (lstr(CRAFTED[items[i]["name"]]), way[0], way[1]))
+        else:
+            out.append("{ \"X\", %s }" % lstr(CRAFTED[items[i]["name"]]))
     elif crafted:
         for s in sources.get(i, []):
             if s["k"] == "X":
@@ -346,6 +357,8 @@ P.append("--   weapons: \"dw\" two one-handers, \"2h\" a two-hander, \"caster\" 
 P.append("--            staff, \"tank\" a one-hander and shield, \"hunter\" melee stat stick and a bow, gun or crossbow.")
 P.append("--   mh / oh: weapon subclasses allowed in that hand (4 mace, 7 sword, 13 fist, 15 dagger); none = any.")
 P.append("--   ranged:  \"ranged\" bows, guns, crossbows and thrown; \"wand\"; \"relic\" (libram, idol or totem).")
+P.append("--   speed:   per hand, { speed, worth per second away from it, \"slow\" or \"fast\" }: a weapon quicker (\"fast\":")
+P.append("--            slower) than that loses that much of its value per second, up to a tenth. Not hand-picked items.")
 P.append("")
 P.append("local G = JournalGearBIS")
 P.append("")
@@ -355,6 +368,8 @@ for k, p in PROFILES.items():
     for hand in ("mh", "oh"):
         if p.get(hand):
             extra += ", %s = { %s }" % (hand, ", ".join("[%d] = true" % x for x in sorted(p[hand])))
+    if p.get("speed"):
+        extra += ", speed = { %s }" % ", ".join("%s = { %s, %s, %s }" % (h, v[0], v[1], lstr(v[2])) for h, v in sorted(p["speed"].items()))
     P.append("\t%s = { class = %s, name = %s, role = %s, weapons = %s, ranged = %s%s," % (
         k, lstr(p["cls"]), lstr(p["name"]), lstr(p["role"]), lstr(p["weapons"]), lstr(p["ranged"]), extra))
     P.append("\t\tweights = %s }," % ltable(p["w"]))
@@ -389,7 +404,7 @@ print("done", file=sys.stderr)
 # ---------------------------------------------------------------- Extras.lua: enchants, glyphs, consumables
 from crafts import Crafts, CLASSIC_CAP
 from curated import GLYPHS, CONSUMABLES, ENCHANT_PROCS, PROFESSION_CONSUMABLES
-crafts = Crafts(BUILD, lambda t: db[t].rows, items, SPELLS)
+crafts = early_crafts
 ENCH, ench_str, _ = dbc_load(os.path.join(BUILD, "dbc", "SpellItemEnchantment.dbc"))
 GLYPH_PROPS = dbc_load(os.path.join(BUILD, "dbc", "GlyphProperties.dbc"))[0]
 EXTRA = set(SRC.get("extra", []))
@@ -518,6 +533,7 @@ X.append("--   enchantNames[enchant] = \"what it gives\"")
 X.append("--   glyphs[profile] = { major = { { item, glyph spell, Inscription skill, stage, level, \"talent\", \"name\" } },")
 X.append("--                       minor = { ... } }, best first")
 X.append("--   consumables[profile] = { { item, \"note\" } }")
+X.append("--   elixirs[item] = 1 battle elixir, 2 guardian elixir, 3 both (a flask): one of each at a time")
 X.append("--   professionConsumables[profession] = { { item, skill needed to use it, \"what it's for\" } }")
 X.append("")
 X.append("local G = JournalGearBIS")
@@ -581,11 +597,16 @@ for prof, kinds in GLYPHS.items():
     X.append("\t},")
 X.append("}")
 
-# consumables
+# consumables: flasks and elixirs first (still best first among them), then the rest in the list's order
+_groups = collections.defaultdict(int)
+for r in db["spell_group"].rows:
+    if r["id"] in (1, 2):
+        _groups[r["spell_id"]] |= r["id"]
 X.append("")
 X.append("G.consumables = {")
 for prof, lst in CONSUMABLES.items():
     X.append("\t%s = {" % prof)
+    rows = []
     for entry in lst:
         name, note = (entry, "") if isinstance(entry, str) else entry
         ids = [i for i in byname.get(name, []) if i in EXTRA]
@@ -593,11 +614,21 @@ for prof, lst in CONSUMABLES.items():
             print("consumable not found:", name, file=sys.stderr)
             continue
         extra_items.add(ids[0])
-        X.append("\t\t{ %d, %s }, -- %s" % (ids[0], lstr(note), name))
+        rows.append((0 if _groups.get(items[ids[0]].get("spellid_1") or 0) else 1, ids[0], note, name))
+    for _, i, note, name in sorted(rows, key=lambda r: r[0]):
+        X.append("\t\t{ %d, %s }, -- %s" % (i, lstr(note), name))
     X.append("\t},")
 X.append("}")
 
 
+X.append("")
+X.append("G.elixirs = {")
+_cons = {e if isinstance(e, str) else e[0] for lst in CONSUMABLES.values() for e in lst}
+for i in sorted(extra_items):
+    g = _groups.get(items[i].get("spellid_1") or 0)
+    if g and items[i]["name"] in _cons:
+        X.append("\t[%d] = %d, -- %s" % (i, g, items[i]["name"]))
+X.append("}")
 X.append("")
 X.append("G.professionConsumables = {")
 for prof, lst in PROFESSION_CONSUMABLES.items():
