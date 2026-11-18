@@ -1018,8 +1018,39 @@ function G.Build(choice, stage)
 	end
 	-- A caster or hunter with a two-hander as the main hand's goal has no use for the off-hand row.
 	if prof.weapons == "caster" or prof.weapons == "hunter" then
-		local mh
-		for _, r in ipairs(rows) do if r.row.key == "MH" then mh = r end end
+		local mh, ohRow
+		for _, r in ipairs(rows) do
+			if r.row.key == "MH" then mh = r end
+			if r.row.key == "OH" then ohRow = r end
+		end
+		-- With a two-hander as the goal, the best one-hander is a goal too (the two-hander may be a long way
+		-- off: Atiesh), so the off-hand row stays for it.
+		if mh and mh.final and mh.final.item.inv == 17 then
+			local alt
+			local shown = {}
+			for _, c in ipairs(mh.steps) do shown[c] = true end
+			for _, c in ipairs(mh.candidates) do
+				if c.item.inv ~= 17 and not shown[c] and c.value > mh.owned.value * MIN_GAIN + 0.5
+					and (not alt or c.value > alt.value) then
+					alt = c
+				end
+			end
+			if alt then
+				alt.role, alt.oneHandGoal = "bis", true
+				alt.equipped = false
+				alt.inBags = P.bags[alt.item.id] ~= nil
+				table.insert(mh.steps, #mh.steps, alt)
+			end
+		end
+		-- Mixed: each step says which it is, and the off-hand row says it's only for the one-handers.
+		local one, two = false, false
+		for _, c in ipairs(mh and mh.steps or {}) do
+			if c.item.inv == 17 then two = true else one = true end
+		end
+		if one and two then
+			mh.mixedHands = true
+			if ohRow then ohRow.withOneHander = true end
+		end
 		local twoHand = mh and #mh.steps > 0
 		for _, c in ipairs(mh and mh.steps or {}) do
 			if c.item.inv ~= 17 then twoHand = false end

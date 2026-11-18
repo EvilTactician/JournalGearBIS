@@ -72,7 +72,9 @@ end
 function G.SourceText(src)
 	local g = src.inst and G.instances[src.inst]
 	if src.kind == "D" or src.kind == "C" then
-		return src.who .. " in " .. place(g) .. hint(runs(src.chance))
+		-- a boss to know about first (summoned, or one of several that take turns): its tag
+		local note = G.sourceNotes and G.sourceNotes[src.who]
+		return src.who .. " in " .. place(g) .. hint(runs(src.chance)) .. (note and hint(note[1]) or "")
 	elseif src.kind == "Q" then
 		local t = (src.chain or 1) > 1 and ("Quest chain starting with " .. src.startName) or ("Quest: " .. src.who)
 		if src.trainer then
@@ -721,6 +723,13 @@ local function build(panel)
 			for i, s in ipairs(e.sources) do
 				if i > 4 then break end
 				GameTooltip:AddLine(G.SourceText(s), 1, 1, 1, true)
+				local note = s.kind == "D" and G.sourceNotes and G.sourceNotes[s.who]
+				if note then GameTooltip:AddLine(note[2], 1, 0.82, 0, true) end
+			end
+			-- gear with only so many uses, unless a hand-written note already says so
+			local uses = G.charges and G.charges[e.item.id]
+			if uses and not (G.curatedNotes and G.curatedNotes[e.item.id]) then
+				GameTooltip:AddLine("Its use effect works " .. uses .. " times; after that it's just its stats.", 1, 0.82, 0, true)
 			end
 			if e.src.kind == "Q" and (e.src.chain or 1) > 1 then
 				GameTooltip:AddLine("It's a quest chain: start with " .. e.src.startName .. " and work through it to "
@@ -961,7 +970,10 @@ local function build(panel)
 				end
 				local open = 0
 				for _, e in ipairs(r.steps) do if e.open then open = open + 1 end end
-				if v.preview then
+				if r.withOneHander then
+					-- the main hand mixes one- and two-handers: an off-hand only goes with the one-handers
+					h.state:SetText("|cff9d9d9dWith a one-hander only|r")
+				elseif v.preview then
 					h.state:SetText("")
 				elseif r.best and have then
 					h.state:SetText("|cff40ff40" .. G.BIS_TEXT[0] .. "|r")
@@ -983,7 +995,12 @@ local function build(panel)
 					st.num:SetText((e.soon and e.role ~= "bis" and SOON) or ROLE[e.role] or "")
 					st.icon:SetTexture(GetItemIcon and GetItemIcon(e.item.id) or J.ItemIcon(e.item.id))
 					st.icon:SetDesaturated(not e.open)
-					st.name:SetText(itemName(e.item))
+					-- the main hand mixes one- and two-handers: which this one is
+					local hands = ""
+					if r.mixedHands then
+						hands = e.item.inv == 17 and "  |cff9d9d9d(two-hand)|r" or "  |cff9d9d9d(one-hand, with an off-hand)|r"
+					end
+					st.name:SetText(itemName(e.item) .. hands)
 					st.name:SetWidth(width - 230)
 					-- an optional extra (Manual Crowd Pummeler) says so on its line too, not just in its tooltip
 					local note = G.curatedNotes and G.curatedNotes[e.item.id]

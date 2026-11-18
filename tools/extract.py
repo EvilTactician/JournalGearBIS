@@ -186,7 +186,7 @@ for e, maps in list(cmaps.items()) + [(k, {v}) for k, v in SUMMONED.items()]:
             drops_of[it][ik] = max(drops_of[it].get(ik, 0), ch)
             if wanted(it):
                 sources[it].append({"k": "D", "i": ik, "n": c["name"] + (" (Ring of Law)" if e in RING_OF_LAW else ""),
-                                    "c": round(ch, 4), "rank": c["rank"]})
+                                    "c": round(ch, 4), "rank": c["rank"], "sum": e in SUMMONED})
 
 for e, maps in gmaps.items():
     g = gtpl.get(e)

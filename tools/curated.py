@@ -199,6 +199,54 @@ GLYPHS = {
     },
 }
 
+# Bosses with something to know before you go: a short tag for the item's source line and a sentence for its
+# tooltip. The Ring of Law is found from the data; these are the ones that need summoning or take turns.
+BOSS_NOTES = {
+    "Lord Valthalak": ("summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock "
+                                   "Mountain (the dungeon set upgrade quests)."),
+    "Mor Grayhoof": ("summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock "
+                                 "Mountain (the dungeon set upgrade quests)."),
+    "Isalien": ("summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock "
+                            "Mountain (the dungeon set upgrade quests)."),
+    "Kormok": ("summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock "
+                           "Mountain (the dungeon set upgrade quests)."),
+    "Sothos": ("summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock "
+                           "Mountain (the dungeon set upgrade quests)."),
+    "Jarien": ("summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock "
+                           "Mountain (the dungeon set upgrade quests)."),
+    "Postmaster Malown": ("summoned", "Appears once you've opened Stratholme's three postboxes with the Key to the "
+                                      "City."),
+    "Gri'lek": ("one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which one "
+                               "is there changes from time to time."),
+    "Renataki": ("one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which "
+                                "one is there changes from time to time."),
+    "Wushoolay": ("one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which "
+                                 "one is there changes from time to time."),
+    "Hazza'rah": ("one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which "
+                                 "one is there changes from time to time."),
+    "Urok Doomhowl": ("summoned", "Summoned through the quest Urok Doomhowl in Lower Blackrock Spire, which starts "
+                                  "from Warosh's Scroll."),
+    "Avatar of Hakkar": ("summoned", "Summoned with the Egg of Hakkar, from the quest chain The God Hakkar, in the "
+                                     "Sunken Temple."),
+    "Gahz'rilla": ("summoned", "Summoned by striking the gong in Zul'Farrak with the Mallet of Zul'Farrak, made "
+                              "through a quest chain."),
+    "Gahz'ranka": ("summoned", "Summoned by fishing in Zul'Gurub's Muddy Churning Waters with a Mudskunk Lure."),
+}
+
+# Summoned bosses that simply turn up as you play through the instance: no note needed.
+EVENT_BOSSES = {
+    # dungeons: they appear as part of the run
+    "Balnazzar", "Ramstein the Gorger", "Gizrul the Slavener", "Solakar Flamewreath", "Gyth", "Nekrum Gutchewer",
+    "Shadowpriest Sezz'ziz",
+    # raids: the encounter brings them (Bug Trio, Ragnaros, Nefarian, Ouro, Arlokk, Naxxramas)
+    "Lord Kri", "Vem", "Princess Yauj", "Ragnaros", "Nefarian", "Ouro", "High Priestess Arlokk",
+    "Anub'Rekhan", "Grand Widow Faerlina", "Maexxna", "Noth the Plaguebringer", "Heigan the Unclean", "Loatheb",
+    "Instructor Razuvious", "Gothik the Harvester", "Patchwerk", "Grobbulus", "Gluth", "Thaddius", "Sapphiron",
+    "Kel'Thuzad", "Bile Retcher", "Carrion Spinner", "Crypt Reaver", "Dread Creeper", "Living Monstrosity",
+    "Mad Scientist", "Naxxramas Acolyte", "Naxxramas Cultist", "Patchwork Golem", "Stitched Spewer",
+    "Surgical Assistant", "Tomb Horror", "Venom Stalker",
+}
+
 # A line under a hand-picked item's tooltip, for the ones worth a word: optional extras and odd ways to get them.
 CURATED_NOTES = {
     "Breastplate of Bloodthirst": "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast "

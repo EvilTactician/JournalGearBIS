@@ -67,6 +67,12 @@ end
 -----------------------------------------
 -- enchants
 
+-- A weapon's type as its subclass number, from the client's English name for it (nil if unknown).
+local WEAPON_SUBCLASS = { ["One-Handed Axes"] = 0, ["Two-Handed Axes"] = 1, ["Bows"] = 2, ["Guns"] = 3,
+	["One-Handed Maces"] = 4, ["Two-Handed Maces"] = 5, ["Polearms"] = 6, ["One-Handed Swords"] = 7,
+	["Two-Handed Swords"] = 8, ["Staves"] = 10, ["Fist Weapons"] = 13, ["Miscellaneous"] = 14, ["Daggers"] = 15,
+	["Thrown"] = 16, ["Crossbows"] = 18, ["Wands"] = 19, ["Fishing Poles"] = 20 }
+
 -- Which of Extras.lua's enchant slots fit an item you wear in a row.
 local function enchantSlots(rowKey, worn)
 	if rowKey == "MH" or rowKey == "OH" or rowKey == "RANGED" then
@@ -139,9 +145,13 @@ function G.EnchantFor(r, room)
 	local classBit = G.CLASS_BIT[P.class] or 0
 	local best, later, pre
 	local locked = {}
+	-- the weapon's type, for enchants that only fit some (Iron Counterweight: no staves)
+	local subType = select(7, GetItemInfo(worn.link))
+	local sub = WEAPON_SUBCLASS[subType]
 	for _, slot in ipairs(enchantSlots(r.row.key, worn)) do
 		for _, o in ipairs(G.enchants[slot] or {}) do
-			if (o.classes or 0) == 0 or band(o.classes, classBit) ~= 0 then
+			local fits = (o.sub or 0) == 0 or not sub or band(o.sub, 2 ^ sub) ~= 0
+			if fits and ((o.classes or 0) == 0 or band(o.classes, classBit) ~= 0) then
 				local value = enchantValue(o.e, room, credit, part, speed)
 				if value > 0 then
 					local ways = enchantWays(o)

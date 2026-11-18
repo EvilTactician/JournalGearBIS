@@ -2231,6 +2231,34 @@ G.items = {
 	[23668] = { "Leggings of the Grand Crusader", 7, 404, 85, 60, 4, 2, 0, 0, { armor = 833, crit = 28, int = 21, sp = 26, sta = 21, str = 21 }, { { "D", 533, 0.024, "Mad Scientist, Venom Stalker" } } },
 }
 
+-- A boss to know about: sourceNotes[name] = { short tag for the source line, a sentence for the tooltip }.
+G.sourceNotes = {
+	["Anub'shiah (Ring of Law)"] = { "one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six is his; the chance shown counts that." },
+	["Avatar of Hakkar"] = { "summoned", "Summoned with the Egg of Hakkar, from the quest chain The God Hakkar, in the Sunken Temple." },
+	["Eviscerator (Ring of Law)"] = { "one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six is his; the chance shown counts that." },
+	["Gahz'ranka"] = { "summoned", "Summoned by fishing in Zul'Gurub's Muddy Churning Waters with a Mudskunk Lure." },
+	["Gahz'rilla"] = { "summoned", "Summoned by striking the gong in Zul'Farrak with the Mallet of Zul'Farrak, made through a quest chain." },
+	["Gorosh the Dervish (Ring of Law)"] = { "one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six is his; the chance shown counts that." },
+	["Gri'lek"] = { "one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which one is there changes from time to time." },
+	["Grizzle (Ring of Law)"] = { "one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six is his; the chance shown counts that." },
+	["Hazza'rah"] = { "one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which one is there changes from time to time." },
+	["Hedrum the Creeper (Ring of Law)"] = { "one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six is his; the chance shown counts that." },
+	["Isalien"] = { "summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock Mountain (the dungeon set upgrade quests)." },
+	["Kormok"] = { "summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock Mountain (the dungeon set upgrade quests)." },
+	["Lord Valthalak"] = { "summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock Mountain (the dungeon set upgrade quests)." },
+	["Mor Grayhoof"] = { "summoned", "Summoned with a Brazier of Beckoning, from Bodley's quest chain in Blackrock Mountain (the dungeon set upgrade quests)." },
+	["Ok'thor the Breaker (Ring of Law)"] = { "one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six is his; the chance shown counts that." },
+	["Postmaster Malown"] = { "summoned", "Appears once you've opened Stratholme's three postboxes with the Key to the City." },
+	["Renataki"] = { "one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which one is there changes from time to time." },
+	["Urok Doomhowl"] = { "summoned", "Summoned through the quest Urok Doomhowl in Lower Blackrock Spire, which starts from Warosh's Scroll." },
+	["Wushoolay"] = { "one of four", "One of the four bosses that take turns at Zul'Gurub's Edge of Madness: which one is there changes from time to time." },
+}
+
+-- Gear with only so many uses: charges[id] = uses.
+G.charges = {
+	[9449] = 3, -- Manual Crowd Pummeler
+}
+
 -- Raid drops you hand in for an item (tier tokens, Head of Onyxia): token = { items it can become }.
 G.tokens = {
 	[12361] = { 21520, 21521, 21522, 21523, 21526, 21527, 22699, 22700, 22701, 22702, 22707 }, -- Blue Sapphire

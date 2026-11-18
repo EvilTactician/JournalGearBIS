@@ -6,7 +6,7 @@ import pickle, sys, collections, math
 sys.path.insert(0, HERE)
 from sqlload import Table  # noqa
 from profiles import PROFILES, BY_TREE, CLASS_BIT, WEAPON_SKILL, ARMOR_SKILL
-from curated import CURATED, CRAFTED, CURATED_NOTES
+from curated import CURATED, CRAFTED, CURATED_NOTES, BOSS_NOTES
 from crafts import PROFESSIONS
 
 db = pickle.load(open(os.path.join(BUILD, "db.pkl"), "rb"))
@@ -345,6 +345,40 @@ for i in sorted(keep):
         it["Quality"], usable_mask(it), races, uniq, ltable(stats(it)), src_lua(i), prof))
 L.append("}")
 L.append("")
+# Things to know about a boss before you go: the Ring of Law from the data, summoned bosses by hand. (Classic's
+# rare spawns are ordinary spawns in the realm's data, so they get no note: they're always there.)
+L.append("-- A boss to know about: sourceNotes[name] = { short tag for the source line, a sentence for the tooltip }.")
+L.append("G.sourceNotes = {")
+_notes = {}
+for i in keep:
+    for s in sources.get(i, []):
+        if s["k"] != "D":
+            continue
+        n = s["n"]
+        if n in BOSS_NOTES:
+            _notes[n] = BOSS_NOTES[n]
+        elif n.endswith("(Ring of Law)"):
+            _notes[n] = ("one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six "
+                                       "is his; the chance shown counts that.")
+# a summoned boss without a note: say so, so it gets one (or goes on curated.EVENT_BOSSES if it simply turns up)
+from curated import EVENT_BOSSES
+for n in sorted({s["n"] for i in keep for s in sources.get(i, []) if s["k"] == "D" and s.get("sum")}):
+    if n not in _notes and n not in EVENT_BOSSES:
+        print("summoned boss with no note:", n, file=sys.stderr)
+for n in sorted(_notes):
+    L.append("\t[%s] = { %s, %s }," % (lstr(n), lstr(_notes[n][0]), lstr(_notes[n][1])))
+L.append("}")
+L.append("")
+# Gear you use, with only so many uses (Manual Crowd Pummeler's 3).
+L.append("-- Gear with only so many uses: charges[id] = uses.")
+L.append("G.charges = {")
+for i in sorted(keep):
+    it = items[i]
+    ch = it.get("spellcharges_1") or 0
+    if it.get("spelltrigger_1") == 0 and ch > 0:
+        L.append("\t[%d] = %d, -- %s" % (i, ch, it["name"]))
+L.append("}")
+L.append("")
 L.append("-- Raid drops you hand in for an item (tier tokens, Head of Onyxia): token = { items it can become }.")
 tokens = collections.defaultdict(set)
 for i in keep:
@@ -461,6 +495,14 @@ def enchant_stats(e):
     return s, proc
 
 
+def weapon_mask(sid):
+    """The weapon types (subclass bits) an enchanting spell fits, or 0 for any (or not a weapon)."""
+    r = SPELLS.get(sid)
+    if not r or i32(r[68]) != 2:
+        return 0
+    return r[69] & 0x1FFFFF
+
+
 def enchant_slots(sid):
     """The slots a spell can enchant: armor slots, 'SHIELD', 'WEAPON', '2H' (two-handers only) or 'RANGED'."""
     r = SPELLS.get(sid)
@@ -520,7 +562,8 @@ for e in sorted(crafts.enchants):
     known.add(e)
     skill, rank, sid, recipe = ways[0]
     for slot in enchant_slots(sid):
-        options[slot].append("{ e = %d, spell = %d, level = %d, ways = { %s } }" % (e, sid, ENCH[e][37], recipe_way(skill, rank, sid, recipe, "Enchanting")))
+        options[slot].append("{ e = %d, spell = %d, level = %d, sub = %d, ways = { %s } }" % (
+            e, sid, ENCH[e][37], weapon_mask(sid), recipe_way(skill, rank, sid, recipe, "Enchanting")))
 
 # enchants that come as an item (arcanums, signets, armor kits, scopes)
 for i in sorted(EXTRA):
@@ -537,14 +580,15 @@ for i in sorted(EXTRA):
     allow = it["AllowableClass"]
     classes = 0 if allow in (-1, 0, 32767, 262143) else allow
     for slot in enchant_slots(sid):
-        options[slot].append("{ e = %d, item = %d, level = %d, classes = %d }" % (
-            e, i, max(ENCH[e][37], it["RequiredLevel"] or 0), classes))
+        options[slot].append("{ e = %d, item = %d, level = %d, classes = %d, sub = %d }" % (
+            e, i, max(ENCH[e][37], it["RequiredLevel"] or 0), classes, weapon_mask(sid)))
 
 X = []
 X.append("-- Enchants, glyphs and consumables for JournalGearBIS, generated from the realm's world database and the")
 X.append("-- client's DBC files (tools/gen.py). Don't edit by hand: tools/curated.py has the hand-picked lists.")
 X.append("--")
 X.append("--   enchants[slot] = { { e = enchant, spell = enchanting spell or item = the item that puts it on,")
+X.append("--     sub = the weapon types it fits (subclass bits; 0 for any),")
 X.append("--                        level = level needed, classes = bit mask (0 = all), ways = { source, ... } } }")
 X.append("--                    slots: armor slots, SHIELD, WEAPON (any weapon), TWOHAND (two-handers) and RANGED (bows, guns)")
 X.append("--   enchantStats[enchant] = { stats } (wdmg = weapon damage), with proc = value by profile for procs")
