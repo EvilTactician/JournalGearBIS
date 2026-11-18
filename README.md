@@ -1,7 +1,7 @@
-# Journal: Gear 0.2.1
+# Journal: Gear 0.2.2
 
 > [!WARNING]
-> **Early alpha (version 0.2.1-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.2.2-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest** and **Druid** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.2.1-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.2.2-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -54,6 +54,13 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   otherwise: it's often costly and hard to make.
 
 Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest** and **Druid**.
+
+- **Talent builds (with DragonUI):** a book icon after the list's title saves a level 80 talent build for
+  your spec to DragonUI's talent builds, named "GearBIS: …" so you can tell where it came from. There you
+  can follow it as a plan; below level 80, spend your points along it as far as they go. The builds are
+  the first ones Warcraft Tavern's Wrath guides list for each spec, checked against the realm's own talent
+  trees. Clicking again doesn't make a duplicate, but a copy you've renamed or changed is left alone, and
+  the next click saves a fresh one. The icon only shows with a DragonUI that lets other addons save builds.
 
 ## On your gear list: Roll Need
 
@@ -124,8 +131,8 @@ feral druid can switch between Feral (cat) and Feral (bear). A feral druid with 
 gets the bear list by default, since only tanks take it.
 
 **Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
-damage past 54.8 per second into feral attack power (14 for each point above it). A feral druid's weapon
-steps count that along with the weapon's own stats, so slow, hard-hitting two-handers rank high.
+damage past 54.8 per second into feral attack power (14 for each point above it). Only two-handers get
+there, so a feral druid's list shows two-handed weapons only, with no off-hand.
 
 Steps are compared with what you **wear and carry** in your bags. Quest chains are the ones your faction
 starts.
@@ -163,6 +170,11 @@ different stage for a raid on your realm, the tab uses the realm's.
   so on). Rewards for raid tokens, such as the tier 2.5 and 3 sets and Head of Onyxia's rewards, count as
   part of that raid. Rewards behind world bosses, the Darkmoon Faire or battlegrounds are left out, and so is
   anything only a world event brings (the Darkmoon Faire's vendors, the Scourge Invasion's bosses).
+- **Odd ways to get things** count too: bosses the realm summons rather than spawns (Gyth, and the six that
+  take turns in Blackrock Depths' Ring of Law, each counted as a sixth of a chance), quests that need
+  something skinned (Breastplate of Bloodthirst, which only shows for skinners), and, for hand-picked items
+  with no other way to get them, random world drops (Idol of the Moon), marked Easy, Medium or Hard by how
+  many kills they take.
 - **Item stats**, including the *Equip:* lines (attack power, crit, hit, spell power and the rest), come
   from the item table and the client's Spell.dbc.
 - **Stat weights** for every spec are in `Profiles.lua`.
@@ -178,7 +190,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.1.14 to 0.1.19-alpha | Rogue and Priest lists re-checked against current Classic guides and the realm. |
 | 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
-| **0.2.1-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons. |
+| 0.2.1 to **0.2.2-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
 | 0.3.0-alpha | Druid finished. |
 | 0.4.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
@@ -193,6 +205,7 @@ different stage for a raid on your realm, the tab uses the realm's.
   realm. Without it, every raid counts as open.
 - **[DragonUI](https://github.com/EvilTactician/wow-addon-DragonUI)** (my fork), recommended: the tab is
   built and tested with it. It may well work without, but if something looks out of place, that's why.
+  Saving talent builds needs it.
 
 Nothing needs installing on the server beyond those two modules.
 

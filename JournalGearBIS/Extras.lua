@@ -21,7 +21,7 @@ G.enchants = {
 		{ e = 256, spell = 7861, level = 0, ways = { { "X", "Enchanting", 333, 125, 0, "from a trainer", 0 } } },
 		{ e = 744, spell = 13421, level = 0, ways = { { "X", "Enchanting", 333, 115, 0, "from a trainer", 0 } } },
 		{ e = 783, spell = 7771, level = 0, ways = { { "X", "Enchanting", 333, 70, 0, "from a trainer", 0 } } },
-		{ e = 804, spell = 13522, level = 0, ways = { { "X", "Enchanting", 333, 135, 0, "from a recipe", 0 } } },
+		{ e = 804, spell = 13522, level = 0, ways = { { "X", "Enchanting", 333, 135, 0, "recipe drops in Gnomeregan", 90 } } },
 		{ e = 884, spell = 13746, level = 0, ways = { { "X", "Enchanting", 333, 205, 0, "from a trainer", 0 } } },
 		{ e = 903, spell = 13794, level = 0, ways = { { "X", "Enchanting", 333, 205, 0, "from a trainer", 0 } } },
 		{ e = 1888, spell = 20014, level = 0, ways = { { "X", "Enchanting", 333, 265, 0, "recipe drops in Sunken Temple", 109 } } },
@@ -156,7 +156,7 @@ G.enchants = {
 		{ e = 2523, item = 18283, level = 50, classes = 0 },
 	},
 	SHIELD = {
-		{ e = 848, spell = 13464, level = 0, ways = { { "X", "Enchanting", 333, 115, 0, "from a recipe", 0 } } },
+		{ e = 848, spell = 13464, level = 0, ways = { { "X", "Enchanting", 333, 115, 0, "recipe drops in Gnomeregan", 90 } } },
 		{ e = 863, spell = 13689, level = 0, ways = { { "X", "Enchanting", 333, 195, 0, "from a recipe", 0 } } },
 		{ e = 926, spell = 13933, level = 0, ways = { { "X", "Enchanting", 333, 235, 1, "recipe drops in Onyxia's Lair", 249 } } },
 		{ e = 1890, spell = 20016, level = 0, ways = { { "X", "Enchanting", 333, 280, 0, "from a recipe", 0 } } },
@@ -181,7 +181,7 @@ G.enchants = {
 	},
 	TWOHAND = {
 		{ e = 241, spell = 7745, level = 0, ways = { { "X", "Enchanting", 333, 100, 0, "from a trainer", 0 } } },
-		{ e = 255, spell = 13380, level = 0, ways = { { "X", "Enchanting", 333, 110, 0, "from a recipe", 0 } } },
+		{ e = 255, spell = 13380, level = 0, ways = { { "X", "Enchanting", 333, 110, 0, "recipe drops in Gnomeregan", 90 } } },
 		{ e = 723, spell = 7793, level = 0, ways = { { "X", "Enchanting", 333, 100, 0, "recipe sold by Nata Dawnstrider", 0 } } },
 		{ e = 943, spell = 13529, level = 0, ways = { { "X", "Enchanting", 333, 145, 0, "from a trainer", 0 } } },
 		{ e = 963, spell = 13937, level = 0, ways = { { "X", "Enchanting", 333, 240, 0, "from a trainer", 0 } } },
@@ -192,7 +192,7 @@ G.enchants = {
 		{ e = 34, item = 6043, level = 0, classes = 0 },
 	},
 	WEAPON = {
-		{ e = 249, spell = 7786, level = 0, ways = { { "X", "Enchanting", 333, 90, 0, "from a recipe", 0 } } },
+		{ e = 249, spell = 7786, level = 0, ways = { { "X", "Enchanting", 333, 90, 0, "recipe drops in Gnomeregan", 90 } } },
 		{ e = 250, spell = 7788, level = 0, ways = { { "X", "Enchanting", 333, 90, 0, "from a trainer", 0 } } },
 		{ e = 803, spell = 13898, level = 0, ways = { { "X", "Enchanting", 333, 265, 0, "recipe drops in Blackrock Depths", 230 } } },
 		{ e = 805, spell = 13943, level = 0, ways = { { "X", "Enchanting", 333, 245, 0, "from a trainer", 0 } } },
@@ -216,9 +216,9 @@ G.enchants = {
 	},
 	WRIST = {
 		{ e = 66, spell = 7457, level = 0, ways = { { "X", "Enchanting", 333, 50, 0, "from a trainer", 0 } } },
-		{ e = 243, spell = 7766, level = 0, ways = { { "X", "Enchanting", 333, 60, 0, "from a recipe", 0 } } },
+		{ e = 243, spell = 7766, level = 0, ways = { { "X", "Enchanting", 333, 60, 0, "recipe drops in Gnomeregan", 90 } } },
 		{ e = 247, spell = 7779, level = 0, ways = { { "X", "Enchanting", 333, 80, 0, "from a trainer", 0 } } },
-		{ e = 248, spell = 7782, level = 0, ways = { { "X", "Enchanting", 333, 80, 0, "from a recipe", 0 } } },
+		{ e = 248, spell = 7782, level = 0, ways = { { "X", "Enchanting", 333, 80, 0, "recipe drops in Gnomeregan", 90 } } },
 		{ e = 724, spell = 13501, level = 0, ways = { { "X", "Enchanting", 333, 130, 0, "from a trainer", 0 } } },
 		{ e = 823, spell = 13536, level = 0, ways = { { "X", "Enchanting", 333, 140, 0, "recipe sold by Dalria", 0 } } },
 		{ e = 851, spell = 13642, level = 0, ways = { { "X", "Enchanting", 333, 165, 0, "from a trainer", 0 } } },
@@ -790,12 +790,12 @@ G.extraItems = {
 	[2304] = { "Light Armor Kit", 1, 1, { { "D", 70, 0.25, "Olaf" } } },
 	[2313] = { "Medium Armor Kit", 1, 5, { { "D", 70, 0.25, "Olaf" }, { "Q", 125, "The Lost Tools", 0, 0, 1101, 16, 15, { 125, "The Lost Tools", 1, 0, 1 }, { 125, "The Lost Tools", 1, 0, 1 }, 0 }, { "Q", 448, "Report to Hadrec", 0, 0, 0, 16, 10, { 437, "The Dead Fields", 1, 0, 6 }, { 437, "The Dead Fields", 1, 0, 6 }, 0 }, { "X", "Crafted: Leatherworking", 165, 100, 0, "from a trainer", 0 } } },
 	[4265] = { "Heavy Armor Kit", 1, 20, { { "D", 70, 0.25, "Olaf" }, { "Q", 4767, "Wind Rider", 0, 0, 690, 29, 25, { 4767, "Wind Rider", 1, 0, 1 }, { 4767, "Wind Rider", 1, 0, 1 }, 0 }, { "X", "Crafted: Leatherworking", 165, 150, 0, "from a trainer", 0 } } },
-	[4405] = { "Crude Scope", 1, 5, { { "X", "Crafted: Engineering", 202, 60, 0, "from a trainer", 0 } } },
-	[4406] = { "Standard Scope", 1, 10, { { "X", "Crafted: Engineering", 202, 110, 0, "from a trainer", 0 } } },
+	[4405] = { "Crude Scope", 1, 5, { { "D", 90, 0.005, "Mobile Alert System" }, { "C", 90, 0.1, "Box of Assorted Parts" }, { "X", "Crafted: Engineering", 202, 60, 0, "from a trainer", 0 } } },
+	[4406] = { "Standard Scope", 1, 10, { { "C", 90, 0.06, "Box of Assorted Parts" }, { "X", "Crafted: Engineering", 202, 110, 0, "from a trainer", 0 } } },
 	[4407] = { "Accurate Scope", 1, 20, { { "X", "Crafted: Engineering", 202, 180, 0, "recipe sold by Mazk Snipeshot", 0 } } },
 	[5421] = { "Fiery Blaze Enchantment", 1, 0, { { "Q", 706, "Fiery Blaze Enchantments", 0, 0, 1101, 45, 40, { 706, "Fiery Blaze Enchantments", 1, 0, 1 }, { 706, "Fiery Blaze Enchantments", 1, 0, 1 }, 0 } } },
 	[6041] = { "Steel Weapon Chain", 1, 0, { { "X", "Crafted: Blacksmithing", 164, 190, 0, "from a recipe", 0 } } },
-	[6042] = { "Iron Shield Spike", 1, 0, { { "X", "Crafted: Blacksmithing", 164, 150, 0, "from a recipe", 0 } } },
+	[6042] = { "Iron Shield Spike", 1, 0, { { "X", "Crafted: Blacksmithing", 164, 150, 0, "recipe drops in Gnomeregan", 90 } } },
 	[6043] = { "Iron Counterweight", 1, 0, { { "X", "Crafted: Blacksmithing", 164, 165, 0, "from a recipe", 0 } } },
 	[7676] = { "Thistle Tea", 1, 5, { { "Q", 2358, "Horns of Nez'ra", 0, 0, 0, 22, 16, { 2358, "Horns of Nez'ra", 1, 0, 1 }, { 2358, "Horns of Nez'ra", 1, 0, 1 }, 8 }, { "Q", 2381, "Plundering the Plunderers", 0, 0, 690, 18, 16, { 2381, "Plundering the Plunderers", 1, 0, 1 }, { 2378, "Find the Shattered Hand", 1, 0, 4 }, 8 }, { "X", "Crafted: Cooking", 185, 60, 0, "recipe from the quest Klaven's Tower", 0 } } },
 	[7967] = { "Mithril Shield Spike", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 215, 1, "recipe drops in Onyxia's Lair", 249 } } },
@@ -868,4 +868,42 @@ G.extraItems = {
 	[23547] = { "Resilience of the Scourge", 4, 60, { { "D", 533, 0.5, "Sapphiron" } } },
 	[23548] = { "Might of the Scourge", 4, 60, { { "D", 533, 0.5, "Sapphiron" } } },
 	[23549] = { "Fortitude of the Scourge", 4, 60, { { "D", 533, 0.5, "Sapphiron" } } },
+}
+
+G.talentBuilds = {
+	["DRUID_CAT"] = { class = "DRUID", name = "GearBIS: Feral (Cat)", ranks = {
+		{  },
+		{ { 1, 2, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 3, 1, 2 }, { 3, 3, 3 }, { 4, 1, 2 }, { 4, 2, 3 }, { 4, 3, 2 }, { 4, 4, 2 }, { 5, 3, 1 }, { 6, 2, 5 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 1, 3 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 10, 2, 5 }, { 10, 3, 1 }, { 11, 2, 1 } },
+		{ { 1, 1, 2 }, { 1, 3, 5 }, { 2, 1, 5 }, { 2, 3, 3 }, { 3, 2, 1 }, { 3, 3, 2 } },
+	} },
+	["DRUID_BEAR"] = { class = "DRUID", name = "GearBIS: Feral (Bear)", ranks = {
+		{  },
+		{ { 1, 2, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 2, 1 }, { 3, 3, 3 }, { 4, 1, 2 }, { 4, 2, 3 }, { 4, 3, 2 }, { 4, 4, 2 }, { 5, 3, 1 }, { 6, 1, 3 }, { 6, 2, 5 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 1, 3 }, { 8, 4, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 10, 3, 1 }, { 11, 2, 1 } },
+		{ { 1, 1, 2 }, { 1, 3, 3 }, { 2, 1, 5 }, { 3, 2, 1 } },
+	} },
+	["DRUID_RESTO"] = { class = "DRUID", name = "GearBIS: Restoration", ranks = {
+		{ { 1, 3, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 3, 3, 1 } },
+		{  },
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 2, 3 }, { 2, 3, 3 }, { 3, 1, 3 }, { 3, 2, 1 }, { 3, 3, 2 }, { 4, 3, 3 }, { 5, 1, 1 }, { 5, 2, 5 }, { 6, 1, 2 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 2, 5 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 3, 5 }, { 11, 2, 1 } },
+	} },
+	["ROGUE:1"] = { class = "ROGUE", name = "GearBIS: Assassination", ranks = {
+		{ { 1, 3, 5 }, { 2, 1, 3 }, { 2, 4, 3 }, { 3, 3, 5 }, { 4, 2, 3 }, { 4, 3, 5 }, { 5, 2, 1 }, { 5, 4, 2 }, { 6, 2, 5 }, { 6, 3, 2 }, { 7, 2, 1 }, { 8, 1, 3 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{ { 1, 3, 5 }, { 2, 4, 5 }, { 3, 3, 3 } },
+		{ { 1, 1, 5 }, { 1, 3, 2 } },
+	} },
+	["PRIEST:1"] = { class = "PRIEST", name = "GearBIS: Discipline", ranks = {
+		{ { 1, 3, 5 }, { 2, 2, 3 }, { 2, 3, 2 }, { 3, 1, 3 }, { 3, 2, 1 }, { 3, 3, 3 }, { 4, 2, 3 }, { 5, 2, 5 }, { 5, 3, 1 }, { 6, 1, 2 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 3 }, { 8, 1, 2 }, { 8, 2, 3 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 2 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{ { 1, 1, 2 }, { 1, 3, 5 }, { 2, 2, 5 }, { 3, 4, 3 }, { 4, 2, 2 } },
+		{  },
+	} },
+	["PRIEST:2"] = { class = "PRIEST", name = "GearBIS: Holy", ranks = {
+		{ { 1, 3, 5 }, { 2, 2, 3 }, { 2, 3, 2 }, { 3, 1, 3 } },
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 5 }, { 2, 3, 5 }, { 3, 1, 1 }, { 3, 4, 3 }, { 4, 2, 3 }, { 5, 1, 2 }, { 5, 2, 1 }, { 5, 3, 5 }, { 6, 1, 2 }, { 6, 3, 5 }, { 7, 1, 3 }, { 8, 2, 5 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{  },
+	} },
+	["PRIEST:3"] = { class = "PRIEST", name = "GearBIS: Shadow", ranks = {
+		{ { 1, 3, 5 }, { 2, 2, 3 }, { 2, 3, 2 }, { 3, 1, 3 }, { 3, 2, 1 } },
+		{  },
+		{ { 1, 1, 3 }, { 1, 2, 2 }, { 1, 3, 5 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 5 }, { 3, 3, 1 }, { 4, 2, 2 }, { 4, 3, 2 }, { 4, 4, 3 }, { 5, 2, 1 }, { 5, 4, 2 }, { 6, 1, 2 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 5 }, { 8, 1, 2 }, { 8, 3, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 3, 5 }, { 11, 2, 1 } },
+	} },
 }

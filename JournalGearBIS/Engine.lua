@@ -135,7 +135,7 @@ function G.TalentProfile(group)
 		if (points or 0) > bestPoints then best, bestPoints, name = tab, points or 0, tabName end
 	end
 	-- No points spent yet: the class's usual pick (a rogue's is Combat).
-	if bestPoints <= 0 then return trees[G.DEFAULT_TREE[class] or 1], nil end
+	if bestPoints <= 0 then return trees[G.DEFAULT_TREE[class] or 1], nil, G.DEFAULT_TREE[class] or 1 end
 	-- a tree two roles share: a talent only one of them takes picks it
 	local key, swap = trees[best], G.ROLE_TALENT[trees[best]]
 	if swap and GetNumTalents then
@@ -144,7 +144,7 @@ function G.TalentProfile(group)
 			if tname == swap[1] and (rank or 0) > 0 then key = swap[2] end
 		end
 	end
-	return key, name
+	return key, name, best
 end
 
 -----------------------------------------
@@ -393,6 +393,8 @@ local function readSource(s)
 		src.need = s[8] or 0
 		src.start, src.startName, src.givers, src.trainer, src.chain = chain[1] or s[2], chain[2] or s[3], chain[3] or 1,
 			chain[4] == 1, chain[5] or 1
+		-- a quest that needs something only a profession gets (a hide skinned from a boss)
+		src.prof, src.profRank = s[12], s[13]
 		if src.races ~= 0 and band(src.races, P.raceBit) == 0 then return nil end
 		local classes = s[11] or 0
 		if classes ~= 0 and band(classes, G.CLASS_BIT[P.class] or 0) == 0 then return nil end
@@ -404,6 +406,10 @@ local function readSource(s)
 		else
 			src.tier = TIER_EASY
 		end
+	elseif kind == "W" then
+		-- a world drop: { "W", best chance, lowest level, highest level of the mobs, 1 when it binds on equip }
+		src.chance, src.lo, src.hi, src.boe = s[2], s[3], s[4], s[5] == 1
+		src.stage, src.tier = 0, TIER_DUNGEON
 	elseif kind == "V" then
 		src.who, src.price, src.rep, src.rank, src.stage = s[2], s[3], s[4], s[5], s[6]
 		src.tier = TIER_EASY
@@ -441,6 +447,12 @@ function G.Difficulty(src)
 	if src.kind == "V" then return (src.rank or 0) >= 6 and 3 or ((src.rank or 0) >= 5 and 2 or 1) end
 	if src.kind == "X" then return 2 end
 	local c = src.chance or 0
+	-- a world drop: by how long it takes, at about two kills a minute (half an hour or less is easy)
+	if src.kind == "W" then
+		if c >= 1 / 60 then return 1 end
+		if c >= 1 / 240 then return 2 end
+		return 3
+	end
 	if src.raid then
 		if c >= G.EASY then return 2 end
 		return 3
@@ -493,16 +505,19 @@ end
 local function candidate(t, prof, rowKey, curated)
 	if t.prof and (P.skills[t.prof] or 0) < (t.profRank or 0) then return nil end
 	local srcs = sourcesOf(t)
-	-- Bind on Pickup crafts: only for a crafter of that profession (locked until the skill's there)
+	-- Bind on Pickup crafts, and quests that need something only a profession gets: only for someone with
+	-- that profession (locked until the skill's there)
 	local craftLock
 	for i = #srcs, 1, -1 do
 		local s = srcs[i]
-		if s.bop and s.skill then
-			local have = P.skills[s.skill]
+		local skill, rank = s.bop and s.skill, s.rank
+		if not skill and s.prof then skill, rank = s.prof, s.profRank end
+		if skill then
+			local have = P.skills[skill]
 			if not have then
 				table.remove(srcs, i)
-			elseif have < (s.rank or 0) then
-				craftLock = "Needs " .. (G.PROFESSIONS[s.skill] or "the profession") .. " " .. s.rank
+			elseif have < (rank or 0) then
+				craftLock = "Needs " .. (G.PROFESSIONS[skill] or "the profession") .. " " .. rank
 			end
 		end
 	end
@@ -913,15 +928,18 @@ function G.Build(choice, stage)
 
 	local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
 	local groups = GetNumTalentGroups and GetNumTalentGroups() or 1
-	local profileKey, treeName, which
+	local profileKey, treeName, which, treeIndex
 	if choice == "other" and groups > 1 then
 		which = active == 1 and 2 or 1
-		profileKey, treeName = G.TalentProfile(which)
+		profileKey, treeName, treeIndex = G.TalentProfile(which)
 	elseif choice and G.profiles[choice] and G.profiles[choice].class == class then
 		profileKey, which = choice, nil
+		for i, k in ipairs(G.byTree[class]) do
+			if k == choice then treeIndex = i end
+		end
 	else
 		which = active
-		profileKey, treeName = G.TalentProfile(active)
+		profileKey, treeName, treeIndex = G.TalentProfile(active)
 	end
 	local prof = G.profiles[profileKey]
 	P.profileKey, P.profile = profileKey, prof
@@ -994,7 +1012,7 @@ function G.Build(choice, stage)
 		end
 	end
 	return {
-		profileKey = profileKey, profile = prof, treeName = treeName, group = which, active = active, groups = groups,
+		profileKey = profileKey, profile = prof, treeName = treeName, treeIndex = treeIndex, group = which, active = active, groups = groups,
 		rows = rows, dungeons = dungeons, raids = raids, class = class, adviceNote = adviceNote,
 		preview = P.preview, readyLevel = G.READY[phase], cap = G.CAP[phase], phase = phase,
 		worn = P.worn, bags = P.bags, level = P.realLevel,

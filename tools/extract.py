@@ -18,7 +18,7 @@ qaddon = {r["ID"]: r for r in R("quest_template_addon")}
 # ---------------------------------------------------------------- instances (Classic)
 # key: map id, or 2291 for Upper Blackrock Spire (map 229). stage = default progression stage that opens it.
 INSTANCES = {
-    70: ("Uldaman", False, 5, 0, 37), 209: ("Zul'Farrak", False, 5, 0, 39), 349: ("Maraudon", False, 5, 0, 41),
+    90: ("Gnomeregan", False, 5, 0, 29), 70: ("Uldaman", False, 5, 0, 37), 209: ("Zul'Farrak", False, 5, 0, 39), 349: ("Maraudon", False, 5, 0, 41),
     109: ("Sunken Temple", False, 5, 0, 45), 230: ("Blackrock Depths", False, 5, 0, 48),
     229: ("Lower Blackrock Spire", False, 5, 0, 52), 2291: ("Upper Blackrock Spire", True, 15, 0, 55),
     429: ("Dire Maul", False, 5, 0, 52), 289: ("Scholomance", False, 5, 0, 55), 329: ("Stratholme", False, 5, 0, 55),
@@ -53,6 +53,9 @@ for r in R("gameobject"):
 SUMMONED = {10584: 229, 10268: 229, 10264: 2291, 10339: 2291, 10813: 329, 10439: 329, 8443: 109, 7273: 209, 7796: 209, 7275: 209,
             11583: 469, 11502: 409, 15517: 531, 15083: 309, 15114: 309, 14515: 309}
 SUMMONED.update({e: 533 for e in range(351000, 351040)})
+# The Ring of Law in Blackrock Depths picks one of six bosses each time: each one's loot counts a sixth.
+RING_OF_LAW = {9027, 9028, 9029, 9030, 9031, 9032}
+SUMMONED.update({e: 230 for e in RING_OF_LAW})
 BY_NAME = {"Gri'lek": 309, "Renataki": 309, "Wushoolay": 309, "Lord Valthalak": 2291, "Mor Grayhoof": 229, "Isalien": 429,
            "Kormok": 289, "Sothos": 329, "Jarien": 329, "Postmaster Malown": 329, "Lord Kri": 531, "Vem": 531,
            "Princess Yauj": 531}
@@ -130,7 +133,7 @@ def classic_gear(e):
 # kits, scopes), the curated consumables, gear only a profession can wear (Engineering goggles and trinkets), and
 # the recipes that make them. Classic items only: ids below The Burning Crusade's.
 from crafts import Crafts, CLASSIC_CAP
-from curated import CONSUMABLES, PROFESSION_CONSUMABLES
+from curated import CONSUMABLES, PROFESSION_CONSUMABLES, CURATED
 crafts = Crafts(BUILD, R, items)
 CLASSIC_ID = 23728
 
@@ -147,8 +150,12 @@ def profession_gear(it):
 
 consumable_names = {e if isinstance(e, str) else e[0] for lst in list(CONSUMABLES.values()) + list(PROFESSION_CONSUMABLES.values())
                     for e in lst}
+# hand-picked gear, whatever its level (Manual Crowd Pummeler is level 34)
+curated_names = {e if isinstance(e, str) else e[0] for lst in CURATED.values() for e in lst}
+curated_ids = {i for i, it in items.items() if i < CLASSIC_ID and (it["name"] in curated_names or i in curated_names)
+               and it["InventoryType"] in EQUIP}
 EXTRA = {i for i, it in items.items() if i < CLASSIC_ID and not it["name"].startswith(("Monster", "Test", "Deprecated"))
-         and (enchant_item(it) or profession_gear(it) or it["name"] in consumable_names)}
+         and (enchant_item(it) or profession_gear(it) or it["name"] in consumable_names)} | curated_ids
 for sid, ench in [(sid, e) for e, sids in crafts.enchants.items() for sid in sids] + [(sid, None) for i in list(EXTRA) for sid in crafts.creates.get(i, [])]:
     if sid in crafts.recipe and (crafts.rank(sid) or 0) <= CLASSIC_CAP:
         EXTRA.add(crafts.recipe[sid])
@@ -166,6 +173,8 @@ for e, maps in list(cmaps.items()) + [(k, {v}) for k, v in SUMMONED.items()]:
     if not c or not c["lootid"]:
         continue
     loot = resolve(CLT.get(c["lootid"], []))
+    if e in RING_OF_LAW:
+        loot = {it: ch / 6 for it, ch in loot.items()}
     for m in maps:
         ik = inst_key(m if m != 2291 else 229, c["name"]) if m != 2291 else 2291
         for it, ch in resolve(CLT.get(c["lootid"], []), quest=True).items():
@@ -176,7 +185,8 @@ for e, maps in list(cmaps.items()) + [(k, {v}) for k, v in SUMMONED.items()]:
                 continue
             drops_of[it][ik] = max(drops_of[it].get(ik, 0), ch)
             if wanted(it):
-                sources[it].append({"k": "D", "i": ik, "n": c["name"], "c": round(ch, 4), "rank": c["rank"]})
+                sources[it].append({"k": "D", "i": ik, "n": c["name"] + (" (Ring of Law)" if e in RING_OF_LAW else ""),
+                                    "c": round(ch, 4), "rank": c["rank"]})
 
 for e, maps in gmaps.items():
     g = gtpl.get(e)
@@ -202,6 +212,27 @@ for e, rows in group_loot("item_loot_template").items():
             drops_of[it][ik] = max(drops_of[it].get(ik, 0), ch * och)
             if wanted(it) and ch * och >= 0.004:
                 sources[it].append({"k": "D", "i": ik, "n": items[e]["name"], "c": round(ch * och, 4)})
+
+# Skinned from a boss (Pristine Hide of the Beast): the skill it needs, by the creature's level.
+SLT = group_loot("skinning_loot_template")
+skin_need = {}  # item -> skinning skill
+
+
+def skinning_skill(level):
+    return 1 if level < 10 else ((level - 10) * 10 if level < 20 else level * 5)
+
+
+for e, maps in list(cmaps.items()) + [(k, {v}) for k, v in SUMMONED.items()]:
+    c = ctpl.get(e)
+    if not c or not c.get("skinloot"):
+        continue
+    for it, ch in resolve(SLT.get(c["skinloot"], []), quest=True).items():
+        if ch < 0.004 or it in drops_of:
+            continue
+        for m in maps:
+            ik = inst_key(m if m != 2291 else 229, c["name"]) if m != 2291 else 2291
+            drops_of[it][ik] = max(drops_of[it].get(ik, 0), ch)
+        skin_need[it] = max(skin_need.get(it, 0), skinning_skill(c["maxlevel"]))
 
 # ---------------------------------------------------------------- quests
 RAIDS = {k for k, v in INSTANCES.items() if v[1]}
@@ -446,7 +477,12 @@ for q in quests.values():
         classes = a.get("AllowableClasses", 0) or 0
         for side in ("A", "H"):
             classes = classes or (qaddon.get(chains[side][0], {}).get("AllowableClasses", 0) or 0)
-        sources[it].append({"k": "Q", "q": q["ID"], "n": (q.get("LogTitle") or ""), "lvl": (q.get("QuestLevel") or 0), "i": via, "st": stage,
+        # a quest that needs something skinned: only for skinners
+        prof = None
+        for ri in [q.get("RequiredItemId%d" % i) for i in range(1, 7)]:
+            if ri in skin_need:
+                prof = [393, skin_need[ri]]
+        sources[it].append({"k": "Q", "q": q["ID"], "n": (q.get("LogTitle") or ""), "lvl": (q.get("QuestLevel") or 0), "i": via, "st": stage, "prof": prof,
                             "need": need, "chains": chains, "tokens": sorted(quest_tokens(q["ID"])) if via in RAIDS else [],
                             "races": (q.get("AllowableRaces") or 0), "classes": classes, "end": end})
 
@@ -473,6 +509,27 @@ for i in sorted(EXTRA):
     for skill, rank, sid, recipe in crafts.made_by(i):
         if rank <= CLASSIC_CAP:
             sources[i].append({"k": "X", "skill": skill, "rank": rank, "spell": sid, "recipe": recipe})
+
+# ---------------------------------------------------------------- world drops (hand-picked items only)
+# A hand-picked item with no other way to get it: the creatures out in the world that drop it, their level
+# range and the best chance (however rare: a 1 in 5,000 drop is still worth knowing about).
+_fullloot = {}
+for i in sorted(curated_ids):
+    if sources.get(i):
+        continue
+    best, lo, hi = 0.0, 99, 0
+    for e, mset in _world.items():
+        c = ctpl.get(e)
+        if not c or not c["lootid"] or not (mset & {0, 1}) or e in EVENT_ONLY:
+            continue
+        if c["lootid"] not in _fullloot:
+            _fullloot[c["lootid"]] = resolve(CLT.get(c["lootid"], []))
+        ch = _fullloot[c["lootid"]].get(i, 0)
+        if ch <= 0:
+            continue
+        best, lo, hi = max(best, ch), min(lo, c["minlevel"]), max(hi, c["maxlevel"])
+    if best > 0:
+        sources[i].append({"k": "W", "c": round(best, 5), "lo": lo, "hi": hi, "boe": items[i]["bonding"] == 2})
 
 pickle.dump({"sources": dict(sources), "instances": INSTANCES, "extra": sorted(EXTRA)}, open(os.path.join(BUILD, "sources.pkl"), "wb"))
 print("items with sources:", len(sources))

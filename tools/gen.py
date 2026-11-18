@@ -6,7 +6,7 @@ import pickle, sys, collections, math
 sys.path.insert(0, HERE)
 from sqlload import Table  # noqa
 from profiles import PROFILES, BY_TREE, CLASS_BIT, WEAPON_SKILL, ARMOR_SKILL
-from curated import CURATED, CRAFTED
+from curated import CURATED, CRAFTED, CURATED_NOTES
 from crafts import PROFESSIONS
 
 db = pickle.load(open(os.path.join(BUILD, "db.pkl"), "rb"))
@@ -189,15 +189,20 @@ for prof, lst in CURATED.items():
     for e in lst:
         name, value = (e, None) if isinstance(e, str) else e
         # an item id names one item where several share a name (Mark of the Champion: melee and caster)
+        placed = False
         for i in ([name] if isinstance(name, int) else byname.get(name, [])):
             it = items[i]
-            name = it["name"]
+            iname = it["name"]
             if it["ItemLevel"] > 92 or not (usable_mask(it) & pcls):
                 continue
-            if not sources.get(i) and name not in CRAFTED:
+            if not sources.get(i) and iname not in CRAFTED:
                 continue
             out.append((i, value))
             curated_ids.add(i)
+            placed = True
+        if not placed:
+            # say so, rather than drop a hand-picked item quietly
+            print("curated item with no way to get it on the realm (%s): %s" % (prof, name), file=sys.stderr)
     curated[prof] = out
 
 # ---------------------------------------------------------------- prefilter
@@ -277,8 +282,12 @@ def src_lua(i, crafted=True):
         if s["k"] == "Q" and s["q"] not in seenq:
             seenq.add(s["q"])
             ch = lambda c: "{ %d, %s, %d, %d, %d }" % (c[0], lstr(c[1]), c[2], c[3], c[4])
-            out.append("{ \"Q\", %d, %s, %d, %d, %d, %d, %d, %s, %s, %d }" % (s["q"], lstr(s["n"]), s["i"] or 0, s["st"], s["races"] or 0,
-                       s["lvl"] or 0, s["need"], ch(s["chains"]["A"]), ch(s["chains"]["H"]), s["classes"] or 0))
+            prof = s.get("prof")
+            out.append("{ \"Q\", %d, %s, %d, %d, %d, %d, %d, %s, %s, %d%s }" % (s["q"], lstr(s["n"]), s["i"] or 0, s["st"], s["races"] or 0,
+                       s["lvl"] or 0, s["need"], ch(s["chains"]["A"]), ch(s["chains"]["H"]), s["classes"] or 0,
+                       (", %d, %d" % (prof[0], prof[1])) if prof else ""))
+        elif s["k"] == "W":
+            out.append("{ \"W\", %s, %d, %d, %d }" % (lval(s["c"]), s["lo"], s["hi"], 1 if s["boe"] else 0))
         elif s["k"] == "V":
             name = s["n"] + (" <%s>" % s["sub"] if s["sub"] else "")
             out.append("{ \"V\", %s, %d, %d, %d, %d }" % (lstr(name), s["price"] or 0, s["rep"] or 0, s["rank"] or 0, s["st"]))
@@ -400,6 +409,14 @@ for prof, lst in curated.items():
     for i, v in lst:
         C.append("\t\t{ %d%s }, -- %s" % (i, (", %d" % v) if v else "", items[i]["name"]))
     C.append("\t},")
+C.append("}")
+C.append("")
+C.append("-- A line for a hand-picked item's tooltip: optional extras and odd ways to get them.")
+C.append("G.curatedNotes = {")
+for name, note in CURATED_NOTES.items():
+    for i in byname.get(name, []):
+        if i in curated_ids:
+            C.append("\t[%d] = %s, -- %s" % (i, lstr(note), name))
 C.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Curated.lua"), "w").write("\n".join(C) + "\n")
 print("done", file=sys.stderr)
@@ -662,6 +679,17 @@ X.append("G.extraItems = {")
 for i in sorted(extra_items):
     it = items[i]
     X.append("\t[%d] = { %s, %d, %d, %s }," % (i, lstr(it["name"]), it["Quality"], it["RequiredLevel"] or 0, extra_src_lua(i)))
+X.append("}")
+
+# level 80 talent builds for DragonUI (tools/talentbuilds.py): per tree, { tier, column, rank }
+from talentbuilds import all_builds
+X.append("")
+X.append("G.talentBuilds = {")
+for key, (cls, name, trees) in all_builds().items():
+    X.append("\t[%s] = { class = %s, name = %s, ranks = {" % (lstr(key), lstr(cls), lstr(name)))
+    for t in trees:
+        X.append("\t\t{ " + ", ".join("{ %d, %d, %d }" % x for x in t) + " },")
+    X.append("\t} },")
 X.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Extras.lua"), "w").write("\n".join(X) + "\n")
 print("extras: %d enchants, %d items" % (len(known), len(extra_items)), file=sys.stderr)

@@ -92,6 +92,7 @@ CURATED = {
         ("Wolfshead Helm", 40), "Mark of Fordring", "Truestrike Shoulders", "Cape of the Black Baron", "Cadaverous Armor",
         "Blackmist Armguards", "Devilsaur Gauntlets", "Cloudrunner Girdle", "Devilsaur Leggings", "Swiftwalker Boots",
         "Blackstone Ring", "Magma Forged Band", "Blackhand's Breadth", ("Hand of Justice", 45), ("Idol of Ferocity", 20),
+        ("Manual Crowd Pummeler", 60),
         # raids
         "Onyxia Tooth Pendant", "Prestor's Talisman of Connivery", "Barbed Choker", "Cloak of Firemaw",
         "Cloak of the Shrouded Mists", "Wristguards of Stability", "Gloves of Enforcement", "Quick Strike Ring",
@@ -100,7 +101,7 @@ CURATED = {
     ],
     "DRUID_BEAR": [
         # pre-raid
-        "Mask of the Unforgiven", "Mark of Fordring", "Truestrike Shoulders", "Phantasmal Cloak",
+        "Mask of the Unforgiven", "Mark of Fordring", "Truestrike Shoulders", "Phantasmal Cloak", "Breastplate of Bloodthirst",
         "Blackmist Armguards", "Devilsaur Gauntlets", "Cloudrunner Girdle", "Devilsaur Leggings", "Pads of the Dread Wolf",
         "Thrall's Resolve", "Blackstone Ring", "Blackhand's Breadth", "Mark of the Chosen",
         ("Idol of Brutality", 15),
@@ -111,13 +112,13 @@ CURATED = {
     "DRUID_BALANCE": [
         # pre-raid
         "Crimson Felt Hat", "Diana's Pearl Necklace", "Burial Shawl", "Spritecaster Cape", "Robes of the Royal Crown",
-        "Manacle Cuffs", "Hands of Power", "Skyshroud Leggings", "Omnicast Boots", "Eye of Orgrimmar",
-        "Songstone of Ironforge", "Eye of the Beast", ("Briarwood Reed", 25), "Witchblade",
+        "Manacle Cuffs", "Hands of Power", "Ban'thok Sash", "Skyshroud Leggings", "Omnicast Boots", "Eye of Orgrimmar",
+        "Songstone of Ironforge", "Cyclopean Band", "Eye of the Beast", ("Briarwood Reed", 25), "Witchblade",
         "Spirit of Aquementas",
         # raids
         "Ring of Spell Power", ("Talisman of Ephemeral Power", 30), "Staff of Dominance", "Neltharion's Tear",
         "Gem of Trapped Innocents", "Rime Covered Mantle", "Cloak of the Necropolis", "Band of the Inevitable",
-        "The Restrained Essence of Sapphiron", "Brimstone Staff",
+        "The Restrained Essence of Sapphiron", "Brimstone Staff", ("Idol of the Moon", 15),
         (23207, 40),  # Mark of the Champion, the caster one
     ],
     "DRUID_RESTO": [
@@ -196,6 +197,12 @@ GLYPHS = {
         "minor": ["Glyph of Unburdened Rebirth", "Glyph of the Wild", "Glyph of Thorns", "Glyph of Dash",
                   "Glyph of Aquatic Form"],
     },
+}
+
+# A line under a hand-picked item's tooltip, for the ones worth a word: optional extras and odd ways to get them.
+CURATED_NOTES = {
+    "Manual Crowd Pummeler": "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit "
+                             "of damage; you'd need several.",
 }
 
 # Recommended consumables, by spec profile: "Item name" or ("Item name", "a note for its tooltip").

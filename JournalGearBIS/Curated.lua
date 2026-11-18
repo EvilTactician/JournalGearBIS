@@ -247,6 +247,7 @@ G.curated = {
 		{ 13965 }, -- Blackhand's Breadth
 		{ 11815, 45 }, -- Hand of Justice
 		{ 22397, 20 }, -- Idol of Ferocity
+		{ 9449, 60 }, -- Manual Crowd Pummeler
 		{ 18404 }, -- Onyxia Tooth Pendant
 		{ 19377 }, -- Prestor's Talisman of Connivery
 		{ 21664 }, -- Barbed Choker
@@ -267,6 +268,7 @@ G.curated = {
 		{ 15411 }, -- Mark of Fordring
 		{ 12927 }, -- Truestrike Shoulders
 		{ 18689 }, -- Phantasmal Cloak
+		{ 12757 }, -- Breastplate of Bloodthirst
 		{ 12966 }, -- Blackmist Armguards
 		{ 15063 }, -- Devilsaur Gauntlets
 		{ 13252 }, -- Cloudrunner Girdle
@@ -292,10 +294,12 @@ G.curated = {
 		{ 11924 }, -- Robes of the Royal Crown
 		{ 11962 }, -- Manacle Cuffs
 		{ 13253 }, -- Hands of Power
+		{ 11662 }, -- Ban'thok Sash
 		{ 13170 }, -- Skyshroud Leggings
 		{ 11822 }, -- Omnicast Boots
 		{ 12545 }, -- Eye of Orgrimmar
 		{ 12543 }, -- Songstone of Ironforge
+		{ 11824 }, -- Cyclopean Band
 		{ 13968 }, -- Eye of the Beast
 		{ 12930, 25 }, -- Briarwood Reed
 		{ 13964 }, -- Witchblade
@@ -310,6 +314,7 @@ G.curated = {
 		{ 23031 }, -- Band of the Inevitable
 		{ 23046 }, -- The Restrained Essence of Sapphiron
 		{ 22800 }, -- Brimstone Staff
+		{ 23197, 15 }, -- Idol of the Moon
 		{ 23207, 40 }, -- Mark of the Champion
 	},
 	DRUID_RESTO = {
@@ -338,4 +343,9 @@ G.curated = {
 		{ 21712 }, -- Amulet of the Fallen God
 		{ 22398, 20 }, -- Idol of Rejuvenation
 	},
+}
+
+-- A line for a hand-picked item's tooltip: optional extras and odd ways to get them.
+G.curatedNotes = {
+	[9449] = "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit of damage; you'd need several.", -- Manual Crowd Pummeler
 }

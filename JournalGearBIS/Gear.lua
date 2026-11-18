@@ -81,8 +81,16 @@ function G.SourceText(src)
 		elseif (src.givers or 1) == 0 and not g then
 			t = t .. hint("starts from an item")
 		end
+		if src.prof then
+			t = t .. hint("needs " .. (G.PROFESSIONS[src.prof] or "a profession") .. " " .. (src.profRank or 0))
+		end
 		if g and G.IsRaid(g) then return t .. hint("needs an item from " .. place(g, "|cff9d9d9d")) end
 		if g then return t .. hint(place(g, "|cff9d9d9d")) end
+		return t
+	elseif src.kind == "W" then
+		local t = "World drop from level " .. src.lo .. (src.hi > src.lo and ("-" .. src.hi) or "") .. " mobs"
+			.. hint("about 1 in " .. math.max(2, math.floor(1 / src.chance + 0.5)) .. " kills")
+		if src.boe then t = t .. hint("or buy it at the Auction House") end
 		return t
 	elseif src.kind == "V" then
 		local t = "Sold by " .. src.who
@@ -214,6 +222,13 @@ local function build(panel)
 	local title = body:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", body, "TOPLEFT", 8, -8)
 	title:SetJustifyH("LEFT")
+	-- roles that share a tree (Feral cat and bear): their own names, not the tree's
+	local function sharedRole(k)
+		for from, swap in pairs(G.ROLE_TALENT or {}) do
+			if k == from or k == swap[2] then return true end
+		end
+		return false
+	end
 	local note = body:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 	note:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -4)
 	note:SetPoint("RIGHT", body, "RIGHT", -230, 0)
@@ -221,7 +236,7 @@ local function build(panel)
 	note:SetTextColor(0.8, 0.8, 0.8)
 
 	local render
-	local choose = J.CreateDropdown(body, 210, function ()
+	local choose = J.CreateDropdown(body, 170, function ()
 		local list = {}
 		local _, class = UnitClass("player")
 		local function add(text, value)
@@ -234,20 +249,104 @@ local function build(panel)
 		end
 		table.insert(list, { text = "Show the list for", isTitle = true, notCheckable = true })
 		local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
-		local _, tree = G.TalentProfile(active)
-		add("My talents (" .. (tree or "none yet") .. ")", "active")
+		local mine, tree = G.TalentProfile(active)
+		local extra = G.ExtraRoles(class)
+		if sharedRole(mine) then
+			-- a tree two roles share (Feral): just the two, the one your talents point to first and marked
+			table.sort(extra, function (a, b) return (a == mine) and b ~= mine end)
+			for _, k in ipairs(extra) do
+				if k == mine then
+					add(G.profiles[k].name .. "  |cff9d9d9d(your talents)|r", "active")
+				else
+					add(G.profiles[k].name, k)
+				end
+			end
+			extra = {}
+		else
+			add("My talents (" .. (tree or "none yet") .. ")", "active")
+		end
 		if (GetNumTalentGroups and GetNumTalentGroups() or 1) > 1 then
 			local _, otree = G.TalentProfile(active == 1 and 2 or 1)
 			add("My other talents (" .. (otree or "none yet") .. ")", "other")
 		end
-		local extra = G.ExtraRoles(class)
 		if #extra > 0 then
 			table.insert(list, { text = "Or a role", isTitle = true, notCheckable = true })
 			for _, k in ipairs(extra) do add(G.profiles[k].name .. "  |cff9d9d9d" .. G.profiles[k].role .. "|r", k) end
 		end
 		return list
 	end)
-	choose:SetPoint("TOPRIGHT", body, "TOPRIGHT", -8, -8)
+	-- placed right after the title, when the title's set (render)
+
+	-- A level 80 talent build for the list's spec, saved to DragonUI's talent builds: only with a DragonUI that
+	-- offers other addons a way to save one (DragonUI.API.SaveTalentBuild).
+	local function dragonAPI()
+		local api = _G.DragonUI and _G.DragonUI.API
+		if type(api) == "table" and type(api.SaveTalentBuild) == "function" then return api end
+		return nil
+	end
+	-- the build's ranks by DragonUI's talent order (the client's): { [tree] = { [talent index] = rank } }
+	local function buildRanks(b)
+		local ranks = {}
+		for tab, list in ipairs(b.ranks) do
+			local at = {}
+			for i = 1, (GetNumTalents(tab) or 0) do
+				local _, _, tier, column = GetTalentInfo(tab, i)
+				if tier then at[tier .. ":" .. column] = i end
+			end
+			ranks[tab] = {}
+			for _, x in ipairs(list) do
+				local i = at[x[1] .. ":" .. x[2]]
+				if not i then return nil end
+				ranks[tab][i] = x[3]
+			end
+		end
+		return ranks
+	end
+	local talentButton = CreateFrame("Button", nil, body)
+	talentButton:SetSize(20, 20)
+	talentButton.icon = talentButton:CreateTexture(nil, "ARTWORK")
+	talentButton.icon:SetAllPoints(talentButton)
+	talentButton.icon:SetTexture("Interface\\Icons\\INV_Misc_Book_11")
+	talentButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+	local function talentSaved(b)
+		local api, ranks = dragonAPI(), buildRanks(b)
+		return api and ranks and type(api.HasTalentBuild) == "function" and api.HasTalentBuild(b.class, b.name, ranks)
+	end
+	talentButton:SetScript("OnEnter", function (self)
+		local b = self.build
+		if not b then return end
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:AddLine("Talent build: " .. b.name)
+		if talentSaved(b) then
+			GameTooltip:AddLine("Already in DragonUI's talent builds.", 0.25, 1, 0.25, true)
+		else
+			GameTooltip:AddLine("Click to save this level 80 build to DragonUI's talent builds, where you can "
+				.. "follow it as a plan. Below level 80, spend your points along it as far as they go.", 1, 1, 1, true)
+		end
+		GameTooltip:AddLine("From Warcraft Tavern's guide for the spec.", 0.6, 0.6, 0.6, true)
+		GameTooltip:Show()
+	end)
+	talentButton:SetScript("OnLeave", function () GameTooltip:Hide() end)
+	talentButton:SetScript("OnClick", function (self)
+		local b, api = self.build, dragonAPI()
+		if not b or not api then return end
+		local ranks = buildRanks(b)
+		local tag = "|cffffd100GearBIS:|r "
+		if not ranks then
+			DEFAULT_CHAT_FRAME:AddMessage(tag .. "this build doesn't fit your talent trees, so it wasn't saved.")
+			return
+		end
+		local result, err = api.SaveTalentBuild(b.class, b.name, ranks, 80)
+		if result == "exists" then
+			DEFAULT_CHAT_FRAME:AddMessage(tag .. b.name .. " is already in DragonUI's talent builds.")
+		elseif result then
+			DEFAULT_CHAT_FRAME:AddMessage(tag .. "saved " .. b.name .. " to DragonUI's talent builds.")
+		else
+			DEFAULT_CHAT_FRAME:AddMessage(tag .. "DragonUI didn't save the build" .. (err and (": " .. err) or "") .. ".")
+		end
+		if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end
+		self.icon:SetDesaturated(talentSaved(b) and true or false)
+	end)
 
 	-- consumables: a row of icons at the top right, each with how to get it on hover
 	local consumables = CreateFrame("Frame", nil, body)
@@ -621,6 +720,8 @@ local function build(panel)
 				GameTooltip:AddLine(G.BIS_TEXT[0], 1, 0.82, 0, true)
 			end
 			if e.curated then GameTooltip:AddLine("A hand-picked item for this spec.", 0.5, 0.85, 1, true) end
+			local note = G.curatedNotes and G.curatedNotes[e.item.id]
+			if note then GameTooltip:AddLine(note, 1, 0.82, 0, true) end
 			GameTooltip:AddLine(" ")
 			local click = clickText(e)
 			if click then GameTooltip:AddLine(click, 0.5, 0.85, 1, true) end
@@ -691,7 +792,7 @@ local function build(panel)
 		local className = UnitClass("player")
 		local picked = db.choice and G.profiles[db.choice]
 		local noTalents = not v.treeName and not picked
-		local spec = noTalents and "" or ((v.treeName or prof.name) .. " ")
+		local spec = noTalents and "" or (((not sharedRole(v.profileKey) and v.treeName) or prof.name) .. " ")
 		title:SetText("Classic gear: " .. spec .. className .. "  |cff9d9d9d" .. prof.role
 			.. (prof.mh and (", " .. prof.name:lower()) or "") .. "|r")
 		local lines
@@ -716,7 +817,23 @@ local function build(panel)
 		local choices = (v.groups > 1) or #G.ExtraRoles(v.class) > 0
 		setShown(choose, choices)
 		local p = G.profiles[v.profileKey]
-		choose:SetText((db.choice == "other" and "Other talents") or (db.choice and G.profiles[db.choice] and p.name) or "My talents")
+		choose:SetText((db.choice == "other" and "Other talents") or ((db.choice and G.profiles[db.choice] or sharedRole(v.profileKey))
+			and p.name) or "My talents")
+		-- the menu sits right after the title, so the consumables keep the right-hand side
+		choose:ClearAllPoints()
+		choose:SetPoint("LEFT", title, "LEFT", math.min(title:GetStringWidth(), 420) - 6, 0)
+		-- the talent build button: after the menu, or after the title without one
+		local _, cls = UnitClass("player")
+		local b = G.talentBuilds and (G.talentBuilds[v.profileKey] or G.talentBuilds[cls .. ":" .. (v.treeIndex or 0)])
+		talentButton.build = (b and b.class == cls and dragonAPI()) and b or nil
+		setShown(talentButton, talentButton.build ~= nil)
+		talentButton:ClearAllPoints()
+		if choose:IsShown() then
+			talentButton:SetPoint("LEFT", choose, "RIGHT", -10, 2)
+		else
+			talentButton:SetPoint("LEFT", title, "LEFT", math.min(title:GetStringWidth(), 420) + 8, 0)
+		end
+		if talentButton.build then talentButton.icon:SetDesaturated(talentSaved(talentButton.build) and true or false) end
 
 		-- consumables, left of the menu when it's there
 		local list = {}
@@ -725,11 +842,7 @@ local function build(panel)
 			if #p.items > 0 and PROFESSION_ICONS[p.skill] then table.insert(list, p) end
 		end
 		consumables:ClearAllPoints()
-		if choose:IsShown() then
-			consumables:SetPoint("TOPRIGHT", choose, "TOPLEFT", -8, -17)
-		else
-			consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -19)
-		end
+		consumables:SetPoint("TOPRIGHT", body, "TOPRIGHT", -10, -19)
 		consumables:SetWidth(math.max(1, #list * 22 - 2))
 		for i, c in ipairs(list) do
 			local b = consumableIcon(i)
@@ -842,7 +955,9 @@ local function build(panel)
 					st.icon:SetDesaturated(not e.open)
 					st.name:SetText(itemName(e.item))
 					st.name:SetWidth(width - 230)
-					st.source:SetText(G.SourceText(e.src))
+					-- an optional extra (Manual Crowd Pummeler) says so on its line too, not just in its tooltip
+					local note = G.curatedNotes and G.curatedNotes[e.item.id]
+					st.source:SetText(G.SourceText(e.src) .. ((note and note:find("^Optional")) and hint("optional") or ""))
 					st.source:SetWidth(width - 230)
 					st.state:SetText(stepState(e, r))
 					st.how:SetText(DIFFICULTY[G.Difficulty(e.src)] or "")

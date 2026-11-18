@@ -60,9 +60,9 @@ PROFILES = {
                     w=w(CASTER, int=0.3, sta=0.3, crit=0.4, scrit=0.4, spi=0.05, shadow=1.0, fire=0.3)),
     "DRUID_BALANCE": dict(cls="DRUID", name="Balance", role="Spell damage", weapons="caster", ranged="relic",
                           w=w(CASTER, int=0.4, spi=0.1, mp5=0.4, nature=0.6, arcane=0.6)),
-    "DRUID_CAT": dict(cls="DRUID", name="Feral (cat)", role="Melee damage", weapons="caster", ranged="relic",
+    "DRUID_CAT": dict(cls="DRUID", name="Feral (cat)", role="Melee damage", weapons="2h", ranged="relic",
                       w=w(MELEE, str=2.0, agi=1.6, fap=1.0)),
-    "DRUID_BEAR": dict(cls="DRUID", name="Feral (bear)", role="Tank", weapons="caster", ranged="relic",
+    "DRUID_BEAR": dict(cls="DRUID", name="Feral (bear)", role="Tank", weapons="2h", ranged="relic",
                        # bears can't parry or block, and Survival of the Fittest makes them uncrittable without
                        # defense; leather armor counts several times over in Dire Bear Form
                        w=dict(sta=1.0, agi=1.0, armor=0.08, dodge=0.8, **{"def": 0.3}, str=0.4, ap=0.2, fap=0.2,
