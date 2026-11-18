@@ -738,14 +738,19 @@ local function build(panel)
 		for i = #list + 1, #consumableIcons do consumableIcons[i]:Hide() end
 		setShown(consumables, #list > 0)
 
-		-- where to go next: two dungeons a line, then the raid
+		-- where to go next: two dungeons a line, then the raids
 		local groups = {}
 		local function group(lead, a, b)
 			if a then table.insert(groups, { lead = lead, a, b }) end
 		end
 		group("|cff40ff40Best now:|r", v.dungeons[1], v.dungeons[2])
 		group("|cff40ff40Also good:|r", v.dungeons[3], v.dungeons[4])
-		group("|cff40ff40Raid:|r", v.raids[1])
+		-- a small raid (Upper Blackrock Spire) while it has upgrades for you, then the best big raid
+		local small, big
+		for _, e in ipairs(v.raids) do
+			if (e.players or 40) <= G.SMALL_RAID then small = small or e else big = big or e end
+		end
+		group("|cff40ff40Raid:|r", small or big, small and big)
 		for i = 1, 3 do
 			local line, g = adviceLines[i], groups[i]
 			setShown(line.lead, g ~= nil)

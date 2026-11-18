@@ -407,6 +407,17 @@ local function readSource(s)
 	return src
 end
 
+-- How far up the way to gear a candidate is: 0 without raiding (quests, dungeons, crafts, vendors), 1 a small
+-- raid (15 players or fewer: Upper Blackrock Spire, the usual last stop before the big raids), 2 a big raid.
+G.SMALL_RAID = 15
+local function rung(c)
+	if (c.tier or 0) < TIER_RAID then return 0 end
+	local g = c.src and c.src.inst and G.instances[c.src.inst]
+	if g and (G.Players(g) or 40) <= G.SMALL_RAID then return 1 end
+	return 2
+end
+G.Rung = rung
+
 -- How hard a source is: 1 easy, 2 medium, 3 hard.
 function G.Difficulty(src)
 	if src.kind == "Q" then return src.inst and 2 or 1 end
@@ -670,9 +681,17 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 
 	-- Shown: what to get now (the easy way in and the best you can get), then what opens next (one: you
 	-- can't get it yet anyway), then the best in slot; three at most.
+	-- The second is the best you can get, unless the first is from a dungeon and a small raid has a step: then
+	-- that one, so the way up goes dungeon, small raid, big raid (each disappears once you have it).
+	local second = steps[#steps]
+	if #steps >= 2 and rung(steps[1]) == 0 then
+		for i = 2, #steps do
+			if rung(steps[i]) == 1 then second = steps[i]; break end
+		end
+	end
 	local shown = {}
 	if #steps >= 1 then table.insert(shown, steps[1]) end
-	if #steps >= 2 then table.insert(shown, steps[#steps]) end
+	if #steps >= 2 then table.insert(shown, second) end
 	for _, c in ipairs(chain) do
 		if #shown < SHOWN - 1 and c ~= final then table.insert(shown, c) end
 		break
@@ -722,17 +741,24 @@ function G.BuildPairRow(row, prof, profileKey)
 	end
 	table.sort(pool, function (a, b) return a.value > b.value end)
 
-	-- the two best in slot, and the two best you can get now: the best without raiding first (a dungeon or
-	-- quest ring), then the best of all
+	-- the two best in slot, and the two best you can get now, one step up the way at a time: the best without
+	-- raiding first (a dungeon or quest ring), then a better one from a small raid, else the best of all. With
+	-- nothing left without raiding, the small raid's comes first and the best of all second.
 	local finals, now = {}, {}
-	local preRaid
+	local best = {}
 	for _, c in ipairs(pool) do
 		if #finals < 2 then table.insert(finals, c) end
-		if c.open and not preRaid and (c.tier or 0) < TIER_RAID then preRaid = c end
+		local k = c.open and rung(c)
+		if k and not best[k] then best[k] = c end
 	end
-	if preRaid then table.insert(now, preRaid) end
+	local first = best[0] or best[1]
+	if first then
+		table.insert(now, first)
+		local up = best[1]
+		if first == best[0] and up and up.value > first.value then table.insert(now, up) end
+	end
 	for _, c in ipairs(pool) do
-		if c.open and #now < 2 and c ~= preRaid then table.insert(now, c) end
+		if c.open and #now < 2 and c ~= first then table.insert(now, c) end
 	end
 	local isFinal = {}
 	for _, c in ipairs(finals) do isFinal[c] = true end
@@ -784,8 +810,9 @@ function G.BuildPairRow(row, prof, profileKey)
 	}
 end
 
--- Where to go next: the dungeons with the most for you, and the best raid (Upper Blackrock Spire is one; the
--- Journal has Lower Blackrock Spire as a dungeon, though the two share a map). Each upgrade counts by how
+-- Where to go next: the dungeons with the most for you, and the raids (Upper Blackrock Spire is a small one,
+-- shown before the big ones while it has upgrades; the Journal has Lower Blackrock Spire as a dungeon, though
+-- the two share a map). Each upgrade counts by how
 -- likely it is to drop and how big it is, against what you wear (an empty slot against the best you can get
 -- now, so a weak item isn't a full upgrade). Items your list shows count fully, hand-picked ones a bit
 -- more, other upgrades a quarter; a place with lots of likely upgrades can still come first.
