@@ -1035,11 +1035,21 @@ function G.Build(choice, stage)
 					alt = c
 				end
 			end
+			-- the one-hander to compare with: the best one still to get, or the one you wear
+			local wornOne
+			if not alt and not P.preview and P.worn[16] and not P.worn[16].twoHand then
+				wornOne = { item = { name = (GetItemInfo(P.worn[16].link)) or "your one-hander" }, value = mh.owned.value }
+			end
 			if alt then
-				alt.role, alt.oneHandGoal = "bis", true
-				alt.equipped = false
-				alt.inBags = P.bags[alt.item.id] ~= nil
 				table.insert(mh.steps, #mh.steps, alt)
+			end
+			local one = alt or wornOne
+			if one then
+				if alt then
+					alt.role, alt.oneHandGoal = "bis", true
+					alt.equipped = false
+					alt.inBags = P.bags[alt.item.id] ~= nil
+				end
 				-- which wins in the end: the two-hander, or the one-hander with the best off-hand
 				-- the best off-hand: the row's best in slot, or what you wear when nothing beats it
 				local ohName, ohValue = nil, 0
@@ -1049,10 +1059,11 @@ function G.Build(choice, stage)
 					local w = ohRow.owned.strong.worn
 					ohName, ohValue = w and w.link and GetItemInfo(w.link) or nil, ohRow.owned.value
 				end
-				local pairValue = alt.value - (ohRef or 0) + ohValue
-				local cmp = { one = alt.item.name, off = ohName,
+				local pairValue = one.value - (ohRef or 0) + ohValue
+				local cmp = { one = one.item.name, off = ohName,
 					twoWins = mh.final.value >= pairValue }
-				mh.final.handsCompare, alt.handsCompare = cmp, cmp
+				mh.final.handsCompare = cmp
+				if alt then alt.handsCompare = cmp end
 			end
 		end
 		-- Mixed: each step says which it is, and the off-hand row says it's only for the one-handers.
@@ -1071,6 +1082,8 @@ function G.Build(choice, stage)
 		if mh and #mh.steps == 0 then twoHand = not P.preview and P.worn[16] and P.worn[16].twoHand end
 		-- you wear a one-hander now: its off-hand still counts until you have the two-hander
 		if twoHand and not P.preview and P.worn[16] and not P.worn[16].twoHand then twoHand = false end
+		-- the row's name follows: Two-hand only when there's no off-hand row
+		if mh then mh.twoHandOnly = twoHand end
 		if twoHand then
 			for i, r in ipairs(rows) do
 				if r.row.key == "OH" then

@@ -798,14 +798,11 @@ local function build(panel)
 	end
 	-- A row's name for this list: "Two-hand" when the list only has two-handers (that's why there's no off-hand
 	-- row), and "Relic" or "Wand" for the ranged slot of classes that use those.
-	function rowName(row, prof, steps)
+	function rowName(row, prof, twoHandOnly)
 		if row.key == "MH" then
-			-- Two-hand only when every step is one: then the off-hand row is hidden too
-			local all2h = steps and #steps > 0
-			for _, e in ipairs(steps or {}) do
-				if e.item.inv ~= 17 then all2h = false end
-			end
-			if prof.weapons == "2h" or all2h then return "Two-hand" end
+			-- Two-hand only when the list has no off-hand row (every step a two-hander, and you don't wear a
+			-- one-hander that still needs one)
+			if prof.weapons == "2h" or twoHandOnly then return "Two-hand" end
 		elseif row.key == "RANGED" then
 			if prof.ranged == "relic" then return "Relic" end
 			if prof.ranged == "wand" then return "Wand" end
@@ -952,7 +949,7 @@ local function build(panel)
 				h:ClearAllPoints()
 				h:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 				h:SetWidth(width)
-				h.slot:SetText(rowName(r.row, v.profile, r.steps))
+				h.slot:SetText(rowName(r.row, v.profile, r.twoHandOnly))
 				local have = r.owned.weak or r.owned.strong
 				h.link = have and have.worn.link
 				if have then
@@ -1009,7 +1006,7 @@ local function build(panel)
 					st.icon:SetDesaturated(not e.open)
 					-- the main hand mixes one- and two-handers: which this one is
 					local hands = ""
-					if r.mixedHands then
+					if r.mixedHands or e.handsCompare then
 						local cmp = e.handsCompare
 						local wins = cmp and ((e.item.inv == 17) == cmp.twoWins)
 						hands = (e.item.inv == 17 and "two-hand" or "one-hand, with an off-hand") .. (wins and ": the better choice" or "")
