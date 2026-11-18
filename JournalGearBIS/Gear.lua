@@ -10,6 +10,7 @@ local G = JournalGearBIS
 if not (J and J.RegisterTab and (J.API or 0) >= 1 and J.CreateInset and J.CreateScrollArea and J.CreatePool
 		and G and G.Build) then return end
 
+local rowName
 local setShown = J.SetShown or function (f, shown) if shown then f:Show() else f:Hide() end end
 
 local STAGE_QUEST = 66000
@@ -189,19 +190,6 @@ end
 -----------------------------------------
 -- the tab
 
--- Roles one tree shares (a feral druid tanking or not): the class's profiles no tree picks on its own, and
--- both sides of a talent that tells them apart, so either can be chosen.
-function G.ExtraRoles(class)
-	local byTree, out, shared = {}, {}, {}
-	for _, k in ipairs(G.byTree[class] or {}) do byTree[k] = true end
-	for k, swap in pairs(G.ROLE_TALENT or {}) do shared[k], shared[swap[2]] = true, true end
-	for k, p in pairs(G.profiles) do
-		if p.class == class and (not byTree[k] or shared[k]) then table.insert(out, k) end
-	end
-	table.sort(out)
-	return out
-end
-
 local function build(panel)
 	JournalGearBISCharDB = JournalGearBISCharDB or {}
 	local db = JournalGearBISCharDB
@@ -219,9 +207,30 @@ local function build(panel)
 
 	-- top: the list's title, whose talents it's for, and the choice of list
 
+	-- The title reads "Classic gear: <spec> <class>  <role>". The spec is a button: click it for any of your
+	-- class's lists (a gold arrow after it says so), the one your talents pick marked.
 	local title = body:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 	title:SetPoint("TOPLEFT", body, "TOPLEFT", 8, -8)
 	title:SetJustifyH("LEFT")
+	title:SetText("Classic gear:")
+	local specButton = CreateFrame("Button", nil, body)
+	specButton:SetHeight(20)
+	specButton:SetPoint("LEFT", title, "RIGHT", 5, 0)
+	specButton.text = specButton:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+	specButton.text:SetPoint("LEFT", specButton, "LEFT", 0, 0)
+	specButton.arrow = specButton:CreateTexture(nil, "OVERLAY")
+	specButton.arrow:SetSize(14, 14)
+	specButton.arrow:SetPoint("LEFT", specButton.text, "RIGHT", 2, -1)
+	specButton.arrow:SetTexture("Interface\\Buttons\\Arrow-Down-Up")
+	local specGlow = specButton:CreateTexture(nil, "HIGHLIGHT")
+	specGlow:SetTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight")
+	specGlow:SetBlendMode("ADD")
+	specGlow:SetVertexColor(1, 0.82, 0, 0.35)
+	specGlow:SetAllPoints(specButton)
+	local titleTail = body:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+	titleTail:SetJustifyH("LEFT")
+	-- what each role's called on the title
+	local ROLE_LABEL = { ["Melee damage"] = "Melee DPS", ["Spell damage"] = "Ranged DPS", ["Ranged damage"] = "Ranged DPS" }
 	-- roles that share a tree (Feral cat and bear): their own names, not the tree's
 	local function sharedRole(k)
 		for from, swap in pairs(G.ROLE_TALENT or {}) do
@@ -236,46 +245,60 @@ local function build(panel)
 	note:SetTextColor(0.8, 0.8, 0.8)
 
 	local render
-	local choose = J.CreateDropdown(body, 170, function ()
-		local list = {}
+	-- every list for your class: each talent tree by name, and a role that shares one (Feral bear) after it
+	local function specChoices()
 		local _, class = UnitClass("player")
+		local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
+		local mine, _, mineTree = G.TalentProfile(active)
+		local out = {}
+		for i, k in ipairs(G.byTree[class] or {}) do
+			local tabName = GetTalentTabInfo(i)
+			local swap = G.ROLE_TALENT[k]
+			table.insert(out, { label = swap and G.profiles[k].name or tabName, value = "tree:" .. i,
+				mine = (i == mineTree and mine == k) })
+			if swap then
+				table.insert(out, { label = G.profiles[swap[2]].name, value = swap[2],
+					mine = (i == mineTree and mine == swap[2]) })
+			end
+		end
+		return out
+	end
+	local specMenu = CreateFrame("Frame", "JournalGearBISSpecMenu", UIParent, "UIDropDownMenuTemplate")
+	local function openSpecMenu(self)
+		local list = { { text = "Show the list for", isTitle = true, notCheckable = true } }
+		local current = db.choice or "active"
 		local function add(text, value)
-			table.insert(list, { text = text, checked = (db.choice or "active") == value, func = function ()
+			table.insert(list, { text = text, checked = current == value, func = function ()
 				db.choice = value
 				G.MarkTipsDirty()
 				CloseDropDownMenus()
 				render()
 			end })
 		end
-		table.insert(list, { text = "Show the list for", isTitle = true, notCheckable = true })
-		local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
-		local mine, tree = G.TalentProfile(active)
-		local extra = G.ExtraRoles(class)
-		if sharedRole(mine) then
-			-- a tree two roles share (Feral): just the two, the one your talents point to first and marked
-			table.sort(extra, function (a, b) return (a == mine) and b ~= mine end)
-			for _, k in ipairs(extra) do
-				if k == mine then
-					add(G.profiles[k].name .. "  |cff9d9d9d(your talents)|r", "active")
-				else
-					add(G.profiles[k].name, k)
-				end
+		for _, c in ipairs(specChoices()) do
+			if c.mine then
+				add(c.label .. "  |cff9d9d9d(your talents)|r", "active")
+			else
+				add(c.label, c.value)
 			end
-			extra = {}
-		else
-			add("My talents (" .. (tree or "none yet") .. ")", "active")
 		end
 		if (GetNumTalentGroups and GetNumTalentGroups() or 1) > 1 then
+			local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
 			local _, otree = G.TalentProfile(active == 1 and 2 or 1)
 			add("My other talents (" .. (otree or "none yet") .. ")", "other")
 		end
-		if #extra > 0 then
-			table.insert(list, { text = "Or a role", isTitle = true, notCheckable = true })
-			for _, k in ipairs(extra) do add(G.profiles[k].name .. "  |cff9d9d9d" .. G.profiles[k].role .. "|r", k) end
-		end
-		return list
+		EasyMenu(list, specMenu, self, 0, 0, "MENU")
+	end
+	specButton:SetScript("OnClick", function (self)
+		if self.choices then openSpecMenu(self) end
 	end)
-	-- placed right after the title, when the title's set (render)
+	specButton:SetScript("OnEnter", function (self)
+		if not self.choices then return end
+		GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+		GameTooltip:AddLine("Click to see another list for your class.", 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	specButton:SetScript("OnLeave", function () GameTooltip:Hide() end)
 
 	-- A level 80 talent build for the list's spec, saved to DragonUI's talent builds: only with a DragonUI that
 	-- offers other addons a way to save one (DragonUI.API.SaveTalentBuild).
@@ -755,6 +778,19 @@ local function build(panel)
 		if view and view.preview then return "" end
 		return gainText(e, r.owned.value)
 	end
+	-- A row's name for this list: "Two-hand" when the list only has two-handers or you wear one (that's why
+	-- there's no off-hand row), and "Relic" or "Wand" for the ranged slot of classes that use those.
+	function rowName(row, prof)
+		if row.key == "MH" then
+			local link = GetInventoryItemLink("player", 16)
+			local equipLoc = link and select(9, GetItemInfo(link))
+			if prof.weapons == "2h" or equipLoc == "INVTYPE_2HWEAPON" then return "Two-hand" end
+		elseif row.key == "RANGED" then
+			if prof.ranged == "relic" then return "Relic" end
+			if prof.ranged == "wand" then return "Wand" end
+		end
+		return row.name
+	end
 	local ROLE = { get = "|cff40ff40Now|r", next = "|cffff6060Next|r", bis = "|cffffd200BiS|r" }
 	-- a Now or Next you're not the level for yet
 	local SOON = "|cffff9933Soon|r"
@@ -790,11 +826,18 @@ local function build(panel)
 
 		local prof = v.profile
 		local className = UnitClass("player")
-		local picked = db.choice and G.profiles[db.choice]
+		local picked = db.choice and db.choice ~= "active" and db.choice ~= "other"
 		local noTalents = not v.treeName and not picked
-		local spec = noTalents and "" or (((not sharedRole(v.profileKey) and v.treeName) or prof.name) .. " ")
-		title:SetText("Classic gear: " .. spec .. className .. "  |cff9d9d9d" .. prof.role
-			.. (prof.mh and (", " .. prof.name:lower()) or "") .. "|r")
+		local spec = noTalents and "" or ((not sharedRole(v.profileKey) and v.treeName) or prof.name)
+		local choices = (v.groups > 1) or #specChoices() > 1
+		specButton.choices = choices
+		specButton.text:SetText(spec)
+		setShown(specButton.arrow, choices)
+		specButton:SetWidth(specButton.text:GetStringWidth() + (choices and 16 or 0))
+		specButton:EnableMouse(choices)
+		titleTail:ClearAllPoints()
+		titleTail:SetPoint("LEFT", specButton, "RIGHT", spec == "" and -5 or 5, 0)
+		titleTail:SetText(className .. "  |cff9d9d9d" .. (ROLE_LABEL[prof.role] or prof.role) .. "|r")
 		local lines
 		if v.preview then
 			lines = "A preview of your gear goals at level " .. v.cap .. ". From level " .. v.readyLevel
@@ -803,8 +846,8 @@ local function build(panel)
 			lines = "You have no talent points assigned. Please assign your talent points so that this list doesn't guess."
 		elseif db.choice == "other" and v.groups > 1 then
 			lines = "Your other talents (" .. (v.treeName or "none yet") .. "), compared with the gear you're wearing now, which is likely your active talents' gear."
-		elseif db.choice and G.profiles[db.choice] then
-			lines = "The role you picked, compared with the gear you're wearing and carrying."
+		elseif db.choice and db.choice ~= "active" and db.choice ~= "other" then
+			lines = "The list you picked, compared with the gear you're wearing and carrying."
 		else
 			lines = "For your talents" .. (v.treeName and (" (" .. v.treeName .. ")") or "")
 				.. ", compared with the gear you're wearing and carrying."
@@ -813,26 +856,13 @@ local function build(panel)
 		-- worded and coloured as the Progression tab has it
 		stageText:SetText(J.Has(J.HELLO_PROGRESSION) and ("Your progression stage: |cffffffff" .. s .. "|r")
 			or "|cff9d9d9dProgression isn't on for you here|r")
-		-- The menu is only there when there's a choice: dual spec, or a role talents can't tell.
-		local choices = (v.groups > 1) or #G.ExtraRoles(v.class) > 0
-		setShown(choose, choices)
-		local p = G.profiles[v.profileKey]
-		choose:SetText((db.choice == "other" and "Other talents") or ((db.choice and G.profiles[db.choice] or sharedRole(v.profileKey))
-			and p.name) or "My talents")
-		-- the menu sits right after the title, so the consumables keep the right-hand side
-		choose:ClearAllPoints()
-		choose:SetPoint("LEFT", title, "LEFT", math.min(title:GetStringWidth(), 420) - 6, 0)
 		-- the talent build button: after the menu, or after the title without one
 		local _, cls = UnitClass("player")
 		local b = G.talentBuilds and (G.talentBuilds[v.profileKey] or G.talentBuilds[cls .. ":" .. (v.treeIndex or 0)])
 		talentButton.build = (b and b.class == cls and dragonAPI()) and b or nil
 		setShown(talentButton, talentButton.build ~= nil)
 		talentButton:ClearAllPoints()
-		if choose:IsShown() then
-			talentButton:SetPoint("LEFT", choose, "RIGHT", -10, 2)
-		else
-			talentButton:SetPoint("LEFT", title, "LEFT", math.min(title:GetStringWidth(), 420) + 8, 0)
-		end
+		talentButton:SetPoint("LEFT", titleTail, "RIGHT", 8, 0)
 		if talentButton.build then talentButton.icon:SetDesaturated(talentSaved(talentButton.build) and true or false) end
 
 		-- consumables, left of the menu when it's there
@@ -901,7 +931,7 @@ local function build(panel)
 				h:ClearAllPoints()
 				h:SetPoint("TOPLEFT", c, "TOPLEFT", 0, -y)
 				h:SetWidth(width)
-				h.slot:SetText(r.row.name)
+				h.slot:SetText(rowName(r.row, v.profile))
 				local have = r.owned.weak or r.owned.strong
 				h.link = have and have.worn.link
 				if have then

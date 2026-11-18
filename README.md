@@ -1,7 +1,7 @@
-# Journal: Gear 0.2.2
+# Journal: Gear 0.2.3
 
 > [!WARNING]
-> **Early alpha (version 0.2.2-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.2.3-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest** and **Druid** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.2.2-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.2.3-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -55,11 +55,11 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
 
 Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest** and **Druid**.
 
-- **Talent builds (with DragonUI):** a book icon after the list's title saves a level 80 talent build for
+- **Talent builds (with DragonUI):** a book icon at the end of the title saves a level 80 talent build for
   your spec to DragonUI's talent builds, named "GearBIS: …" so you can tell where it came from. There you
   can follow it as a plan; below level 80, spend your points along it as far as they go. The builds are
-  the first ones Warcraft Tavern's Wrath guides list for each spec, checked against the realm's own talent
-  trees. Clicking again doesn't make a duplicate, but a copy you've renamed or changed is left alone, and
+  the first ones Warcraft Tavern's Wrath guides list for each spec (Combat and Balance picked by hand from
+  its calculator), checked against the realm's own talent trees. Clicking again doesn't make a duplicate, but a copy you've renamed or changed is left alone, and
   the next click saves a fresh one. The icon only shows with a DragonUI that lets other addons save builds.
 
 ## On your gear list: Roll Need
@@ -125,10 +125,18 @@ weapons that go with it (a Combat rogue gets swords and maces, Assassination and
 leaning toward the right speed for each hand (a slow main hand and quick off hand for Combat, a quick
 off-hand dagger for the others).
 With no talent points spent yet, the list asks you to assign them and shows a typical list for your
-class meanwhile (Combat for a rogue). The menu at the top right only appears when there's a choice to make: with **dual spec** it shows your
-other talents' list, compared with what you're wearing now (probably your active spec's gear), and a
-feral druid can switch between Feral (cat) and Feral (bear). A feral druid with the Natural Reaction talent
-gets the bear list by default, since only tanks take it.
+class meanwhile (Combat for a rogue).
+
+**Other lists:** the spec in the title ("Classic gear: **Combat** ▾ Rogue") is a button. Click it for any
+of your class's lists, with the one your talents pick marked; with **dual spec** it also offers your other
+talents' list, compared with what you're wearing now (probably your active spec's gear). Feral druids get
+Feral (cat) and Feral (bear) as two lists; one with the Natural Reaction talent gets the bear list by
+default, since only tanks take it. The list you picked stays picked until you pick another.
+
+**Weapons that suit the role:** a melee or tank list never offers a caster's weapon (intellect and spell
+power with no fighting stats), however much damage it does. The weapon row says **Two-hand** when the list
+only has two-handers or you wear one, which is why there's no off-hand row then, and the ranged row says
+**Relic** or **Wand** for the classes that use those.
 
 **Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
 damage past 54.8 per second into feral attack power (14 for each point above it). Only two-handers get
@@ -190,7 +198,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.1.14 to 0.1.19-alpha | Rogue and Priest lists re-checked against current Classic guides and the realm. |
 | 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
-| 0.2.1 to **0.2.2-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
+| 0.2.1 to **0.2.3-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
 | 0.3.0-alpha | Druid finished. |
 | 0.4.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |

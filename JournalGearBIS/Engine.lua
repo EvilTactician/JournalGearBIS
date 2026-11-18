@@ -502,8 +502,28 @@ local function speedFactor(pref, speed)
 	return 1 - math.min(0.1, off * pref[2])
 end
 
+-- A caster's weapon (intellect, spell power, spirit, no fighting stats): never a melee or tank pick, however
+-- much damage it does (a rogue with Verimonde's Last Resort, a cat with Finkle's Lava Dredger).
+local CASTER_STATS = { int = true, sp = true, spi = true, mp5 = true, heal = true, shadow = true, fire = true,
+	frost = true, arcane = true, nature = true, holy = true, spen = true, scrit = true }
+local FIGHTING_STATS = { agi = true, str = true, ap = true, rap = true, fap = true, crit = true, mcrit = true,
+	hit = true, mhit = true, exp = true, arp = true, haste = true, mhaste = true, dodge = true, parry = true,
+	def = true, block = true, bv = true }
+local function casterWeapon(stats)
+	local caster, fighting = false, false
+	for k in pairs(stats) do
+		if CASTER_STATS[k] then caster = true end
+		if FIGHTING_STATS[k] then fighting = true end
+	end
+	return caster and not fighting
+end
+
 local function candidate(t, prof, rowKey, curated)
 	if t.prof and (P.skills[t.prof] or 0) < (t.profRank or 0) then return nil end
+	if (rowKey == "MH" or rowKey == "OH") and (prof.role == "Melee damage" or prof.role == "Tank")
+		and not curated[t.id] and casterWeapon(t.stats) then
+		return nil
+	end
 	local srcs = sourcesOf(t)
 	-- Bind on Pickup crafts, and quests that need something only a profession gets: only for someone with
 	-- that profession (locked until the skill's there)
@@ -539,6 +559,9 @@ local function candidate(t, prof, rowKey, curated)
 	c.open = src.open and need <= P.level and not craftLock
 	-- Soon: open at your stage, but you're not the level for it yet
 	c.soon = src.open and need > P.realLevel
+	-- open at your stage but your profession's skill isn't there yet: shown on the way up as Soon, with the
+	-- skill it needs, rather than dropped
+	if craftLock and src.open then c.skillLocked, c.soon = true, true end
 	if craftLock then
 		c.lock = craftLock
 	elseif need > P.level and src.open then
@@ -657,7 +680,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	-- dungeons, an easier drop first when the best is a rare one).
 	local tiers, order = {}, {}
 	for _, c in ipairs(pool) do
-		if c.open then
+		if c.open or c.skillLocked then
 			if not tiers[c.tier] then tiers[c.tier] = {}; table.insert(order, c.tier) end
 			table.insert(tiers[c.tier], c)
 		end
@@ -689,7 +712,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	-- What opens after that, soonest first: by progression stage, then level, then raid order.
 	local locked = {}
 	for _, c in ipairs(pool) do
-		if not c.open then table.insert(locked, c) end
+		if not c.open and not c.skillLocked then table.insert(locked, c) end
 	end
 	table.sort(locked, function (a, b)
 		if a.stage ~= b.stage then return a.stage < b.stage end
@@ -740,7 +763,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	local wearing = {}
 	for _, o in ipairs(owned.all) do wearing[o.id] = true end
 	for _, c in ipairs(shown) do
-		c.role = (c == final) and "bis" or (c.open and "get" or "next")
+		c.role = (c == final) and "bis" or ((c.open or c.skillLocked) and "get" or "next")
 		c.equipped = wearing[c.item.id] == true
 		c.inBags = not c.equipped and P.bags[c.item.id] ~= nil
 	end
@@ -932,16 +955,31 @@ function G.Build(choice, stage)
 	if choice == "other" and groups > 1 then
 		which = active == 1 and 2 or 1
 		profileKey, treeName, treeIndex = G.TalentProfile(which)
+	elseif type(choice) == "string" and choice:match("^tree:%d$") then
+		-- a talent tree picked from the menu: its list, under its name
+		treeIndex = tonumber(choice:sub(6))
+		profileKey = G.byTree[class][treeIndex]
+		treeName = GetTalentTabInfo(treeIndex)
+		which = nil
 	elseif choice and G.profiles[choice] and G.profiles[choice].class == class then
 		profileKey, which = choice, nil
 		for i, k in ipairs(G.byTree[class]) do
 			if k == choice then treeIndex = i end
+		end
+		-- a role that shares a tree (Feral bear): that tree's
+		for from, swap in pairs(G.ROLE_TALENT) do
+			if swap[2] == choice then
+				for i, k in ipairs(G.byTree[class]) do
+					if k == from then treeIndex = i end
+				end
+			end
 		end
 	else
 		which = active
 		profileKey, treeName, treeIndex = G.TalentProfile(active)
 	end
 	local prof = G.profiles[profileKey]
+	if not prof then return nil, "class" end
 	P.profileKey, P.profile = profileKey, prof
 
 	-- The off-hand you'd pair with a one-hander: yours, or the best you can get.
