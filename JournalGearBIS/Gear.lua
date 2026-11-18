@@ -181,12 +181,14 @@ end
 -----------------------------------------
 -- the tab
 
--- Roles talents can't tell apart (a feral druid tanking or not): the class's profiles no tree picks.
+-- Roles one tree shares (a feral druid tanking or not): the class's profiles no tree picks on its own, and
+-- both sides of a talent that tells them apart, so either can be chosen.
 function G.ExtraRoles(class)
-	local byTree, out = {}, {}
+	local byTree, out, shared = {}, {}, {}
 	for _, k in ipairs(G.byTree[class] or {}) do byTree[k] = true end
+	for k, swap in pairs(G.ROLE_TALENT or {}) do shared[k], shared[swap[2]] = true, true end
 	for k, p in pairs(G.profiles) do
-		if p.class == class and not byTree[k] then table.insert(out, k) end
+		if p.class == class and (not byTree[k] or shared[k]) then table.insert(out, k) end
 	end
 	table.sort(out)
 	return out

@@ -50,7 +50,7 @@ for r in R("gameobject"):
         gmaps[r["id"]].add(r["map"])
 
 # Bosses the realm summons rather than spawns
-SUMMONED = {10584: 229, 10268: 229, 10264: 2291, 10813: 329, 10439: 329, 8443: 109, 7273: 209, 7796: 209, 7275: 209,
+SUMMONED = {10584: 229, 10268: 229, 10264: 2291, 10339: 2291, 10813: 329, 10439: 329, 8443: 109, 7273: 209, 7796: 209, 7275: 209,
             11583: 469, 11502: 409, 15517: 531, 15083: 309, 15114: 309, 14515: 309}
 SUMMONED.update({e: 533 for e in range(351000, 351040)})
 BY_NAME = {"Gri'lek": 309, "Renataki": 309, "Wushoolay": 309, "Lord Valthalak": 2291, "Mor Grayhoof": 229, "Isalien": 429,

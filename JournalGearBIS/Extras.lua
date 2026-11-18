@@ -560,7 +560,7 @@ G.enchantNames = {
 
 G.enchantProcs = {
 	[803] = { ROGUE_DAGGERS = 12, ROGUE_SWORDS = 12 }, -- Fiery Weapon
-	[1900] = { ROGUE_DAGGERS = 35, ROGUE_SWORDS = 35 }, -- Crusader
+	[1900] = { DRUID_BEAR = 25, DRUID_CAT = 50, ROGUE_DAGGERS = 35, ROGUE_SWORDS = 35 }, -- Crusader
 }
 
 G.glyphs = {
@@ -628,6 +628,76 @@ G.glyphs = {
 			{ 43370, 57987, 175, 0, 34, "", "Glyph of Levitate" },
 		},
 	},
+	DRUID_BALANCE = {
+		major = {
+			{ 40916, 54845, 220, 0, 20, "", "Glyph of Starfire" },
+			{ 40923, 54829, 130, 0, 15, "", "Glyph of Moonfire" },
+			{ 40919, 54830, 150, 0, 20, "Insect Swarm", "Glyph of Insect Swarm" },
+			{ 40921, 54828, 385, 13, 60, "Starfall", "Glyph of Starfall" },
+			{ 44928, 62080, 375, 8, 70, "Starfall", "Glyph of Focus" },
+			{ 40922, 54756, 85, 0, 15, "", "Glyph of Wrath" },
+			{ 40909, 54733, 170, 0, 20, "", "Glyph of Rebirth" },
+		},
+		minor = {
+			{ 44922, 62135, 350, 8, 70, "Typhoon", "Glyph of Typhoon" },
+			{ 43331, 57857, 100, 0, 20, "", "Glyph of Unburdened Rebirth" },
+			{ 43335, 57855, 75, 0, 15, "", "Glyph of the Wild" },
+			{ 43332, 57862, 75, 0, 15, "", "Glyph of Thorns" },
+			{ 43674, 59219, 150, 0, 16, "", "Glyph of Dash" },
+		},
+	},
+	DRUID_CAT = {
+		major = {
+			{ 40901, 54815, 260, 0, 22, "", "Glyph of Shred" },
+			{ 40902, 54818, 200, 0, 20, "", "Glyph of Rip" },
+			{ 40900, 54813, 385, 13, 50, "Mangle", "Glyph of Mangle" },
+			{ 40903, 54821, 310, 8, 24, "", "Glyph of Rake" },
+			{ 48720, 67598, 100, 0, 20, "", "Glyph of Claw" },
+			{ 40909, 54733, 170, 0, 20, "", "Glyph of Rebirth" },
+		},
+		minor = {
+			{ 43674, 59219, 150, 0, 16, "", "Glyph of Dash" },
+			{ 43331, 57857, 100, 0, 20, "", "Glyph of Unburdened Rebirth" },
+			{ 43335, 57855, 75, 0, 15, "", "Glyph of the Wild" },
+			{ 43316, 57856, 100, 0, 16, "", "Glyph of Aquatic Form" },
+			{ 43332, 57862, 75, 0, 15, "", "Glyph of Thorns" },
+		},
+	},
+	DRUID_BEAR = {
+		major = {
+			{ 40897, 54811, 90, 0, 15, "", "Glyph of Maul" },
+			{ 40900, 54813, 385, 13, 50, "Mangle", "Glyph of Mangle" },
+			{ 40899, 54812, 385, 13, 15, "", "Glyph of Growl" },
+			{ 40896, 54810, 350, 8, 36, "", "Glyph of Frenzied Regeneration" },
+			{ 40909, 54733, 170, 0, 20, "", "Glyph of Rebirth" },
+		},
+		minor = {
+			{ 43334, 57858, 150, 0, 28, "", "Glyph of Challenging Roar" },
+			{ 43331, 57857, 100, 0, 20, "", "Glyph of Unburdened Rebirth" },
+			{ 43335, 57855, 75, 0, 15, "", "Glyph of the Wild" },
+			{ 43332, 57862, 75, 0, 15, "", "Glyph of Thorns" },
+			{ 43674, 59219, 150, 0, 16, "", "Glyph of Dash" },
+		},
+	},
+	DRUID_RESTO = {
+		major = {
+			{ 40906, 54824, 385, 13, 40, "Swiftmend", "Glyph of Swiftmend" },
+			{ 40912, 54743, 385, 13, 15, "", "Glyph of Regrowth" },
+			{ 40913, 54754, 80, 0, 15, "", "Glyph of Rejuvenation" },
+			{ 40915, 54826, 385, 13, 64, "", "Glyph of Lifebloom" },
+			{ 50125, 71013, 375, 8, 15, "", "Glyph of Rapid Rejuvenation" },
+			{ 40908, 54832, 385, 13, 40, "", "Glyph of Innervate" },
+			{ 40914, 54825, 115, 0, 15, "", "Glyph of Healing Touch" },
+			{ 40909, 54733, 170, 0, 20, "", "Glyph of Rebirth" },
+		},
+		minor = {
+			{ 43331, 57857, 100, 0, 20, "", "Glyph of Unburdened Rebirth" },
+			{ 43335, 57855, 75, 0, 15, "", "Glyph of the Wild" },
+			{ 43332, 57862, 75, 0, 15, "", "Glyph of Thorns" },
+			{ 43674, 59219, 150, 0, 16, "", "Glyph of Dash" },
+			{ 43316, 57856, 100, 0, 16, "", "Glyph of Aquatic Form" },
+		},
+	},
 }
 
 G.consumables = {
@@ -665,12 +735,44 @@ G.consumables = {
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
 	},
+	DRUID_BALANCE = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 13454, "" }, -- Greater Arcane Elixir
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
+	DRUID_CAT = {
+		{ 13452, "" }, -- Elixir of the Mongoose
+		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 13928, "" }, -- Grilled Squid
+		{ 13446, "" }, -- Major Healing Potion
+	},
+	DRUID_BEAR = {
+		{ 13510, "" }, -- Flask of the Titans
+		{ 13452, "" }, -- Elixir of the Mongoose
+		{ 13445, "" }, -- Elixir of Superior Defense
+		{ 21023, "" }, -- Dirge's Kickin' Chimaerok Chops
+		{ 13446, "" }, -- Major Healing Potion
+	},
+	DRUID_RESTO = {
+		{ 13511, "" }, -- Flask of Distilled Wisdom
+		{ 20007, "" }, -- Mageblood Elixir
+		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
+		{ 13931, "" }, -- Nightfin Soup
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
 }
 
 G.elixirs = {
 	[9264] = 1, -- Elixir of Shadow Power
 	[12820] = 1, -- Winterfall Firewater
+	[13445] = 2, -- Elixir of Superior Defense
 	[13452] = 1, -- Elixir of the Mongoose
+	[13454] = 1, -- Greater Arcane Elixir
+	[13510] = 3, -- Flask of the Titans
 	[13511] = 3, -- Flask of Distilled Wisdom
 	[13512] = 3, -- Flask of Supreme Power
 	[20007] = 2, -- Mageblood Elixir
@@ -717,8 +819,11 @@ G.extraItems = {
 	[12662] = { "Demonic Rune", 2, 0, { { "D", 229, 0.1, "Burning Felguard" }, { "D", 309, 0.163, "Mad Servant" }, { "D", 429, 0.52, "Wildspawn Trickster, Wildspawn Rogue, Wildspawn Shadowstalker and others" }, { "D", 329, 0.08, "Balnazzar" } } },
 	[12820] = { "Winterfall Firewater", 1, 45, {  } },
 	[13444] = { "Major Mana Potion", 1, 49, { { "D", 229, 1, "Quartermaster Zigris, Chromatic Dragonspawn, Spirestone Warlord and others" }, { "D", 309, 0.172, "Hakkari Witch Doctor, Gurubashi Headhunter, Hakkari Blood Priest and others" }, { "D", 289, 0.197, "Unstable Corpse, Reanimated Corpse, Scholomance Student and others" }, { "D", 329, 0.263, "Malor the Zealous, Crimson Monk, Stonespine and others" }, { "D", 409, 0.029, "Flamewaker Protector, Flamewaker Priest, Flamewaker" }, { "D", 429, 0.22, "Tsu'zee, Gordok Brute, Gordok Mage-Lord and others" }, { "D", 469, 0.123, "Death Talon Wyrmguard, Blackwing Technician, Death Talon Captain and others" }, { "D", 2291, 0.02, "Goraluk Anvilcrack, Jed Runewatcher" }, { "D", 249, 0.012, "Onyxian Warder" }, { "Q", 8278, "Noggle's Last Hope", 0, 4, 0, 57, 54, { 8277, "Deadly Desert Venom", 1, 0, 2 }, { 8277, "Deadly Desert Venom", 1, 0, 2 }, 0 }, { "Q", 8470, "Deadwood Ritual Totem", 0, 0, 0, 55, 45, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 8471, "Winterfall Ritual Totem", 0, 0, 0, 56, 50, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 9419, "Scouring the Desert", 0, 5, 1101, 60, 1, { 9415, "Report to Marshal Bluewall", 1, 0, 2 }, { 9419, "Scouring the Desert", 1, 0, 1 }, 0 }, { "Q", 9422, "Scouring the Desert", 0, 5, 0, 60, 55, { 9422, "Scouring the Desert", 1, 0, 1 }, { 9416, "Report to General Kirika", 1, 0, 2 }, 0 }, { "X", "Crafted: Alchemy", 171, 295, 0, "recipe drops in Scholomance", 289 } } },
+	[13445] = { "Elixir of Superior Defense", 1, 43, { { "X", "Crafted: Alchemy", 171, 265, 0, "recipe sold by Kor'geld", 0 } } },
 	[13446] = { "Major Healing Potion", 1, 45, { { "D", 229, 1, "Quartermaster Zigris, Chromatic Dragonspawn, Spirestone Warlord and others" }, { "D", 309, 0.32, "Hakkari Witch Doctor, Gurubashi Headhunter, Hakkari Blood Priest and others" }, { "D", 230, 0.426, "Ograbisi, Jaz, Shill Dinger and others" }, { "D", 289, 0.36, "Unstable Corpse, Reanimated Corpse, Scholomance Student and others" }, { "D", 329, 0.467, "Crimson Monk, Stonespine, Hearthsinger Forresten and others" }, { "D", 409, 0.059, "Flamewaker Protector, Flamewaker Priest, Flamewaker" }, { "D", 429, 0.434, "Tsu'zee, Gordok Brute, Gordok Mage-Lord and others" }, { "D", 469, 0.224, "Death Talon Wyrmguard, Blackwing Technician, Death Talon Captain and others" }, { "D", 2291, 0.04, "Goraluk Anvilcrack, Jed Runewatcher" }, { "D", 249, 0.017, "Onyxian Warder" }, { "Q", 8278, "Noggle's Last Hope", 0, 4, 0, 57, 54, { 8277, "Deadly Desert Venom", 1, 0, 2 }, { 8277, "Deadly Desert Venom", 1, 0, 2 }, 0 }, { "Q", 8470, "Deadwood Ritual Totem", 0, 0, 0, 55, 45, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 8471, "Winterfall Ritual Totem", 0, 0, 0, 56, 50, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 9052, "Bloodpetal Poison", 0, 0, 0, 52, 50, { 9063, "Torwa Pathfinder", 9, 1, 2 }, { 9063, "Torwa Pathfinder", 9, 1, 2 }, 1024 }, { "Q", 9419, "Scouring the Desert", 0, 5, 1101, 60, 1, { 9415, "Report to Marshal Bluewall", 1, 0, 2 }, { 9419, "Scouring the Desert", 1, 0, 1 }, 0 }, { "Q", 9422, "Scouring the Desert", 0, 5, 0, 60, 55, { 9422, "Scouring the Desert", 1, 0, 1 }, { 9416, "Report to General Kirika", 1, 0, 2 }, 0 }, { "X", "Crafted: Alchemy", 171, 275, 0, "recipe sold by Evie Whirlbrew", 0 } } },
 	[13452] = { "Elixir of the Mongoose", 1, 46, { { "Q", 8282, "Noggle's Lost Satchel", 0, 4, 0, 58, 54, { 8277, "Deadly Desert Venom", 1, 0, 3 }, { 8277, "Deadly Desert Venom", 1, 0, 3 }, 0 }, { "X", "Crafted: Alchemy", 171, 280, 0, "from a recipe", 0 } } },
+	[13454] = { "Greater Arcane Elixir", 1, 47, { { "X", "Crafted: Alchemy", 171, 285, 0, "from a recipe", 0 } } },
+	[13510] = { "Flask of the Titans", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "from a recipe", 0 } } },
 	[13511] = { "Flask of Distilled Wisdom", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "from a recipe", 0 } } },
 	[13512] = { "Flask of Supreme Power", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "recipe sold by Alurmi (Exalted)", 0 } } },
 	[13928] = { "Grilled Squid", 1, 35, { { "X", "Crafted: Cooking", 185, 240, 0, "recipe sold by Gikkix", 0 } } },
@@ -755,6 +860,7 @@ G.extraItems = {
 	[20748] = { "Brilliant Mana Oil", 1, 45, { { "X", "Crafted: Enchanting", 333, 300, 3, "recipe sold by Rin'wosho the Trader (Friendly)", 0 } } },
 	[20749] = { "Brilliant Wizard Oil", 1, 45, { { "X", "Crafted: Enchanting", 333, 300, 3, "recipe sold by Rin'wosho the Trader (Honored)", 0 } } },
 	[20844] = { "Deadly Poison V", 1, 60, { { "V", "Jasper Fel <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Sloan McCoy <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Samor Festivus <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Sly Garrett <Shady Goods>", 600, 0, 0, 0 }, { "V", "Gerald Crawley <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Malissa <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Rekkul <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Hula'mahi <Reagents and Herbs>", 600, 0, 0, 0 }, { "V", "Jaysin Lanyda <Poisons & Reagents>", 600, 0, 0, 0 }, { "V", "Patrice Dwyer <Poison Supplies>", 600, 0, 0, 0 }, { "V", "Kyrai <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Fahran Silentblade <Tools & Supplies>", 600, 0, 0, 0 }, { "V", "Ezekiel Graves <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Tynnus Venomsprout <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Smudge Thunderwood <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Khur Hornstriker <Reagent Vendor>", 600, 0, 0, 0 }, { "V", "Bortega <Reagents & Poison Supplies>", 600, 0, 0, 0 }, { "V", "Miles Sidney <Poison Supplies>", 600, 0, 0, 0 } } },
+	[21023] = { "Dirge's Kickin' Chimaerok Chops", 1, 55, { { "Q", 8586, "Dirge's Kickin' Chimaerok Chops", 0, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 12 }, { 8286, "What Tomorrow Brings", 1, 0, 12 }, 0 }, { "X", "Crafted: Cooking", 185, 300, 4, "recipe from the quest Dirge's Kickin' Chimaerok Chops", 0 } } },
 	[22635] = { "Savage Guard", 3, 55, { { "Q", 9208, "The Savage Guard - Arcanum of Protection", 0, 3, 0, 60, 60, { 9208, "The Savage Guard - Arcanum of Protection", 1, 0, 1 }, { 9208, "The Savage Guard - Arcanum of Protection", 1, 0, 1 }, 0 }, { "Q", 9209, "The Savage Guard - Arcanum of Rapidity", 0, 3, 0, 60, 60, { 9209, "The Savage Guard - Arcanum of Rapidity", 1, 0, 1 }, { 9209, "The Savage Guard - Arcanum of Rapidity", 1, 0, 1 }, 0 }, { "Q", 9210, "The Savage Guard - Arcanum of Focus", 0, 3, 0, 60, 60, { 9210, "The Savage Guard - Arcanum of Focus", 1, 0, 1 }, { 9210, "The Savage Guard - Arcanum of Focus", 1, 0, 1 }, 0 } } },
 	[22636] = { "Ice Guard", 3, 55, { { "Q", 9211, "The Ice Guard", 0, 6, 0, 60, 60, { 9211, "The Ice Guard", 1, 0, 1 }, { 9211, "The Ice Guard", 1, 0, 1 }, 0 } } },
 	[22638] = { "Shadow Guard", 3, 55, { { "Q", 9213, "The Shadow Guard", 0, 6, 0, 60, 60, { 9213, "The Shadow Guard", 1, 0, 1 }, { 9213, "The Shadow Guard", 1, 0, 1 }, 0 } } },

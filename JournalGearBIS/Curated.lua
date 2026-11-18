@@ -231,4 +231,111 @@ G.curated = {
 		{ 18842 }, -- Staff of Dominance
 		{ 23207, 40 }, -- Mark of the Champion
 	},
+	DRUID_CAT = {
+		{ 8345, 40 }, -- Wolfshead Helm
+		{ 15411 }, -- Mark of Fordring
+		{ 12927 }, -- Truestrike Shoulders
+		{ 13340 }, -- Cape of the Black Baron
+		{ 14637 }, -- Cadaverous Armor
+		{ 12966 }, -- Blackmist Armguards
+		{ 15063 }, -- Devilsaur Gauntlets
+		{ 13252 }, -- Cloudrunner Girdle
+		{ 15062 }, -- Devilsaur Leggings
+		{ 12553 }, -- Swiftwalker Boots
+		{ 17713 }, -- Blackstone Ring
+		{ 22255 }, -- Magma Forged Band
+		{ 13965 }, -- Blackhand's Breadth
+		{ 11815, 45 }, -- Hand of Justice
+		{ 22397, 20 }, -- Idol of Ferocity
+		{ 18404 }, -- Onyxia Tooth Pendant
+		{ 19377 }, -- Prestor's Talisman of Connivery
+		{ 21664 }, -- Barbed Choker
+		{ 19398 }, -- Cloak of Firemaw
+		{ 17102 }, -- Cloak of the Shrouded Mists
+		{ 19146 }, -- Wristguards of Stability
+		{ 21672 }, -- Gloves of Enforcement
+		{ 18821 }, -- Quick Strike Ring
+		{ 17063 }, -- Band of Accuria
+		{ 19384 }, -- Master Dragonslayer's Ring
+		{ 19432 }, -- Circle of Applied Force
+		{ 19406 }, -- Drake Fang Talisman
+		{ 22954, 75 }, -- Kiss of the Spider
+		{ 23206, 60 }, -- Mark of the Champion
+	},
+	DRUID_BEAR = {
+		{ 13404 }, -- Mask of the Unforgiven
+		{ 15411 }, -- Mark of Fordring
+		{ 12927 }, -- Truestrike Shoulders
+		{ 18689 }, -- Phantasmal Cloak
+		{ 12966 }, -- Blackmist Armguards
+		{ 15063 }, -- Devilsaur Gauntlets
+		{ 13252 }, -- Cloudrunner Girdle
+		{ 15062 }, -- Devilsaur Leggings
+		{ 13210 }, -- Pads of the Dread Wolf
+		{ 12544 }, -- Thrall's Resolve
+		{ 17713 }, -- Blackstone Ring
+		{ 13965 }, -- Blackhand's Breadth
+		{ 17774 }, -- Mark of the Chosen
+		{ 23198, 15 }, -- Idol of Brutality
+		{ 18404 }, -- Onyxia Tooth Pendant
+		{ 19146 }, -- Wristguards of Stability
+		{ 21672 }, -- Gloves of Enforcement
+		{ 17063 }, -- Band of Accuria
+		{ 19384 }, -- Master Dragonslayer's Ring
+		{ 19406 }, -- Drake Fang Talisman
+	},
+	DRUID_BALANCE = {
+		{ 18727 }, -- Crimson Felt Hat
+		{ 22403 }, -- Diana's Pearl Necklace
+		{ 18681 }, -- Burial Shawl
+		{ 11623 }, -- Spritecaster Cape
+		{ 11924 }, -- Robes of the Royal Crown
+		{ 11962 }, -- Manacle Cuffs
+		{ 13253 }, -- Hands of Power
+		{ 13170 }, -- Skyshroud Leggings
+		{ 11822 }, -- Omnicast Boots
+		{ 12545 }, -- Eye of Orgrimmar
+		{ 12543 }, -- Songstone of Ironforge
+		{ 13968 }, -- Eye of the Beast
+		{ 12930, 25 }, -- Briarwood Reed
+		{ 13964 }, -- Witchblade
+		{ 11904 }, -- Spirit of Aquementas
+		{ 19147 }, -- Ring of Spell Power
+		{ 18820, 30 }, -- Talisman of Ephemeral Power
+		{ 18842 }, -- Staff of Dominance
+		{ 19379 }, -- Neltharion's Tear
+		{ 23057 }, -- Gem of Trapped Innocents
+		{ 22983 }, -- Rime Covered Mantle
+		{ 23050 }, -- Cloak of the Necropolis
+		{ 23031 }, -- Band of the Inevitable
+		{ 23046 }, -- The Restrained Essence of Sapphiron
+		{ 22800 }, -- Brimstone Staff
+		{ 23207, 40 }, -- Mark of the Champion
+	},
+	DRUID_RESTO = {
+		{ 12960 }, -- Tribal War Feathers
+		{ 18723 }, -- Animated Chain Necklace
+		{ 15061 }, -- Living Shoulders
+		{ 11623 }, -- Spritecaster Cape
+		{ 13346 }, -- Robes of the Exalted
+		{ 13208 }, -- Bleak Howler Armguards
+		{ 12554 }, -- Hands of the Exalted Herald
+		{ 18740 }, -- Thuzadin Sash
+		{ 11841 }, -- Senior Designer's Pantaloons
+		{ 13954 }, -- Verdant Footpads
+		{ 13178 }, -- Rosewine Circle
+		{ 16058 }, -- Fordring's Seal
+		{ 11819, 20 }, -- Second Wind
+		{ 12930, 20 }, -- Briarwood Reed
+		{ 11923 }, -- The Hammer of Grace
+		{ 11928 }, -- Thaurissan's Royal Scepter
+		{ 18510 }, -- Hide of the Wild
+		{ 19140 }, -- Cauterizing Band
+		{ 19382 }, -- Pure Elementium Band
+		{ 19395 }, -- Rejuvenating Gem
+		{ 17105 }, -- Aurastone Hammer
+		{ 23056 }, -- Hammer of the Twisting Nether
+		{ 21712 }, -- Amulet of the Fallen God
+		{ 22398, 20 }, -- Idol of Rejuvenation
+	},
 }

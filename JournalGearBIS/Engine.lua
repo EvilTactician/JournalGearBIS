@@ -121,6 +121,9 @@ end
 -- The tree a class's list uses before any talent points are spent.
 G.DEFAULT_TREE = { ROGUE = 2 }
 
+-- Feral druids tank or fight in Cat Form from the same tree: Natural Reaction is a bear's talent only.
+G.ROLE_TALENT = { DRUID_CAT = { "Natural Reaction", "DRUID_BEAR" } }
+
 -- The profile for a talent group (1 or 2): the tree with the most points.
 function G.TalentProfile(group)
 	local _, class = UnitClass("player")
@@ -133,7 +136,15 @@ function G.TalentProfile(group)
 	end
 	-- No points spent yet: the class's usual pick (a rogue's is Combat).
 	if bestPoints <= 0 then return trees[G.DEFAULT_TREE[class] or 1], nil end
-	return trees[best], name
+	-- a tree two roles share: a talent only one of them takes picks it
+	local key, swap = trees[best], G.ROLE_TALENT[trees[best]]
+	if swap and GetNumTalents then
+		for i = 1, GetNumTalents(best, false, false) or 0 do
+			local tname, _, _, _, rank = GetTalentInfo(best, i, false, false, group)
+			if tname == swap[1] and (rank or 0) > 0 then key = swap[2] end
+		end
+	end
+	return key, name
 end
 
 -----------------------------------------
@@ -144,7 +155,12 @@ function G.Score(stats, weights, part)
 	for k, v in pairs(stats) do
 		if k ~= "wdps" and k ~= "speed" then s = s + (weights[k] or 0) * v end
 	end
-	if stats.wdps then s = s + (weights[part or "dps"] or 0) * stats.wdps end
+	if stats.wdps then
+		s = s + (weights[part or "dps"] or 0) * stats.wdps
+		-- In Cat and Bear Form a main-hand weapon counts only for its feral attack power, which the realm gives
+		-- any weapon past 54.8 damage per second: 14 for each point above it.
+		if weights.fap and (part or "dps") == "dps" then s = s + weights.fap * math.max(0, stats.wdps * 14 - 767) end
+	end
 	return s
 end
 

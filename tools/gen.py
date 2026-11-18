@@ -137,6 +137,9 @@ def score(st, wts, part):
         s += wts.get(k, 0) * v
     if "wdps" in st:
         s += wts.get(part, 0) * st["wdps"]
+        # feral attack power from a main-hand weapon past 54.8 damage per second (as Engine.lua's G.Score)
+        if "fap" in wts and part == "dps":
+            s += wts["fap"] * max(0, st["wdps"] * 14 - 767)
     return s
 
 

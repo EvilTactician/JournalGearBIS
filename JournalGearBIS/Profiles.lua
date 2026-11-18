@@ -50,7 +50,7 @@ G.profiles = {
 	DRUID_CAT = { class = "DRUID", name = "Feral (cat)", role = "Melee damage", weapons = "caster", ranged = "relic",
 		weights = { agi = 1.6, ap = 1, arp = 0.3, crit = 1.3, exp = 1, fap = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, sta = 0.1, str = 2, wskill = 0.5 } },
 	DRUID_BEAR = { class = "DRUID", name = "Feral (bear)", role = "Tank", weapons = "caster", ranged = "relic",
-		weights = { agi = 1, ap = 0.2, armor = 0.12, block = 0.5, bv = 0.3, def = 1.2, dodge = 1, exp = 0.4, fap = 0.2, hit = 0.3, mhit = 0.3, parry = 0.9, sta = 1, str = 0.5 } },
+		weights = { agi = 1, ap = 0.2, armor = 0.08, arp = 0.1, crit = 0.2, def = 0.3, dodge = 0.8, exp = 0.4, fap = 0.2, haste = 0.1, hit = 0.4, mcrit = 0.2, mhaste = 0.1, mhit = 0.4, sta = 1, str = 0.4 } },
 	DRUID_RESTO = { class = "DRUID", name = "Restoration", role = "Healer", weapons = "caster", ranged = "relic",
 		weights = { crit = 0.4, haste = 0.4, heal = 1, int = 0.5, mp5 = 1.5, scrit = 0.4, shaste = 0.4, sp = 1, spi = 0.7, sta = 0.05 } },
 }

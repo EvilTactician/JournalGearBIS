@@ -87,6 +87,49 @@ CURATED = {
         ("Talisman of Ephemeral Power", 30), "Neltharion's Tear", "Staff of Dominance",
         (23207, 40),  # Mark of the Champion, the caster one (spell power against undead and demons)
     ],
+    "DRUID_CAT": [
+        # pre-raid
+        ("Wolfshead Helm", 40), "Mark of Fordring", "Truestrike Shoulders", "Cape of the Black Baron", "Cadaverous Armor",
+        "Blackmist Armguards", "Devilsaur Gauntlets", "Cloudrunner Girdle", "Devilsaur Leggings", "Swiftwalker Boots",
+        "Blackstone Ring", "Magma Forged Band", "Blackhand's Breadth", ("Hand of Justice", 45), ("Idol of Ferocity", 20),
+        # raids
+        "Onyxia Tooth Pendant", "Prestor's Talisman of Connivery", "Barbed Choker", "Cloak of Firemaw",
+        "Cloak of the Shrouded Mists", "Wristguards of Stability", "Gloves of Enforcement", "Quick Strike Ring",
+        "Band of Accuria", "Master Dragonslayer's Ring", "Circle of Applied Force", "Drake Fang Talisman",
+        ("Kiss of the Spider", 75), (23206, 60),
+    ],
+    "DRUID_BEAR": [
+        # pre-raid
+        "Mask of the Unforgiven", "Mark of Fordring", "Truestrike Shoulders", "Phantasmal Cloak",
+        "Blackmist Armguards", "Devilsaur Gauntlets", "Cloudrunner Girdle", "Devilsaur Leggings", "Pads of the Dread Wolf",
+        "Thrall's Resolve", "Blackstone Ring", "Blackhand's Breadth", "Mark of the Chosen",
+        ("Idol of Brutality", 15),
+        # raids
+        "Onyxia Tooth Pendant", "Wristguards of Stability", "Gloves of Enforcement", "Band of Accuria",
+        "Master Dragonslayer's Ring", "Drake Fang Talisman",
+    ],
+    "DRUID_BALANCE": [
+        # pre-raid
+        "Crimson Felt Hat", "Diana's Pearl Necklace", "Burial Shawl", "Spritecaster Cape", "Robes of the Royal Crown",
+        "Manacle Cuffs", "Hands of Power", "Skyshroud Leggings", "Omnicast Boots", "Eye of Orgrimmar",
+        "Songstone of Ironforge", "Eye of the Beast", ("Briarwood Reed", 25), "Witchblade",
+        "Spirit of Aquementas",
+        # raids
+        "Ring of Spell Power", ("Talisman of Ephemeral Power", 30), "Staff of Dominance", "Neltharion's Tear",
+        "Gem of Trapped Innocents", "Rime Covered Mantle", "Cloak of the Necropolis", "Band of the Inevitable",
+        "The Restrained Essence of Sapphiron", "Brimstone Staff",
+        (23207, 40),  # Mark of the Champion, the caster one
+    ],
+    "DRUID_RESTO": [
+        # pre-raid
+        "Tribal War Feathers", "Animated Chain Necklace", "Living Shoulders", "Spritecaster Cape", "Robes of the Exalted",
+        "Bleak Howler Armguards", "Hands of the Exalted Herald", "Thuzadin Sash", "Senior Designer's Pantaloons",
+        "Verdant Footpads", "Rosewine Circle", "Fordring's Seal", ("Second Wind", 20), ("Briarwood Reed", 20),
+        "The Hammer of Grace", "Thaurissan's Royal Scepter",
+        # raids
+        "Hide of the Wild", "Cauterizing Band", "Pure Elementium Band", "Rejuvenating Gem", "Aurastone Hammer",
+        "Hammer of the Twisting Nether", "Amulet of the Fallen God", ("Idol of Rejuvenation", 20),
+    ],
 }
 
 # Not in the world DB's loot or quest tables.
@@ -99,6 +142,8 @@ CRAFTED = {
     "Felcloth Shoulders": "Crafted: Tailoring",
     "Felcloth Gloves": "Crafted: Tailoring",
     "Robe of Winter Night": "Crafted: Tailoring",
+    "Wolfshead Helm": "Crafted: Leatherworking",
+    "Living Shoulders": "Crafted: Leatherworking",
 }
 
 # Glyphs, best first, by spec profile. "Glyph name" or ("Glyph name", "Talent it needs"). The tab shows the best
@@ -127,6 +172,30 @@ GLYPHS = {
                   "Glyph of Inner Fire"],
         "minor": ["Glyph of Fortitude", "Glyph of Shadow Protection", "Glyph of Fading", "Glyph of Levitate"],
     },
+    "DRUID_BALANCE": {
+        "major": ["Glyph of Starfire", "Glyph of Moonfire", ("Glyph of Insect Swarm", "Insect Swarm"),
+                  ("Glyph of Starfall", "Starfall"), ("Glyph of Focus", "Starfall"), "Glyph of Wrath", "Glyph of Rebirth"],
+        "minor": [("Glyph of Typhoon", "Typhoon"), "Glyph of Unburdened Rebirth", "Glyph of the Wild", "Glyph of Thorns",
+                  "Glyph of Dash"],
+    },
+    "DRUID_CAT": {
+        "major": ["Glyph of Shred", "Glyph of Rip", ("Glyph of Mangle", "Mangle"), "Glyph of Rake", "Glyph of Claw",
+                  "Glyph of Rebirth"],
+        "minor": ["Glyph of Dash", "Glyph of Unburdened Rebirth", "Glyph of the Wild", "Glyph of Aquatic Form",
+                  "Glyph of Thorns"],
+    },
+    "DRUID_BEAR": {
+        "major": ["Glyph of Maul", ("Glyph of Mangle", "Mangle"), "Glyph of Growl", "Glyph of Frenzied Regeneration",
+                  "Glyph of Rebirth"],
+        "minor": ["Glyph of Challenging Roar", "Glyph of Unburdened Rebirth", "Glyph of the Wild", "Glyph of Thorns",
+                  "Glyph of Dash"],
+    },
+    "DRUID_RESTO": {
+        "major": [("Glyph of Swiftmend", "Swiftmend"), "Glyph of Regrowth", "Glyph of Rejuvenation", "Glyph of Lifebloom",
+                  "Glyph of Rapid Rejuvenation", "Glyph of Innervate", "Glyph of Healing Touch", "Glyph of Rebirth"],
+        "minor": ["Glyph of Unburdened Rebirth", "Glyph of the Wild", "Glyph of Thorns", "Glyph of Dash",
+                  "Glyph of Aquatic Form"],
+    },
 }
 
 # Recommended consumables, by spec profile: "Item name" or ("Item name", "a note for its tooltip").
@@ -145,11 +214,19 @@ CONSUMABLES = {
     "PRIEST_SHADOW": ["Flask of Supreme Power", "Elixir of Shadow Power",
                       ("Brilliant Wizard Oil", "Put it on your weapon."), "Runn Tum Tuber Surprise", "Major Mana Potion",
                       ("Demonic Rune", "Costs some health.")],
+    "DRUID_BALANCE": ["Flask of Supreme Power", "Greater Arcane Elixir", ("Brilliant Wizard Oil", "Put it on your weapon."),
+                      "Runn Tum Tuber Surprise", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
+    "DRUID_CAT": ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
+                  "Grilled Squid", "Major Healing Potion"],
+    "DRUID_BEAR": ["Flask of the Titans", "Elixir of the Mongoose", "Elixir of Superior Defense",
+                   "Dirge's Kickin' Chimaerok Chops", "Major Healing Potion"],
+    "DRUID_RESTO": ["Flask of Distilled Wisdom", "Mageblood Elixir", ("Brilliant Mana Oil", "Put it on your weapon."),
+                    "Nightfin Soup", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
 }
 
 # Enchants whose worth is a proc the stat weights can't see: name -> value in the profile's units, by profile.
 ENCHANT_PROCS = {
-    "Crusader": {"ROGUE_SWORDS": 35, "ROGUE_DAGGERS": 35},
+    "Crusader": {"ROGUE_SWORDS": 35, "ROGUE_DAGGERS": 35, "DRUID_CAT": 50, "DRUID_BEAR": 25},
     "Fiery Weapon": {"ROGUE_SWORDS": 12, "ROGUE_DAGGERS": 12},
 }
 

@@ -1,16 +1,16 @@
-# Journal: Gear 0.2.0
+# Journal: Gear 0.2.1
 
 > [!WARNING]
-> **Early alpha (version 0.2.0-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.2.1-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
-> versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
+> versions. Only **Rogue**, **Priest** and **Druid** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
 
 <div align="center">
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.2.0-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.2.1-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -53,7 +53,7 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   have the profession at the skill it needs, and only when it's clearly better than what you can get
   otherwise: it's often costly and hard to make.
 
-Glyphs and consumables are hand-picked, so for now they're there for **Rogue** and **Priest**.
+Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest** and **Druid**.
 
 ## On your gear list: Roll Need
 
@@ -120,7 +120,12 @@ off-hand dagger for the others).
 With no talent points spent yet, the list asks you to assign them and shows a typical list for your
 class meanwhile (Combat for a rogue). The menu at the top right only appears when there's a choice to make: with **dual spec** it shows your
 other talents' list, compared with what you're wearing now (probably your active spec's gear), and a
-druid can pick Feral (bear) instead of Feral (cat).
+feral druid can switch between Feral (cat) and Feral (bear). A feral druid with the Natural Reaction talent
+gets the bear list by default, since only tanks take it.
+
+**Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
+damage past 54.8 per second into feral attack power (14 for each point above it). A feral druid's weapon
+steps count that along with the weapon's own stats, so slow, hard-hitting two-handers rank high.
 
 Steps are compared with what you **wear and carry** in your bags. Quest chains are the ones your faction
 starts.
@@ -162,8 +167,8 @@ different stage for a raid on your realm, the tab uses the realm's.
   from the item table and the client's Spell.dbc.
 - **Stat weights** for every spec are in `Profiles.lua`.
 - **Hand-picked items** in `Curated.lua` win their raid or dungeon step over the stat-weighted pick. In
-  this alpha they cover **Rogue** (swords and maces, and daggers) and **Priest** (Holy and Discipline, and
-  Shadow).
+  this alpha they cover **Rogue** (swords and maces, and daggers), **Priest** (Holy and Discipline, and
+  Shadow) and **Druid** (Balance, Feral cat, Feral bear and Restoration).
 
 ## Versions
 
@@ -172,8 +177,10 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.1.14 to 0.1.19-alpha | Rogue and Priest lists re-checked against current Classic guides and the realm. |
-| **0.2.0-alpha** (now) | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
-| 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
+| 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
+| **0.2.1-alpha** (now) | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons. |
+| 0.3.0-alpha | Druid finished. |
+| 0.4.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
 
