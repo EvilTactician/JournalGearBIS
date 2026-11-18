@@ -748,7 +748,7 @@ local function build(panel)
 		-- a small raid (Upper Blackrock Spire) while it has upgrades for you, then the best big raid
 		local small, big
 		for _, e in ipairs(v.raids) do
-			if (e.players or 40) <= G.SMALL_RAID then small = small or e else big = big or e end
+			if G.SMALL_RAIDS[e.inst] then small = small or e else big = big or e end
 		end
 		group("|cff40ff40Raid:|r", small or big, small and big)
 		for i = 1, 3 do

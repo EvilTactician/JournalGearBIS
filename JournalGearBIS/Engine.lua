@@ -408,12 +408,13 @@ local function readSource(s)
 end
 
 -- How far up the way to gear a candidate is: 0 without raiding (quests, dungeons, crafts, vendors), 1 a small
--- raid (15 players or fewer: Upper Blackrock Spire, the usual last stop before the big raids), 2 a big raid.
-G.SMALL_RAID = 15
+-- raid, the usual last stop before the big raids, 2 a big raid. The small raids are named, not found by group
+-- size: in Classic only Upper Blackrock Spire. The Burning Crusade and Wrath lists choose their own (Karazhan
+-- comes before the big raids; in Wrath every raid has a 10-player size, so none counts as a stop on the way).
+G.SMALL_RAIDS = { [2291] = true }
 local function rung(c)
 	if (c.tier or 0) < TIER_RAID then return 0 end
-	local g = c.src and c.src.inst and G.instances[c.src.inst]
-	if g and (G.Players(g) or 40) <= G.SMALL_RAID then return 1 end
+	if c.src and c.src.inst and G.SMALL_RAIDS[c.src.inst] then return 1 end
 	return 2
 end
 G.Rung = rung
