@@ -287,24 +287,31 @@ local function build(panel)
 			if c.skill then return professionTooltip(self, c) end
 			J.ShowItemTooltip(self, c.id)
 			if c.note then GameTooltip:AddLine(c.note, 0.5, 0.85, 1, true) end
-			-- elixirs: one battle and one guardian at a time; a flask counts as both
+			-- elixirs: one battle and one guardian at a time; a flask counts as both. The list is best first, so one
+			-- that clashes with an earlier one is that one's cheaper stand-in.
 			local kind = G.elixirs and G.elixirs[c.id]
 			if kind then
-				local clash, flask = {}, false
+				local before, after, seen = {}, {}, false
 				for _, o in ipairs(self.list or {}) do
-					local ok = o ~= c and o.id and G.elixirs[o.id]
-					if ok and G.band(ok, kind) ~= 0 then
-						table.insert(clash, (GetItemInfo(o.id)) or o.name or "?")
-						if ok == 3 then flask = true end
+					if o == c then
+						seen = true
+					else
+						local ok = o.id and G.elixirs[o.id]
+						if ok and G.band(ok, kind) ~= 0 then
+							table.insert(seen and after or before, (GetItemInfo(o.id)) or o.name or "?")
+						end
 					end
 				end
 				GameTooltip:AddLine(kind == 3 and "A flask: it counts as both a battle and a guardian elixir."
 					or (kind == 1 and "A battle elixir: one at a time." or "A guardian elixir: one at a time."), 1, 0.82, 0, true)
-				if #clash > 0 then
-					GameTooltip:AddLine("Doesn't stack with " .. table.concat(clash, ", ") .. ".", 1, 0.4, 0.4, true)
-				end
-				if flask and kind ~= 3 then
-					GameTooltip:AddLine("The cheaper choice when you're not using the flask.", 0.8, 0.8, 0.8, true)
+				if #before == 0 then
+					if #after > 0 then
+						GameTooltip:AddLine("The best choice. " .. table.concat(after, " or ") .. " is cheaper, but they don't stack: use one.",
+							0.25, 1, 0.25, true)
+					end
+				else
+					GameTooltip:AddLine("The cheaper choice: use it instead of " .. table.concat(before, " or ")
+						.. ", not with it. They don't stack.", 1, 0.6, 0.2, true)
 				end
 			end
 			if c.count > 0 then GameTooltip:AddLine("You have " .. c.count .. ".", 0.25, 1, 0.25) end
@@ -476,7 +483,14 @@ local function build(panel)
 			GameTooltip:AddLine("This glyph slot opens at level " .. e.unlock .. ".", 1, 0.4, 0.4, true)
 		end
 		if e.hint then GameTooltip:AddLine(e.hint .. ".", 0.8, 0.8, 0.8, true) end
-		if e.swap then GameTooltip:AddLine("Better than your " .. e.swap .. ": swap it out.", 1, 0.82, 0, true) end
+		if e.swap then
+			GameTooltip:AddLine("Better than your " .. e.swap .. ", which is lower on this list: put this one in its socket.",
+				1, 0.82, 0, true)
+		end
+		if e.waits then
+			GameTooltip:AddLine("Your socket for this one opens at level " .. e.unlock .. ". Until then, swap it out for "
+				.. e.swapFor .. ", and put it back in at level " .. e.unlock .. ".", 1, 0.82, 0, true)
+		end
 		GameTooltip:AddLine(" ")
 		GameTooltip:AddLine("Shift-click links it in chat.", 0.5, 0.85, 1, true)
 		GameTooltip:Show()
@@ -880,10 +894,19 @@ local function build(panel)
 						st.state:SetText("|cffff6060Requires level " .. gs.unlock .. "|r")
 					elseif gs.equipped then
 						st.state:SetText("|cff40ff40Equipped|r")
+					elseif gs.swap then
+						st.state:SetText("|cffff9933Swap in|r")
 					else
 						st.state:SetText("|cffff9933Missing|r")
 					end
-					st.how:SetText("")
+					-- a swap: which one to take out, and which one waits for its socket
+					if gs.swap then
+						st.how:SetText("|cffff9933Instead of " .. gs.swap .. "|r")
+					elseif gs.waits then
+						st.how:SetText("|cffff6060Its socket opens at level " .. gs.unlock .. "|r")
+					else
+						st.how:SetText("")
+					end
 					if gs.locked then st.band:SetTexture(0.5, 0.1, 0.1, 0.12) else st.band:SetTexture(1, 1, 1, 0.03) end
 					y = y + 36
 				end

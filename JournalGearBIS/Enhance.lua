@@ -275,6 +275,8 @@ function G.GlyphsFor()
 					local w = slots[k]
 					if w.equipped and not taken[k] and w.order > s.order and k > count then
 						s.swap, taken[k] = w.glyph.name, true
+						-- the weaker one waits for the socket that opens later
+						w.waits, w.swapFor = true, s.glyph.name
 						break
 					end
 				end

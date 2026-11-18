@@ -368,8 +368,8 @@ local function readSource(s)
 		local g = G.instances[src.inst]
 		if not g then return nil end
 		src.stage = G.InstanceStage(src.inst)
-		src.raid = g.raid
-		src.tier = g.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
+		src.raid = G.IsRaid(g)
+		src.tier = src.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
 	elseif kind == "Q" then
 		src.quest, src.who, src.inst, src.stage, src.races, src.qlevel = s[2], s[3], s[4] ~= 0 and s[4] or nil, s[5], s[6], s[7]
 		-- the chain as your faction starts it: { first quest, title, quest givers, all trainers, quests in it }
@@ -383,7 +383,7 @@ local function readSource(s)
 		if src.inst then
 			local g = G.instances[src.inst]
 			src.stage = math.max(src.stage, G.InstanceStage(src.inst))
-			src.raid = g and g.raid
+			src.raid = g and G.IsRaid(g)
 			src.tier = src.raid and (TIER_RAID + (G.RAID_ORDER[src.inst] or 0)) or TIER_DUNGEON
 		else
 			src.tier = TIER_EASY

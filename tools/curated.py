@@ -130,8 +130,8 @@ GLYPHS = {
 }
 
 # Recommended consumables, by spec profile: "Item name" or ("Item name", "a note for its tooltip").
-ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Juju Power", "A repeatable quest: 3 for every 3 Winterfall E'ko, which Winterfall furbolgs drop. Doesn't stack with Elixir of Giants."),
-                     ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
+# Listed best first: a later one that doesn't stack with an earlier one is its cheaper stand-in.
+ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
 CONSUMABLES = {
     "ROGUE_SWORDS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand, the faster weapon.")]
@@ -140,7 +140,7 @@ CONSUMABLES = {
     + ROGUE_CONSUMABLES,
     "PRIEST_HEAL": ["Flask of Distilled Wisdom", ("Brilliant Mana Oil", "Put it on your weapon."), "Mageblood Elixir",
                     "Nightfin Soup", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
-    "PRIEST_SHADOW": ["Flask of Supreme Power", "Greater Arcane Elixir", "Elixir of Shadow Power",
+    "PRIEST_SHADOW": ["Flask of Supreme Power", "Elixir of Shadow Power",
                       ("Brilliant Wizard Oil", "Put it on your weapon."), "Runn Tum Tuber Surprise", "Major Mana Potion",
                       ("Demonic Rune", "Costs some health.")],
 }

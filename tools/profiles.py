@@ -26,7 +26,7 @@ PROFILES = {
                          speed={"mh": (2.6, 0.08, "slow"), "oh": (1.5, 0.08, "fast")},
                          w=w(MELEE, agi=1.6, str=1.0, dps=9, odps=4, rdps=0.5)),
     "ROGUE_DAGGERS": dict(cls="ROGUE", name="Daggers", role="Melee damage", weapons="dw",
-                          mh={15}, oh={15, 4, 7, 13}, ranged="ranged",
+                          mh={15}, oh={15}, ranged="ranged",
                           speed={"mh": (1.8, 0.05, "slow"), "oh": (1.4, 0.15, "fast")},
                           w=w(MELEE, agi=1.6, str=1.0, dps=9, odps=4, rdps=0.5)),
     "WARRIOR_ARMS": dict(cls="WARRIOR", name="Arms", role="Melee damage", weapons="2h", ranged="ranged",
