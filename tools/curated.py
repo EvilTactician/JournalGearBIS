@@ -130,7 +130,9 @@ GLYPHS = {
 }
 
 # Recommended consumables, by spec profile: "Item name" or ("Item name", "a note for its tooltip").
-# Listed best first: a later one that doesn't stack with an earlier one is its cheaper stand-in.
+# Only what a player should actually use: no item that a better one on the same list makes pointless (two
+# battle elixirs that don't stack, say). Flasks and elixirs are shown first, grouped; list them best first, as
+# a later one that doesn't stack with an earlier one is its cheaper stand-in.
 ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
 CONSUMABLES = {

@@ -597,11 +597,16 @@ for prof, kinds in GLYPHS.items():
     X.append("\t},")
 X.append("}")
 
-# consumables
+# consumables: flasks and elixirs first (still best first among them), then the rest in the list's order
+_groups = collections.defaultdict(int)
+for r in db["spell_group"].rows:
+    if r["id"] in (1, 2):
+        _groups[r["spell_id"]] |= r["id"]
 X.append("")
 X.append("G.consumables = {")
 for prof, lst in CONSUMABLES.items():
     X.append("\t%s = {" % prof)
+    rows = []
     for entry in lst:
         name, note = (entry, "") if isinstance(entry, str) else entry
         ids = [i for i in byname.get(name, []) if i in EXTRA]
@@ -609,17 +614,15 @@ for prof, lst in CONSUMABLES.items():
             print("consumable not found:", name, file=sys.stderr)
             continue
         extra_items.add(ids[0])
-        X.append("\t\t{ %d, %s }, -- %s" % (ids[0], lstr(note), name))
+        rows.append((0 if _groups.get(items[ids[0]].get("spellid_1") or 0) else 1, ids[0], note, name))
+    for _, i, note, name in sorted(rows, key=lambda r: r[0]):
+        X.append("\t\t{ %d, %s }, -- %s" % (i, lstr(note), name))
     X.append("\t},")
 X.append("}")
 
 
 X.append("")
 X.append("G.elixirs = {")
-_groups = collections.defaultdict(int)
-for r in db["spell_group"].rows:
-    if r["id"] in (1, 2):
-        _groups[r["spell_id"]] |= r["id"]
 _cons = {e if isinstance(e, str) else e[0] for lst in CONSUMABLES.values() for e in lst}
 for i in sorted(extra_items):
     g = _groups.get(items[i].get("spellid_1") or 0)

@@ -20,7 +20,7 @@ qaddon = {r["ID"]: r for r in R("quest_template_addon")}
 INSTANCES = {
     70: ("Uldaman", False, 5, 0, 37), 209: ("Zul'Farrak", False, 5, 0, 39), 349: ("Maraudon", False, 5, 0, 41),
     109: ("Sunken Temple", False, 5, 0, 45), 230: ("Blackrock Depths", False, 5, 0, 48),
-    229: ("Lower Blackrock Spire", False, 5, 0, 52), 2291: ("Upper Blackrock Spire", False, 10, 0, 55),
+    229: ("Lower Blackrock Spire", False, 5, 0, 52), 2291: ("Upper Blackrock Spire", True, 15, 0, 55),
     429: ("Dire Maul", False, 5, 0, 52), 289: ("Scholomance", False, 5, 0, 55), 329: ("Stratholme", False, 5, 0, 55),
     409: ("Molten Core", True, 40, 0, 58), 249: ("Onyxia's Lair", True, 40, 1, 58), 469: ("Blackwing Lair", True, 40, 2, 58),
     309: ("Zul'Gurub", True, 20, 3, 58), 509: ("Ruins of Ahn'Qiraj", True, 20, 4, 58),

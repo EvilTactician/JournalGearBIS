@@ -632,27 +632,27 @@ G.glyphs = {
 
 G.consumables = {
 	ROGUE_SWORDS = {
-		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
-		{ 20844, "Put it on your off hand, the faster weapon." }, -- Deadly Poison V
 		{ 13452, "" }, -- Elixir of the Mongoose
 		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
+		{ 20844, "Put it on your off hand, the faster weapon." }, -- Deadly Poison V
 		{ 13928, "" }, -- Grilled Squid
 		{ 7676, "" }, -- Thistle Tea
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	ROGUE_DAGGERS = {
-		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
-		{ 20844, "Put it on your off hand, the faster dagger." }, -- Deadly Poison V
 		{ 13452, "" }, -- Elixir of the Mongoose
 		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 8928, "Put it on your main hand." }, -- Instant Poison VI
+		{ 20844, "Put it on your off hand, the faster dagger." }, -- Deadly Poison V
 		{ 13928, "" }, -- Grilled Squid
 		{ 7676, "" }, -- Thistle Tea
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	PRIEST_HEAL = {
 		{ 13511, "" }, -- Flask of Distilled Wisdom
-		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
 		{ 20007, "" }, -- Mageblood Elixir
+		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
 		{ 13931, "" }, -- Nightfin Soup
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
