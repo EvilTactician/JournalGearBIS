@@ -19,12 +19,45 @@ G.CAPS = {
 	{ keys = { "mhit", "hit" }, roles = { ["Melee damage"] = true, ["Ranged damage"] = true }, rating = 6, cap = 8,
 		extra = function () return GetHitModifier and GetHitModifier() or 0 end, per = 9.84 },
 	{ keys = { "shit", "hit" }, roles = { ["Spell damage"] = true }, rating = 8, cap = 17,
-		extra = function () return GetSpellHitModifier and GetSpellHitModifier() or 0 end, per = 8 },
+		extra = function () return G.TalentSpellHit() end, per = 8 },
 	{ keys = { "exp" }, roles = { ["Melee damage"] = true }, rating = 24, cap = 26, per = 2.46,
 		have = function () return GetExpertise and GetExpertise() or 0 end },
 	{ keys = { "arp" }, roles = { ["Melee damage"] = true, ["Ranged damage"] = true }, rating = 25, cap = 100, per = 4.69,
 		have = function () return GetArmorPenetration and GetArmorPenetration() or 0 end },
 }
+
+-- The school your spec's list values most (its biggest school damage weight), as a bit; nil for none.
+local SCHOOL_BIT = { holy = 2, fire = 4, nature = 8, frost = 16, shadow = 32, arcane = 64 }
+local function mainSchool()
+	local best, bit = 0, nil
+	for k, b in pairs(SCHOOL_BIT) do
+		local w = P.profile and P.profile.weights[k] or 0
+		if w > best then best, bit = w, b end
+	end
+	return bit
+end
+
+-- Spell hit beyond rating: what the client counts (racials, buffs, talents for all spells) plus the talents it
+-- doesn't: hit with some schools only (Suppression, Elemental Precision) when they cover your spec's school, and
+-- hit with one tree's spells (Shadow Focus) when that's your spec's tree. Talents the client may count are
+-- taken as the larger of the two, so none is counted twice.
+function G.TalentSpellHit()
+	local api = GetSpellHitModifier and GetSpellHitModifier() or 0
+	local _, class = UnitClass("player")
+	local all, more, school = 0, 0, mainSchool()
+	for _, t in ipairs(G.talentHit and G.talentHit[class] or {}) do
+		local rank = P.talentAt and P.talentAt[t[1] .. ":" .. t[2] .. ":" .. t[3]] or 0
+		local pct = rank * t[4]
+		if t[6] == "all" then
+			all = all + pct
+		elseif t[6] == "school" then
+			if not school or band(t[5], school) ~= 0 then more = more + pct end
+		elseif t[6] == "tree" and t[1] == P.treeIndex then
+			more = more + pct
+		end
+	end
+	return math.max(api, all) + more
+end
 
 -- Rating points still worth having, by stat key (none for a stat with no cap).
 local function headroom()
@@ -255,7 +288,11 @@ function G.GlyphsFor()
 				name = t[7] }
 			if g.stage <= P.stage and g.level <= P.level then
 				if g.talent and (P.talents[g.talent] or 0) == 0 then
-					hint = hint or ("Better with the " .. g.talent .. " talent: " .. g.name)
+					-- a list two specs share (Affliction and Demonology): another tree's glyph isn't for you
+					local tree = P.talentTree and P.talentTree[g.talent]
+					if not (tree and P.treeIndex and tree ~= P.treeIndex) then
+						hint = hint or ("Better with the " .. g.talent .. " talent: " .. g.name)
+					end
 				else
 					table.insert(slots, { glyph = g, equipped = have[g.spell], hint = hint, order = #slots + 1 })
 					hint = nil

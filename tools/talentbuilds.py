@@ -44,6 +44,8 @@ BUILDS = {
     "PRIEST:3": ("PRIEST", "GearBIS: Shadow", "tavern",
                  "C22222A2222255566888C666559999aeefffhjjddmmmkkpqqqqqssuuuxyyyFFFFFI9C00011A9",
                  "warcrafttavern.com/wotlk/guides/pve-shadow-priest-talents-builds-glyphs"),
+    "WARLOCK:2": ("WARLOCK", "GearBIS: Demonology", "wowhead", "IZ0GchkAbihsgzAoE00Vb",
+                  "warcrafttavern.com/wotlk/guides/pve-demonology-warlock-talents-builds-glyphs (Deep Demonology)"),
 }
 
 CLASS = {1: "WARRIOR", 2: "PALADIN", 4: "HUNTER", 8: "ROGUE", 16: "PRIEST", 32: "DEATHKNIGHT", 64: "SHAMAN",
@@ -122,4 +124,35 @@ def all_builds():
         if errs:
             raise SystemExit("talent build %s: %s" % (key, ", ".join(sorted(set(errs)))))
         out[key] = (cls, name, [[(x["tier"] + 1, x["col"] + 1, r) for x, r in zip(t, rk) if r] for t, rk in zip(tl, ranks)])
+    return out
+
+
+SCHOOL_BITS = {"holy": 2, "fire": 4, "nature": 8, "frost": 16, "shadow": 32, "arcane": 64}
+
+
+def talent_hit():
+    """Talents that add spell hit, by class: [(tree, tier, column, % per rank, school mask, kind)], tier and column
+    from 1 like the client's. kind: "all" for spell hit the client may already count (GetSpellHitModifier),
+    "school" for hit with some schools only (Suppression, Elemental Precision; the client doesn't count these),
+    "tree" for hit with one tree's spells (Shadow Focus, Arcane Focus): it counts only for that tree's spec."""
+    from dbc import i32
+    S, _, _ = load(os.path.join(BUILD, "dbc", "Spell.dbc"))
+    T, _, _ = load(os.path.join(BUILD, "dbc", "Talent.dbc"))
+    TT, _, _ = load(os.path.join(BUILD, "dbc", "TalentTab.dbc"))
+    out = {}
+    for t in T.values():
+        tab, sp = TT.get(t[1]), S.get(t[4])
+        if not tab or not sp or tab[21] != 0 or CLASS.get(tab[20]) is None:
+            continue
+        for e in range(3):
+            aura, misc, per = sp[95 + e], i32(sp[110 + e]), i32(sp[80 + e]) + 1
+            kind = None
+            if aura == 55:
+                kind, misc = "all", 126
+            elif aura == 199:
+                kind = "school"
+            elif aura in (107, 108) and misc == 16:
+                kind, misc = "tree", 126
+            if kind and per > 0:
+                out.setdefault(CLASS[tab[20]], []).append((tab[22] + 1, t[2] + 1, t[3] + 1, per, misc, kind))
     return out

@@ -33,10 +33,14 @@ class Crafts:
             if it["class"] == 9 and it.get("spellid_2"):
                 self.recipe[it["spellid_2"]] = it["entry"]
         self.recipe_rank = {s: items[i]["RequiredSkillRank"] or 0 for s, i in self.recipe.items()}
+        # discoveries: the skill they say, or for one learnt from a book (Book of Glyph Mastery) the skill the book needs
+        book = {it["spellid_1"]: it["RequiredSkillRank"] or 0 for it in items.values()
+                if it.get("spellid_1") and it.get("RequiredSkill") in PROFESSIONS}
         self.discovery = {}
         for r in rows("skill_discovery_template"):
             if r.get("spellId"):
-                self.discovery[r["spellId"]] = max(self.discovery.get(r["spellId"], 0), r.get("reqSkillValue") or 0)
+                need = r.get("reqSkillValue") or book.get(r.get("reqSpell") or 0, 0)
+                self.discovery[r["spellId"]] = max(self.discovery.get(r["spellId"], 0), need)
         self.creates = collections.defaultdict(list)   # item -> [spell]
         self.enchants = collections.defaultdict(list)  # enchant id -> [spell]
         for sid, r in self.spells.items():
