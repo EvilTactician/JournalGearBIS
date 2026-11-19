@@ -440,19 +440,7 @@ local function build(panel)
 			if c.count > 0 then GameTooltip:AddLine("You have " .. c.count .. ".", 0.25, 1, 0.25) end
 			if #c.sources > 0 then
 				GameTooltip:AddLine(" ")
-				-- the two best in slot for the main hand: which wins, and against what
-			local cmp = e.handsCompare
-			if cmp then
-				if e.item.inv == 17 then
-					GameTooltip:AddLine((cmp.twoWins and "Better than " or "Not quite as good as ") .. cmp.one
-						.. (cmp.off and (" with " .. cmp.off) or " with the best off-hand") .. ".", 1, 0.82, 0, true)
-				else
-					GameTooltip:AddLine("With " .. (cmp.off or "the best off-hand") .. ", "
-						.. (cmp.twoWins and "not quite as good as the two-hander" or "better than the two-hander")
-						.. ". Until you have that, this and an off-hand are the way.", 1, 0.82, 0, true)
-				end
-			end
-			GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
+				GameTooltip:AddLine("Where to get it", 1, 0.82, 0)
 				-- the ways open to you now; the locked ones only when there are none
 				local anyOpen = c.sources[1].open
 				local shown = 0
