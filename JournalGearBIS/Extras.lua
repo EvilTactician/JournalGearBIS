@@ -652,6 +652,8 @@ G.glyphs = {
 			{ 42453, 56242, 350, 8, 28, "", "Glyph of Incinerate" },
 			{ 45785, 63320, 425, 13, 15, "", "Glyph of Life Tap" },
 			{ 42464, 56228, 385, 13, 15, "", "Glyph of Immolate" },
+			{ 42467, 56240, 165, 0, 15, "", "Glyph of Shadow Bolt" },
+			{ 42466, 56226, 215, 0, 18, "", "Glyph of Searing Pain" },
 		},
 		minor = {
 			{ 43390, 58070, 75, 0, 15, "", "Glyph of Drain Soul" },

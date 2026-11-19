@@ -206,8 +206,9 @@ GLYPHS = {
         "minor": WARLOCK_MINOR,
     },
     "WARLOCK_FIRE": {
+        # the last two are for before Northrend's glyphs (Inscription past 300), while you cast Shadow Bolt
         "major": [("Glyph of Conflagrate", "Conflagrate"), "Glyph of Incinerate", "Glyph of Life Tap",
-                  "Glyph of Immolate"],
+                  "Glyph of Immolate", "Glyph of Shadow Bolt", "Glyph of Searing Pain"],
         "minor": WARLOCK_MINOR,
     },
     "DRUID_BALANCE": {
