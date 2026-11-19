@@ -234,6 +234,7 @@ G.items = {
 	[10389] = { "Hyperion Legplates", 7, 404, 64, 59, 2, 3, 0, 0, { armor = 530 }, { { "D", 249, 0.009, "Onyxia" }, { "D", 469, 0.01, "Nefarian" }, { "D", 309, 0.009, "Gahz'ranka" } } },
 	[10390] = { "Hyperion Pauldrons", 3, 404, 63, 58, 2, 3, 0, 0, { armor = 448 }, { { "D", 249, 0.009, "Onyxia" }, { "D", 469, 0.009, "Nefarian" }, { "D", 309, 0.009, "Gahz'ranka" } } },
 	[10391] = { "Hyperion Vambraces", 9, 404, 60, 55, 2, 3, 0, 0, { armor = 249 }, { { "D", 289, 0.01, "Jandice Barov" }, { "D", 249, 0.009, "Onyxia" }, { "D", 329, 0.01, "Ramstein the Gorger" }, { "D", 469, 0.009, "Nefarian" }, { "D", 309, 0.009, "Gahz'ranka" }, { "C", 230, 0.005, "Dark Coffer" }, { "C", 289, 0.012, "Old Treasure Chest" } } },
+	[10461] = { "Shadowy Bracers", 9, 401, 45, 0, 2, 1503, 0, 0, { armor = 26, int = 8, shadow = 4, spi = 4 }, { { "Q", 3379, "Shadoweaver", 0, 0, 0, 50, 40, { 3379, "Shadoweaver", 1, 0, 1 }, { 3379, "Shadoweaver", 1, 0, 1 }, 0 } } },
 	[10652] = { "Will of the Mountain Giant", 17, 201, 51, 0, 2, 71, 0, 0, { speed = 2.8, sta = 14, str = 15, wdps = 39.5 }, { { "Q", 3129, "Weapons of Spirit", 0, 0, 690, 50, 40, { 3129, "Weapons of Spirit", 1, 0, 1 }, { 3121, "A Strange Request", 1, 0, 8 }, 0 } } },
 	[10686] = { "Aegis of Battle", 14, 406, 55, 0, 2, 67, 0, 0, { agi = 6, armor = 1691, bv = 29, sta = 10 }, { { "Q", 2938, "Venom to the Undercity", 0, 0, 690, 55, 40, { 2938, "Venom to the Undercity", 1, 0, 1 }, { 2933, "Venom Bottles", 9, 0, 6 }, 0 } } },
 	[10696] = { "Enchanted Azsharite Felbane Sword", 13, 207, 60, 0, 2, 399, 0, 0, { speed = 2, wdps = 35.8 }, { { "Q", 3625, "Enchanted Azsharite Fel Weaponry", 0, 0, 0, 58, 45, { 2783, "Petty Squabbles", 1, 0, 16 }, { 2784, "Fall From Grace", 1, 0, 19 }, 0 } } },
@@ -1527,6 +1528,7 @@ G.items = {
 	[19944] = { "Nat Pagle's Fish Terminator", 17, 210, 65, 60, 4, 1493, 0, 1, { speed = 3.5, sta = 19, str = 41, wdps = 61.4 }, { { "D", 309, 0.1, "Gahz'ranka" } } },
 	[19945] = { "Foror's Eyepatch", 1, 402, 65, 60, 4, 1103, 0, 1, { ap = 44, armor = 160, crit = 28, sta = 19 }, { { "D", 309, 0.1, "Gahz'ranka" } } },
 	[19946] = { "Tigule's Harpoon", 17, 206, 68, 60, 3, 1031, 0, 0, { hit = 20, speed = 3.3, sta = 20, wdps = 58.5 }, { { "D", 309, 0.4, "Gahz'ranka" } } },
+	[19950] = { "Zandalarian Hero Charm", 12, 400, 68, 0, 4, 1503, 0, 1, {  }, { { "Q", 8183, "The Heart of Hakkar", 309, 3, 0, 60, 58, { 8183, "The Heart of Hakkar", 1, 0, 1 }, { 8183, "The Heart of Hakkar", 1, 0, 1 }, 0 } } },
 	[19961] = { "Gri'lek's Grinder", 13, 204, 68, 60, 3, 1115, 0, 0, { speed = 2.4, wdps = 44.8 }, { { "D", 309, 0.5, "Gri'lek" } } },
 	[19962] = { "Gri'lek's Carver", 17, 201, 68, 60, 3, 71, 0, 0, { speed = 3.9, wdps = 58.5 }, { { "D", 309, 0.5, "Gri'lek" } } },
 	[19963] = { "Pitchfork of Madness", 17, 206, 68, 60, 3, 1031, 0, 0, { speed = 3.5, wdps = 58.4 }, { { "D", 309, 0.5, "Renataki" } } },
@@ -2301,6 +2303,7 @@ G.tokens = {
 	[19722] = { 19825, 19828, 19838 }, -- Primal Hakkari Tabard
 	[19723] = { 19822, 20033, 20034 }, -- Primal Hakkari Kossack
 	[19724] = { 19831, 19834, 19841 }, -- Primal Hakkari Aegis
+	[19802] = { 19950 }, -- Heart of Hakkar
 	[20858] = { 21200, 21205, 21210, 21329, 21330, 21334, 21345, 21351, 21355, 21356, 21362, 21365, 21372, 21387, 21403, 21405, 21407, 21415, 21417 }, -- Stone Scarab
 	[20859] = { 21205, 21210, 21333, 21336, 21343, 21349, 21352, 21353, 21354, 21360, 21370, 21376, 21391, 21397, 21400, 21402, 21404, 21412, 21414, 21416 }, -- Gold Scarab
 	[20860] = { 21205, 21210, 21331, 21337, 21344, 21346, 21348, 21350, 21355, 21361, 21368, 21374, 21389, 21396, 21399, 21401, 21409, 21411, 21413 }, -- Silver Scarab

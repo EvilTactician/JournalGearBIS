@@ -735,5 +735,14 @@ for key, (cls, name, trees) in all_builds().items():
         X.append("\t\t{ " + ", ".join("{ %d, %d, %d }" % x for x in t) + " },")
     X.append("\t} },")
 X.append("}")
+
+# talents that add spell hit, for the hit cap (tools/talentbuilds.py talent_hit)
+from talentbuilds import talent_hit
+X.append("")
+X.append("-- talentHit[class] = { { tree, tier, column, % per rank, school mask, kind } }")
+X.append("G.talentHit = {")
+for cls, rows in sorted(talent_hit().items()):
+    X.append("\t%s = { %s }," % (cls, ", ".join("{ %d, %d, %d, %d, %d, %s }" % (r[:5] + (lstr(r[5]),)) for r in rows)))
+X.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Extras.lua"), "w").write("\n".join(X) + "\n")
 print("extras: %d enchants, %d items" % (len(known), len(extra_items)), file=sys.stderr)

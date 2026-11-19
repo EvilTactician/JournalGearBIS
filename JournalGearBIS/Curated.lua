@@ -6,6 +6,138 @@
 local G = JournalGearBIS
 
 G.curated = {
+	WARLOCK_SHADOW = {
+		{ 18727 }, -- Crimson Felt Hat
+		{ 22267 }, -- Spellweaver's Turban
+		{ 22403 }, -- Diana's Pearl Necklace
+		{ 14112 }, -- Felcloth Shoulders
+		{ 18681 }, -- Burial Shawl
+		{ 11623 }, -- Spritecaster Cape
+		{ 18350 }, -- Amplifying Cloak
+		{ 14153 }, -- Robe of the Void
+		{ 14136 }, -- Robe of Winter Night
+		{ 10461 }, -- Shadowy Bracers
+		{ 18497 }, -- Sublime Wristguards
+		{ 13253 }, -- Hands of Power
+		{ 18407 }, -- Felcloth Gloves
+		{ 11662 }, -- Ban'thok Sash
+		{ 18740 }, -- Thuzadin Sash
+		{ 13170 }, -- Skyshroud Leggings
+		{ 18735 }, -- Maleki's Footwraps
+		{ 11822 }, -- Omnicast Boots
+		{ 12545 }, -- Eye of Orgrimmar
+		{ 12543 }, -- Songstone of Ironforge
+		{ 11824 }, -- Cyclopean Band
+		{ 12930, 25 }, -- Briarwood Reed
+		{ 13968 }, -- Eye of the Beast
+		{ 13964 }, -- Witchblade
+		{ 11904 }, -- Spirit of Aquementas
+		{ 13396 }, -- Skul's Ghastly Touch
+		{ 13938 }, -- Bonecreeper Stylus
+		{ 19375 }, -- Mish'undare, Circlet of the Mind Flayer
+		{ 16808 }, -- Felheart Horns
+		{ 16929 }, -- Nemesis Skullcap
+		{ 22506 }, -- Plagueheart Circlet
+		{ 18814 }, -- Choker of the Fire Lord
+		{ 23057 }, -- Gem of Trapped Innocents
+		{ 19370 }, -- Mantle of the Blackwing Cabal
+		{ 16932 }, -- Nemesis Spaulders
+		{ 22507 }, -- Plagueheart Shoulderpads
+		{ 17078 }, -- Sapphiron Drape
+		{ 23050 }, -- Cloak of the Necropolis
+		{ 16931 }, -- Nemesis Robes
+		{ 22504 }, -- Plagueheart Robe
+		{ 21186 }, -- Rockfury Bracers
+		{ 22511 }, -- Plagueheart Bindings
+		{ 21585 }, -- Dark Storm Gauntlets
+		{ 22509 }, -- Plagueheart Gloves
+		{ 22730 }, -- Eyestalk Waist Cord
+		{ 22510 }, -- Plagueheart Belt
+		{ 23070 }, -- Leggings of Polarity
+		{ 22505 }, -- Plagueheart Leggings
+		{ 21600 }, -- Boots of Epiphany
+		{ 22508 }, -- Plagueheart Sandals
+		{ 19147 }, -- Ring of Spell Power
+		{ 23031 }, -- Band of the Inevitable
+		{ 21709 }, -- Ring of the Fallen God
+		{ 23063 }, -- Plagueheart Ring
+		{ 18820, 30 }, -- Talisman of Ephemeral Power
+		{ 19379 }, -- Neltharion's Tear
+		{ 19950, 35 }, -- Zandalarian Hero Charm
+		{ 23046 }, -- The Restrained Essence of Sapphiron
+		{ 23207, 40 }, -- Mark of the Champion
+		{ 18842 }, -- Staff of Dominance
+		{ 22807 }, -- Wraith Blade
+		{ 23049 }, -- Sapphiron's Left Eye
+		{ 22821 }, -- Doomfinger
+		{ 22630 }, -- Atiesh, Greatstaff of the Guardian
+	},
+	WARLOCK_FIRE = {
+		{ 18727 }, -- Crimson Felt Hat
+		{ 22267 }, -- Spellweaver's Turban
+		{ 22403 }, -- Diana's Pearl Necklace
+		{ 14112 }, -- Felcloth Shoulders
+		{ 18681 }, -- Burial Shawl
+		{ 11623 }, -- Spritecaster Cape
+		{ 18350 }, -- Amplifying Cloak
+		{ 14153 }, -- Robe of the Void
+		{ 14136 }, -- Robe of Winter Night
+		{ 10461 }, -- Shadowy Bracers
+		{ 18497 }, -- Sublime Wristguards
+		{ 13253 }, -- Hands of Power
+		{ 18407 }, -- Felcloth Gloves
+		{ 11662 }, -- Ban'thok Sash
+		{ 18740 }, -- Thuzadin Sash
+		{ 13170 }, -- Skyshroud Leggings
+		{ 18735 }, -- Maleki's Footwraps
+		{ 11822 }, -- Omnicast Boots
+		{ 12545 }, -- Eye of Orgrimmar
+		{ 12543 }, -- Songstone of Ironforge
+		{ 11824 }, -- Cyclopean Band
+		{ 12930, 25 }, -- Briarwood Reed
+		{ 13968 }, -- Eye of the Beast
+		{ 13964 }, -- Witchblade
+		{ 11904 }, -- Spirit of Aquementas
+		{ 13396 }, -- Skul's Ghastly Touch
+		{ 13938 }, -- Bonecreeper Stylus
+		{ 19375 }, -- Mish'undare, Circlet of the Mind Flayer
+		{ 16808 }, -- Felheart Horns
+		{ 16929 }, -- Nemesis Skullcap
+		{ 22506 }, -- Plagueheart Circlet
+		{ 18814 }, -- Choker of the Fire Lord
+		{ 23057 }, -- Gem of Trapped Innocents
+		{ 19370 }, -- Mantle of the Blackwing Cabal
+		{ 16932 }, -- Nemesis Spaulders
+		{ 22507 }, -- Plagueheart Shoulderpads
+		{ 17078 }, -- Sapphiron Drape
+		{ 23050 }, -- Cloak of the Necropolis
+		{ 16931 }, -- Nemesis Robes
+		{ 22504 }, -- Plagueheart Robe
+		{ 21186 }, -- Rockfury Bracers
+		{ 22511 }, -- Plagueheart Bindings
+		{ 21585 }, -- Dark Storm Gauntlets
+		{ 22509 }, -- Plagueheart Gloves
+		{ 22730 }, -- Eyestalk Waist Cord
+		{ 22510 }, -- Plagueheart Belt
+		{ 23070 }, -- Leggings of Polarity
+		{ 22505 }, -- Plagueheart Leggings
+		{ 21600 }, -- Boots of Epiphany
+		{ 22508 }, -- Plagueheart Sandals
+		{ 19147 }, -- Ring of Spell Power
+		{ 23031 }, -- Band of the Inevitable
+		{ 21709 }, -- Ring of the Fallen God
+		{ 23063 }, -- Plagueheart Ring
+		{ 18820, 30 }, -- Talisman of Ephemeral Power
+		{ 19379 }, -- Neltharion's Tear
+		{ 19950, 35 }, -- Zandalarian Hero Charm
+		{ 23046 }, -- The Restrained Essence of Sapphiron
+		{ 23207, 40 }, -- Mark of the Champion
+		{ 18842 }, -- Staff of Dominance
+		{ 22807 }, -- Wraith Blade
+		{ 23049 }, -- Sapphiron's Left Eye
+		{ 22821 }, -- Doomfinger
+		{ 22630 }, -- Atiesh, Greatstaff of the Guardian
+	},
 	ROGUE_SWORDS = {
 		{ 13404 }, -- Mask of the Unforgiven
 		{ 12587 }, -- Eye of Rend
@@ -347,6 +479,7 @@ G.curated = {
 
 -- A line for a hand-picked item's tooltip: optional extras and odd ways to get them.
 G.curatedNotes = {
+	[21186] = "The end of a long Cenarion Circle quest chain in Silithus, opened by Ahn'Qiraj: you need Revered with the Cenarion Circle for it.", -- Rockfury Bracers
 	[12757] = "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast itself drops. The hide comes about 1 skin in 50.", -- Breastplate of Bloodthirst
 	[9449] = "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit of damage; you'd need several.", -- Manual Crowd Pummeler
 }
