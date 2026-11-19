@@ -1,16 +1,16 @@
-# Journal: Gear 0.2.0
+# Journal: Gear 0.3.0
 
 > [!WARNING]
-> **Early alpha (version 0.2.0-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.3.0-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
-> versions. Only **Rogue** and **Priest** have hand-picked lists so far; every other class runs on stat
+> versions. Only **Rogue**, **Priest** and **Druid** have hand-picked lists so far; every other class runs on stat
 > weights alone. The full version (1.0) is coming soon.
 
 <div align="center">
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.2.0-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.3.0-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -53,7 +53,14 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   have the profession at the skill it needs, and only when it's clearly better than what you can get
   otherwise: it's often costly and hard to make.
 
-Glyphs and consumables are hand-picked, so for now they're there for **Rogue** and **Priest**.
+Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest** and **Druid**.
+
+- **Talent builds (with DragonUI):** a book icon at the end of the title saves a level 80 talent build for
+  your spec to DragonUI's talent builds, named "GearBIS: …" so you can tell where it came from. There you
+  can follow it as a plan; below level 80, spend your points along it as far as they go. The builds are
+  the first ones Warcraft Tavern's Wrath guides list for each spec (Combat and Balance picked by hand from
+  its calculator), checked against the realm's own talent trees. Clicking again doesn't make a duplicate, but a copy you've renamed or changed is left alone, and
+  the next click saves a fresh one. The icon only shows with a DragonUI that lets other addons save builds.
 
 ## On your gear list: Roll Need
 
@@ -118,9 +125,27 @@ weapons that go with it (a Combat rogue gets swords and maces, Assassination and
 leaning toward the right speed for each hand (a slow main hand and quick off hand for Combat, a quick
 off-hand dagger for the others).
 With no talent points spent yet, the list asks you to assign them and shows a typical list for your
-class meanwhile (Combat for a rogue). The menu at the top right only appears when there's a choice to make: with **dual spec** it shows your
-other talents' list, compared with what you're wearing now (probably your active spec's gear), and a
-druid can pick Feral (bear) instead of Feral (cat).
+class meanwhile (Combat for a rogue).
+
+**Other lists:** the spec in the title ("Classic gear: **Combat** ▾ Rogue") is a button. Click it for any
+of your class's lists, with the one your talents pick marked; with **dual spec** it also offers your other
+talents' list, compared with what you're wearing now (probably your active spec's gear). Feral druids get
+Feral (cat) and Feral (bear) as two lists; one with the Natural Reaction talent gets the bear list by
+default, since only tanks take it. The list you picked stays picked until you pick another.
+
+**Weapons that suit the role:** a melee or tank list never offers a caster's weapon (intellect and spell
+power with no fighting stats), however much damage it does. The weapon row says **Two-hand** when the list
+only has two-handers, which is why there's no off-hand row then, and the ranged row says
+**Relic** or **Wand** for the classes that use those. When a caster's main hand mixes the two, each step
+says whether it's a two-hander or a one-hander that goes with an off-hand, the off-hand row says it's
+"With a one-hander only", and a two-hander as best in slot (Atiesh) comes with the best one-hander too, so
+the off-hand row keeps going until you have the staff. The better of the two in the end (the two-hander, or
+the one-hander with the best off-hand) says "the better choice". The list follows what you wear: with a one-hander on, the
+off-hand row stays even when the only upgrade left is a two-hander; with the two-hander on, it goes.
+
+**Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
+damage past 54.8 per second into feral attack power (14 for each point above it). Only two-handers get
+there, so a feral druid's list shows two-handed weapons only, with no off-hand.
 
 Steps are compared with what you **wear and carry** in your bags. Quest chains are the ones your faction
 starts.
@@ -158,12 +183,22 @@ different stage for a raid on your realm, the tab uses the realm's.
   so on). Rewards for raid tokens, such as the tier 2.5 and 3 sets and Head of Onyxia's rewards, count as
   part of that raid. Rewards behind world bosses, the Darkmoon Faire or battlegrounds are left out, and so is
   anything only a world event brings (the Darkmoon Faire's vendors, the Scourge Invasion's bosses).
+- **Odd ways to get things** count too: bosses the realm summons rather than spawns (Gyth, and the six that
+  take turns in Blackrock Depths' Ring of Law, each counted as a sixth of a chance), quests that need
+  something skinned (Breastplate of Bloodthirst, which only shows for skinners, counting skill from gear
+  like Finkle's Skinner), and, for hand-picked items
+  with no other way to get them, random world drops (Idol of the Moon), marked Easy, Medium or Hard by how
+  many kills they take.
+- **Things to know** before you go are on the source line and in the tooltip: bosses you have to summon
+  (Lord Valthalak's Brazier of Beckoning, say), ones that take turns (the Ring of Law, Zul'Gurub's Edge of
+  Madness), gear whose use effect only works so many times, and the odd item that needs explaining
+  (Breastplate of Bloodthirst's Skinning 310). The data build names any summoned boss without a note.
 - **Item stats**, including the *Equip:* lines (attack power, crit, hit, spell power and the rest), come
   from the item table and the client's Spell.dbc.
 - **Stat weights** for every spec are in `Profiles.lua`.
 - **Hand-picked items** in `Curated.lua` win their raid or dungeon step over the stat-weighted pick. In
-  this alpha they cover **Rogue** (swords and maces, and daggers) and **Priest** (Holy and Discipline, and
-  Shadow).
+  this alpha they cover **Rogue** (swords and maces, and daggers), **Priest** (Holy and Discipline, and
+  Shadow) and **Druid** (Balance, Feral cat, Feral bear and Restoration).
 
 ## Versions
 
@@ -172,8 +207,10 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.1.0 to 0.1.8-alpha | Classic lists for every spec, hand-picked items for Rogue and Priest; Now, Soon, Next and BiS steps; a preview below level 55; Where to go next; "On your gear list: Roll Need" on item tooltips; quests open in the Journal. |
 | 0.1.9 to 0.1.13-alpha | Enchants for what you wear (with a pre-raid step), glyphs and consumables for Rogue and Priest, stat caps, Engineering gear. |
 | 0.1.14 to 0.1.19-alpha | Rogue and Priest lists re-checked against current Classic guides and the realm. |
-| **0.2.0-alpha** (now) | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
-| 0.3.0-alpha and on | One more class's hand-picked lists in each version. |
+| 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
+| 0.2.1 to 0.2.8-alpha | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
+| **0.3.0-alpha** (now) | Druid finished, with the spec switcher in the title, one-hand or two-hand plans, things to know about bosses and items, and talent builds for DragonUI. |
+| 0.4.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
 
@@ -186,6 +223,7 @@ different stage for a raid on your realm, the tab uses the realm's.
   realm. Without it, every raid counts as open.
 - **[DragonUI](https://github.com/EvilTactician/wow-addon-DragonUI)** (my fork), recommended: the tab is
   built and tested with it. It may well work without, but if something looks out of place, that's why.
+  Saving talent builds needs it.
 
 Nothing needs installing on the server beyond those two modules.
 

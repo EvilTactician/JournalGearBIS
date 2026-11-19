@@ -121,6 +121,9 @@ end
 -- The tree a class's list uses before any talent points are spent.
 G.DEFAULT_TREE = { ROGUE = 2 }
 
+-- Feral druids tank or fight in Cat Form from the same tree: Natural Reaction is a bear's talent only.
+G.ROLE_TALENT = { DRUID_CAT = { "Natural Reaction", "DRUID_BEAR" } }
+
 -- The profile for a talent group (1 or 2): the tree with the most points.
 function G.TalentProfile(group)
 	local _, class = UnitClass("player")
@@ -132,8 +135,16 @@ function G.TalentProfile(group)
 		if (points or 0) > bestPoints then best, bestPoints, name = tab, points or 0, tabName end
 	end
 	-- No points spent yet: the class's usual pick (a rogue's is Combat).
-	if bestPoints <= 0 then return trees[G.DEFAULT_TREE[class] or 1], nil end
-	return trees[best], name
+	if bestPoints <= 0 then return trees[G.DEFAULT_TREE[class] or 1], nil, G.DEFAULT_TREE[class] or 1 end
+	-- a tree two roles share: a talent only one of them takes picks it
+	local key, swap = trees[best], G.ROLE_TALENT[trees[best]]
+	if swap and GetNumTalents then
+		for i = 1, GetNumTalents(best, false, false) or 0 do
+			local tname, _, _, _, rank = GetTalentInfo(best, i, false, false, group)
+			if tname == swap[1] and (rank or 0) > 0 then key = swap[2] end
+		end
+	end
+	return key, name, best
 end
 
 -----------------------------------------
@@ -144,7 +155,12 @@ function G.Score(stats, weights, part)
 	for k, v in pairs(stats) do
 		if k ~= "wdps" and k ~= "speed" then s = s + (weights[k] or 0) * v end
 	end
-	if stats.wdps then s = s + (weights[part or "dps"] or 0) * stats.wdps end
+	if stats.wdps then
+		s = s + (weights[part or "dps"] or 0) * stats.wdps
+		-- In Cat and Bear Form a main-hand weapon counts only for its feral attack power, which the realm gives
+		-- any weapon past 54.8 damage per second: 14 for each point above it.
+		if weights.fap and (part or "dps") == "dps" then s = s + weights.fap * math.max(0, stats.wdps * 14 - 767) end
+	end
 	return s
 end
 
@@ -286,12 +302,13 @@ local function scanOwned()
 	local opened = {}
 	local i = 1
 	while i <= (GetNumSkillLines and GetNumSkillLines() or 0) do
-		local name, header, expanded, rank = GetSkillLineInfo(i)
+		local name, header, expanded, rank, _, modifier = GetSkillLineInfo(i)
 		if header and not expanded and ExpandSkillHeader then
 			opened[name] = true
 			ExpandSkillHeader(i)
 		elseif not header and byName[name] then
-			P.skills[byName[name]] = rank or 0
+			-- with bonuses from gear and enchants (Finkle's Skinner takes Skinning past 300)
+			P.skills[byName[name]] = (rank or 0) + (modifier or 0)
 		end
 		i = i + 1
 	end
@@ -377,6 +394,8 @@ local function readSource(s)
 		src.need = s[8] or 0
 		src.start, src.startName, src.givers, src.trainer, src.chain = chain[1] or s[2], chain[2] or s[3], chain[3] or 1,
 			chain[4] == 1, chain[5] or 1
+		-- a quest that needs something only a profession gets (a hide skinned from a boss)
+		src.prof, src.profRank = s[12], s[13]
 		if src.races ~= 0 and band(src.races, P.raceBit) == 0 then return nil end
 		local classes = s[11] or 0
 		if classes ~= 0 and band(classes, G.CLASS_BIT[P.class] or 0) == 0 then return nil end
@@ -388,6 +407,10 @@ local function readSource(s)
 		else
 			src.tier = TIER_EASY
 		end
+	elseif kind == "W" then
+		-- a world drop: { "W", best chance, lowest level, highest level of the mobs, 1 when it binds on equip }
+		src.chance, src.lo, src.hi, src.boe = s[2], s[3], s[4], s[5] == 1
+		src.stage, src.tier = 0, TIER_DUNGEON
 	elseif kind == "V" then
 		src.who, src.price, src.rep, src.rank, src.stage = s[2], s[3], s[4], s[5], s[6]
 		src.tier = TIER_EASY
@@ -425,6 +448,12 @@ function G.Difficulty(src)
 	if src.kind == "V" then return (src.rank or 0) >= 6 and 3 or ((src.rank or 0) >= 5 and 2 or 1) end
 	if src.kind == "X" then return 2 end
 	local c = src.chance or 0
+	-- a world drop: by how long it takes, at about two kills a minute (half an hour or less is easy)
+	if src.kind == "W" then
+		if c >= 1 / 60 then return 1 end
+		if c >= 1 / 240 then return 2 end
+		return 3
+	end
 	if src.raid then
 		if c >= G.EASY then return 2 end
 		return 3
@@ -474,19 +503,42 @@ local function speedFactor(pref, speed)
 	return 1 - math.min(0.1, off * pref[2])
 end
 
+-- A caster's weapon (intellect, spell power, spirit, no fighting stats): never a melee or tank pick, however
+-- much damage it does (a rogue with Verimonde's Last Resort, a cat with Finkle's Lava Dredger).
+local CASTER_STATS = { int = true, sp = true, spi = true, mp5 = true, heal = true, shadow = true, fire = true,
+	frost = true, arcane = true, nature = true, holy = true, spen = true, scrit = true }
+local FIGHTING_STATS = { agi = true, str = true, ap = true, rap = true, fap = true, crit = true, mcrit = true,
+	hit = true, mhit = true, exp = true, arp = true, haste = true, mhaste = true, dodge = true, parry = true,
+	def = true, block = true, bv = true }
+local function casterWeapon(stats)
+	local caster, fighting = false, false
+	for k in pairs(stats) do
+		if CASTER_STATS[k] then caster = true end
+		if FIGHTING_STATS[k] then fighting = true end
+	end
+	return caster and not fighting
+end
+
 local function candidate(t, prof, rowKey, curated)
 	if t.prof and (P.skills[t.prof] or 0) < (t.profRank or 0) then return nil end
+	if (rowKey == "MH" or rowKey == "OH") and (prof.role == "Melee damage" or prof.role == "Tank")
+		and not curated[t.id] and casterWeapon(t.stats) then
+		return nil
+	end
 	local srcs = sourcesOf(t)
-	-- Bind on Pickup crafts: only for a crafter of that profession (locked until the skill's there)
+	-- Bind on Pickup crafts, and quests that need something only a profession gets: only for someone with
+	-- that profession (locked until the skill's there)
 	local craftLock
 	for i = #srcs, 1, -1 do
 		local s = srcs[i]
-		if s.bop and s.skill then
-			local have = P.skills[s.skill]
+		local skill, rank = s.bop and s.skill, s.rank
+		if not skill and s.prof then skill, rank = s.prof, s.profRank end
+		if skill then
+			local have = P.skills[skill]
 			if not have then
 				table.remove(srcs, i)
-			elseif have < (s.rank or 0) then
-				craftLock = "Needs " .. (G.PROFESSIONS[s.skill] or "the profession") .. " " .. s.rank
+			elseif have < (rank or 0) then
+				craftLock = "Needs " .. (G.PROFESSIONS[skill] or "the profession") .. " " .. rank
 			end
 		end
 	end
@@ -508,6 +560,9 @@ local function candidate(t, prof, rowKey, curated)
 	c.open = src.open and need <= P.level and not craftLock
 	-- Soon: open at your stage, but you're not the level for it yet
 	c.soon = src.open and need > P.realLevel
+	-- open at your stage but your profession's skill isn't there yet: shown on the way up as Soon, with the
+	-- skill it needs, rather than dropped
+	if craftLock and src.open then c.skillLocked, c.soon = true, true end
 	if craftLock then
 		c.lock = craftLock
 	elseif need > P.level and src.open then
@@ -626,7 +681,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	-- dungeons, an easier drop first when the best is a rare one).
 	local tiers, order = {}, {}
 	for _, c in ipairs(pool) do
-		if c.open then
+		if c.open or c.skillLocked then
 			if not tiers[c.tier] then tiers[c.tier] = {}; table.insert(order, c.tier) end
 			table.insert(tiers[c.tier], c)
 		end
@@ -658,7 +713,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	-- What opens after that, soonest first: by progression stage, then level, then raid order.
 	local locked = {}
 	for _, c in ipairs(pool) do
-		if not c.open then table.insert(locked, c) end
+		if not c.open and not c.skillLocked then table.insert(locked, c) end
 	end
 	table.sort(locked, function (a, b)
 		if a.stage ~= b.stage then return a.stage < b.stage end
@@ -709,7 +764,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	local wearing = {}
 	for _, o in ipairs(owned.all) do wearing[o.id] = true end
 	for _, c in ipairs(shown) do
-		c.role = (c == final) and "bis" or (c.open and "get" or "next")
+		c.role = (c == final) and "bis" or ((c.open or c.skillLocked) and "get" or "next")
 		c.equipped = wearing[c.item.id] == true
 		c.inBags = not c.equipped and P.bags[c.item.id] ~= nil
 	end
@@ -897,17 +952,35 @@ function G.Build(choice, stage)
 
 	local active = GetActiveTalentGroup and GetActiveTalentGroup() or 1
 	local groups = GetNumTalentGroups and GetNumTalentGroups() or 1
-	local profileKey, treeName, which
+	local profileKey, treeName, which, treeIndex
 	if choice == "other" and groups > 1 then
 		which = active == 1 and 2 or 1
-		profileKey, treeName = G.TalentProfile(which)
+		profileKey, treeName, treeIndex = G.TalentProfile(which)
+	elseif type(choice) == "string" and choice:match("^tree:%d$") then
+		-- a talent tree picked from the menu: its list, under its name
+		treeIndex = tonumber(choice:sub(6))
+		profileKey = G.byTree[class][treeIndex]
+		treeName = GetTalentTabInfo(treeIndex)
+		which = nil
 	elseif choice and G.profiles[choice] and G.profiles[choice].class == class then
 		profileKey, which = choice, nil
+		for i, k in ipairs(G.byTree[class]) do
+			if k == choice then treeIndex = i end
+		end
+		-- a role that shares a tree (Feral bear): that tree's
+		for from, swap in pairs(G.ROLE_TALENT) do
+			if swap[2] == choice then
+				for i, k in ipairs(G.byTree[class]) do
+					if k == from then treeIndex = i end
+				end
+			end
+		end
 	else
 		which = active
-		profileKey, treeName = G.TalentProfile(active)
+		profileKey, treeName, treeIndex = G.TalentProfile(active)
 	end
 	local prof = G.profiles[profileKey]
+	if not prof then return nil, "class" end
 	P.profileKey, P.profile = profileKey, prof
 
 	-- The off-hand you'd pair with a one-hander: yours, or the best you can get.
@@ -945,13 +1018,72 @@ function G.Build(choice, stage)
 	end
 	-- A caster or hunter with a two-hander as the main hand's goal has no use for the off-hand row.
 	if prof.weapons == "caster" or prof.weapons == "hunter" then
-		local mh
-		for _, r in ipairs(rows) do if r.row.key == "MH" then mh = r end end
+		local mh, ohRow
+		for _, r in ipairs(rows) do
+			if r.row.key == "MH" then mh = r end
+			if r.row.key == "OH" then ohRow = r end
+		end
+		-- With a two-hander as the goal, the best one-hander is a goal too (the two-hander may be a long way
+		-- off: Atiesh), so the off-hand row stays for it.
+		if mh and mh.final and mh.final.item.inv == 17 then
+			local alt
+			local shown = {}
+			for _, c in ipairs(mh.steps) do shown[c] = true end
+			for _, c in ipairs(mh.candidates) do
+				if c.item.inv ~= 17 and not shown[c] and c.value > mh.owned.value * MIN_GAIN + 0.5
+					and (not alt or c.value > alt.value) then
+					alt = c
+				end
+			end
+			-- the one-hander to compare with: the best one still to get, or the one you wear
+			local wornOne
+			if not alt and not P.preview and P.worn[16] and not P.worn[16].twoHand then
+				wornOne = { item = { name = (GetItemInfo(P.worn[16].link)) or "your one-hander" }, value = mh.owned.value }
+			end
+			if alt then
+				table.insert(mh.steps, #mh.steps, alt)
+			end
+			local one = alt or wornOne
+			if one then
+				if alt then
+					alt.role, alt.oneHandGoal = "bis", true
+					alt.equipped = false
+					alt.inBags = P.bags[alt.item.id] ~= nil
+				end
+				-- which wins in the end: the two-hander, or the one-hander with the best off-hand
+				-- the best off-hand: the row's best in slot, or what you wear when nothing beats it
+				local ohName, ohValue = nil, 0
+				if ohRow and ohRow.final then
+					ohName, ohValue = ohRow.final.item.name, ohRow.final.value
+				elseif ohRow and ohRow.owned.strong then
+					local w = ohRow.owned.strong.worn
+					ohName, ohValue = w and w.link and GetItemInfo(w.link) or nil, ohRow.owned.value
+				end
+				local pairValue = one.value - (ohRef or 0) + ohValue
+				local cmp = { one = one.item.name, off = ohName,
+					twoWins = mh.final.value >= pairValue }
+				mh.final.handsCompare = cmp
+				if alt then alt.handsCompare = cmp end
+			end
+		end
+		-- Mixed: each step says which it is, and the off-hand row says it's only for the one-handers.
+		local one, two = false, false
+		for _, c in ipairs(mh and mh.steps or {}) do
+			if c.item.inv == 17 then two = true else one = true end
+		end
+		if one and two then
+			mh.mixedHands = true
+			if ohRow then ohRow.withOneHander = true end
+		end
 		local twoHand = mh and #mh.steps > 0
 		for _, c in ipairs(mh and mh.steps or {}) do
 			if c.item.inv ~= 17 then twoHand = false end
 		end
 		if mh and #mh.steps == 0 then twoHand = not P.preview and P.worn[16] and P.worn[16].twoHand end
+		-- you wear a one-hander now: its off-hand still counts until you have the two-hander
+		if twoHand and not P.preview and P.worn[16] and not P.worn[16].twoHand then twoHand = false end
+		-- the row's name follows: Two-hand only when there's no off-hand row
+		if mh then mh.twoHandOnly = twoHand end
 		if twoHand then
 			for i, r in ipairs(rows) do
 				if r.row.key == "OH" then
@@ -978,7 +1110,7 @@ function G.Build(choice, stage)
 		end
 	end
 	return {
-		profileKey = profileKey, profile = prof, treeName = treeName, group = which, active = active, groups = groups,
+		profileKey = profileKey, profile = prof, treeName = treeName, treeIndex = treeIndex, group = which, active = active, groups = groups,
 		rows = rows, dungeons = dungeons, raids = raids, class = class, adviceNote = adviceNote,
 		preview = P.preview, readyLevel = G.READY[phase], cap = G.CAP[phase], phase = phase,
 		worn = P.worn, bags = P.bags, level = P.realLevel,

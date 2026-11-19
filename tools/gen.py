@@ -6,7 +6,7 @@ import pickle, sys, collections, math
 sys.path.insert(0, HERE)
 from sqlload import Table  # noqa
 from profiles import PROFILES, BY_TREE, CLASS_BIT, WEAPON_SKILL, ARMOR_SKILL
-from curated import CURATED, CRAFTED
+from curated import CURATED, CRAFTED, CURATED_NOTES, BOSS_NOTES
 from crafts import PROFESSIONS
 
 db = pickle.load(open(os.path.join(BUILD, "db.pkl"), "rb"))
@@ -137,6 +137,9 @@ def score(st, wts, part):
         s += wts.get(k, 0) * v
     if "wdps" in st:
         s += wts.get(part, 0) * st["wdps"]
+        # feral attack power from a main-hand weapon past 54.8 damage per second (as Engine.lua's G.Score)
+        if "fap" in wts and part == "dps":
+            s += wts["fap"] * max(0, st["wdps"] * 14 - 767)
     return s
 
 
@@ -186,15 +189,20 @@ for prof, lst in CURATED.items():
     for e in lst:
         name, value = (e, None) if isinstance(e, str) else e
         # an item id names one item where several share a name (Mark of the Champion: melee and caster)
+        placed = False
         for i in ([name] if isinstance(name, int) else byname.get(name, [])):
             it = items[i]
-            name = it["name"]
+            iname = it["name"]
             if it["ItemLevel"] > 92 or not (usable_mask(it) & pcls):
                 continue
-            if not sources.get(i) and name not in CRAFTED:
+            if not sources.get(i) and iname not in CRAFTED:
                 continue
             out.append((i, value))
             curated_ids.add(i)
+            placed = True
+        if not placed:
+            # say so, rather than drop a hand-picked item quietly
+            print("curated item with no way to get it on the realm (%s): %s" % (prof, name), file=sys.stderr)
     curated[prof] = out
 
 # ---------------------------------------------------------------- prefilter
@@ -274,8 +282,12 @@ def src_lua(i, crafted=True):
         if s["k"] == "Q" and s["q"] not in seenq:
             seenq.add(s["q"])
             ch = lambda c: "{ %d, %s, %d, %d, %d }" % (c[0], lstr(c[1]), c[2], c[3], c[4])
-            out.append("{ \"Q\", %d, %s, %d, %d, %d, %d, %d, %s, %s, %d }" % (s["q"], lstr(s["n"]), s["i"] or 0, s["st"], s["races"] or 0,
-                       s["lvl"] or 0, s["need"], ch(s["chains"]["A"]), ch(s["chains"]["H"]), s["classes"] or 0))
+            prof = s.get("prof")
+            out.append("{ \"Q\", %d, %s, %d, %d, %d, %d, %d, %s, %s, %d%s }" % (s["q"], lstr(s["n"]), s["i"] or 0, s["st"], s["races"] or 0,
+                       s["lvl"] or 0, s["need"], ch(s["chains"]["A"]), ch(s["chains"]["H"]), s["classes"] or 0,
+                       (", %d, %d" % (prof[0], prof[1])) if prof else ""))
+        elif s["k"] == "W":
+            out.append("{ \"W\", %s, %d, %d, %d }" % (lval(s["c"]), s["lo"], s["hi"], 1 if s["boe"] else 0))
         elif s["k"] == "V":
             name = s["n"] + (" <%s>" % s["sub"] if s["sub"] else "")
             out.append("{ \"V\", %s, %d, %d, %d, %d }" % (lstr(name), s["price"] or 0, s["rep"] or 0, s["rank"] or 0, s["st"]))
@@ -331,6 +343,40 @@ for i in sorted(keep):
     L.append("\t[%d] = { %s, %d, %d, %d, %d, %d, %d, %d, %d, %s, %s%s }," % (
         i, lstr(it["name"]), it["InventoryType"], it["class"] * 100 + it["subclass"], it["ItemLevel"], it["RequiredLevel"],
         it["Quality"], usable_mask(it), races, uniq, ltable(stats(it)), src_lua(i), prof))
+L.append("}")
+L.append("")
+# Things to know about a boss before you go: the Ring of Law from the data, summoned bosses by hand. (Classic's
+# rare spawns are ordinary spawns in the realm's data, so they get no note: they're always there.)
+L.append("-- A boss to know about: sourceNotes[name] = { short tag for the source line, a sentence for the tooltip }.")
+L.append("G.sourceNotes = {")
+_notes = {}
+for i in keep:
+    for s in sources.get(i, []):
+        if s["k"] != "D":
+            continue
+        n = s["n"]
+        if n in BOSS_NOTES:
+            _notes[n] = BOSS_NOTES[n]
+        elif n.endswith("(Ring of Law)"):
+            _notes[n] = ("one of six", "One of six bosses who take turns in the Ring of Law, so about one run in six "
+                                       "is his; the chance shown counts that.")
+# a summoned boss without a note: say so, so it gets one (or goes on curated.EVENT_BOSSES if it simply turns up)
+from curated import EVENT_BOSSES
+for n in sorted({s["n"] for i in keep for s in sources.get(i, []) if s["k"] == "D" and s.get("sum")}):
+    if n not in _notes and n not in EVENT_BOSSES:
+        print("summoned boss with no note:", n, file=sys.stderr)
+for n in sorted(_notes):
+    L.append("\t[%s] = { %s, %s }," % (lstr(n), lstr(_notes[n][0]), lstr(_notes[n][1])))
+L.append("}")
+L.append("")
+# Gear you use, with only so many uses (Manual Crowd Pummeler's 3).
+L.append("-- Gear with only so many uses: charges[id] = uses.")
+L.append("G.charges = {")
+for i in sorted(keep):
+    it = items[i]
+    ch = it.get("spellcharges_1") or 0
+    if it.get("spelltrigger_1") == 0 and ch > 0:
+        L.append("\t[%d] = %d, -- %s" % (i, ch, it["name"]))
 L.append("}")
 L.append("")
 L.append("-- Raid drops you hand in for an item (tier tokens, Head of Onyxia): token = { items it can become }.")
@@ -398,6 +444,14 @@ for prof, lst in curated.items():
         C.append("\t\t{ %d%s }, -- %s" % (i, (", %d" % v) if v else "", items[i]["name"]))
     C.append("\t},")
 C.append("}")
+C.append("")
+C.append("-- A line for a hand-picked item's tooltip: optional extras and odd ways to get them.")
+C.append("G.curatedNotes = {")
+for name, note in CURATED_NOTES.items():
+    for i in byname.get(name, []):
+        if i in curated_ids:
+            C.append("\t[%d] = %s, -- %s" % (i, lstr(note), name))
+C.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Curated.lua"), "w").write("\n".join(C) + "\n")
 print("done", file=sys.stderr)
 
@@ -439,6 +493,14 @@ def enchant_stats(e):
         elif kind == 1:
             proc = ench_str(r[14])
     return s, proc
+
+
+def weapon_mask(sid):
+    """The weapon types (subclass bits) an enchanting spell fits, or 0 for any (or not a weapon)."""
+    r = SPELLS.get(sid)
+    if not r or i32(r[68]) != 2:
+        return 0
+    return r[69] & 0x1FFFFF
 
 
 def enchant_slots(sid):
@@ -500,7 +562,8 @@ for e in sorted(crafts.enchants):
     known.add(e)
     skill, rank, sid, recipe = ways[0]
     for slot in enchant_slots(sid):
-        options[slot].append("{ e = %d, spell = %d, level = %d, ways = { %s } }" % (e, sid, ENCH[e][37], recipe_way(skill, rank, sid, recipe, "Enchanting")))
+        options[slot].append("{ e = %d, spell = %d, level = %d, sub = %d, ways = { %s } }" % (
+            e, sid, ENCH[e][37], weapon_mask(sid), recipe_way(skill, rank, sid, recipe, "Enchanting")))
 
 # enchants that come as an item (arcanums, signets, armor kits, scopes)
 for i in sorted(EXTRA):
@@ -517,14 +580,15 @@ for i in sorted(EXTRA):
     allow = it["AllowableClass"]
     classes = 0 if allow in (-1, 0, 32767, 262143) else allow
     for slot in enchant_slots(sid):
-        options[slot].append("{ e = %d, item = %d, level = %d, classes = %d }" % (
-            e, i, max(ENCH[e][37], it["RequiredLevel"] or 0), classes))
+        options[slot].append("{ e = %d, item = %d, level = %d, classes = %d, sub = %d }" % (
+            e, i, max(ENCH[e][37], it["RequiredLevel"] or 0), classes, weapon_mask(sid)))
 
 X = []
 X.append("-- Enchants, glyphs and consumables for JournalGearBIS, generated from the realm's world database and the")
 X.append("-- client's DBC files (tools/gen.py). Don't edit by hand: tools/curated.py has the hand-picked lists.")
 X.append("--")
 X.append("--   enchants[slot] = { { e = enchant, spell = enchanting spell or item = the item that puts it on,")
+X.append("--     sub = the weapon types it fits (subclass bits; 0 for any),")
 X.append("--                        level = level needed, classes = bit mask (0 = all), ways = { source, ... } } }")
 X.append("--                    slots: armor slots, SHIELD, WEAPON (any weapon), TWOHAND (two-handers) and RANGED (bows, guns)")
 X.append("--   enchantStats[enchant] = { stats } (wdmg = weapon damage), with proc = value by profile for procs")
@@ -659,6 +723,17 @@ X.append("G.extraItems = {")
 for i in sorted(extra_items):
     it = items[i]
     X.append("\t[%d] = { %s, %d, %d, %s }," % (i, lstr(it["name"]), it["Quality"], it["RequiredLevel"] or 0, extra_src_lua(i)))
+X.append("}")
+
+# level 80 talent builds for DragonUI (tools/talentbuilds.py): per tree, { tier, column, rank }
+from talentbuilds import all_builds
+X.append("")
+X.append("G.talentBuilds = {")
+for key, (cls, name, trees) in all_builds().items():
+    X.append("\t[%s] = { class = %s, name = %s, ranks = {" % (lstr(key), lstr(cls), lstr(name)))
+    for t in trees:
+        X.append("\t\t{ " + ", ".join("{ %d, %d, %d }" % x for x in t) + " },")
+    X.append("\t} },")
 X.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Extras.lua"), "w").write("\n".join(X) + "\n")
 print("extras: %d enchants, %d items" % (len(known), len(extra_items)), file=sys.stderr)
