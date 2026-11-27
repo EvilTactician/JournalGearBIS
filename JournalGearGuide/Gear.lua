@@ -1,11 +1,11 @@
--- The Journal's Gear tab: for your spec, every slot's way from what you wear to the best Classic has, a step at
+-- The Journal's Gear Guide tab: for your spec, every slot's way from what you wear to the best Classic has, a step at
 -- a time, and where to go next for the most upgrades. Engine.lua works it all out; this draws it.
 --
 -- Your progression stage and the raids' entrances and bosses come from the Journal (EvilTactician's fork) and
 -- mod-individual-progression, so a step for a raid you haven't opened shows as what's next, not as a goal.
 
 local J = Journal
-local G = JournalGearBIS
+local G = JournalGearGuide
 
 if not (J and J.RegisterTab and (J.API or 0) >= 1 and J.CreateInset and J.CreateScrollArea and J.CreatePool
 		and G and G.Build) then return end
@@ -190,8 +190,8 @@ end
 -- the tab
 
 local function build(panel)
-	JournalGearBISCharDB = JournalGearBISCharDB or {}
-	local db = JournalGearBISCharDB
+	JournalGearGuideCharDB = JournalGearGuideCharDB or {}
+	local db = JournalGearGuideCharDB
 	local view
 
 	local status = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -262,7 +262,7 @@ local function build(panel)
 		end
 		return out
 	end
-	local specMenu = CreateFrame("Frame", "JournalGearBISSpecMenu", UIParent, "UIDropDownMenuTemplate")
+	local specMenu = CreateFrame("Frame", "JournalGearGuideSpecMenu", UIParent, "UIDropDownMenuTemplate")
 	local function openSpecMenu(self)
 		local list = { { text = "Show the list for", isTitle = true, notCheckable = true } }
 		local current = db.choice or "active"
@@ -324,51 +324,57 @@ local function build(panel)
 		end
 		return ranks
 	end
-	local talentButton = CreateFrame("Button", nil, body)
-	talentButton:SetSize(20, 20)
-	talentButton.icon = talentButton:CreateTexture(nil, "ARTWORK")
-	talentButton.icon:SetAllPoints(talentButton)
-	talentButton.icon:SetTexture("Interface\\Icons\\INV_Misc_Book_11")
-	talentButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
 	local function talentSaved(b)
 		local api, ranks = dragonAPI(), buildRanks(b)
 		return api and ranks and type(api.HasTalentBuild) == "function" and api.HasTalentBuild(b.class, b.name, ranks)
 	end
-	talentButton:SetScript("OnEnter", function (self)
-		local b = self.build
-		if not b then return end
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:AddLine("Talent build: " .. b.name)
-		if talentSaved(b) then
-			GameTooltip:AddLine("Already in DragonUI's talent builds.", 0.25, 1, 0.25, true)
-		else
-			GameTooltip:AddLine("Click to save this level 80 build to DragonUI's talent builds, where you can "
-				.. "follow it as a plan. Below level 80, spend your points along it as far as they go.", 1, 1, 1, true)
-		end
-		GameTooltip:AddLine("From Warcraft Tavern's guide for the spec.", 0.6, 0.6, 0.6, true)
-		GameTooltip:Show()
-	end)
-	talentButton:SetScript("OnLeave", function () GameTooltip:Hide() end)
-	talentButton:SetScript("OnClick", function (self)
-		local b, api = self.build, dragonAPI()
-		if not b or not api then return end
-		local ranks = buildRanks(b)
-		local tag = "|cffffd100GearBIS:|r "
-		if not ranks then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "this build doesn't fit your talent trees, so it wasn't saved.")
-			return
-		end
-		local result, err = api.SaveTalentBuild(b.class, b.name, ranks, 80)
-		if result == "exists" then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. b.name .. " is already in DragonUI's talent builds.")
-		elseif result then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "Saved " .. b.name .. " to DragonUI's talent builds.")
-		else
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "DragonUI didn't save the build" .. (err and (": " .. err) or "") .. ".")
-		end
-		if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end
-		self.icon:SetDesaturated(talentSaved(b) and true or false)
-	end)
+	-- one book per build: most lists have one, a few a second (Fire mage: Torment the Weak and Frostfire Bolt)
+	local function newTalentButton(icon)
+		local talentButton = CreateFrame("Button", nil, body)
+		talentButton:SetSize(20, 20)
+		talentButton.icon = talentButton:CreateTexture(nil, "ARTWORK")
+		talentButton.icon:SetAllPoints(talentButton)
+		talentButton.icon:SetTexture(icon)
+		talentButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+		talentButton:SetScript("OnEnter", function (self)
+			local b = self.build
+			if not b then return end
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:AddLine("Talent build: " .. b.name)
+			if talentSaved(b) then
+				GameTooltip:AddLine("Already in DragonUI's talent builds.", 0.25, 1, 0.25, true)
+			else
+				GameTooltip:AddLine("Click to save this level 80 build to DragonUI's talent builds, where you can "
+					.. "follow it as a plan. Below level 80, spend your points along it as far as they go.", 1, 1, 1, true)
+			end
+			GameTooltip:AddLine("From Warcraft Tavern's guide for the spec.", 0.6, 0.6, 0.6, true)
+			GameTooltip:Show()
+		end)
+		talentButton:SetScript("OnLeave", function () GameTooltip:Hide() end)
+		talentButton:SetScript("OnClick", function (self)
+			local b, api = self.build, dragonAPI()
+			if not b or not api then return end
+			local ranks = buildRanks(b)
+			local tag = "|cffffd100Gear Guide:|r "
+			if not ranks then
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. "this build doesn't fit your talent trees, so it wasn't saved.")
+				return
+			end
+			local result, err = api.SaveTalentBuild(b.class, b.name, ranks, 80)
+			if result == "exists" then
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. b.name .. " is already in DragonUI's talent builds.")
+			elseif result then
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. "Saved " .. b.name .. " to DragonUI's talent builds.")
+			else
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. "DragonUI didn't save the build" .. (err and (": " .. err) or "") .. ".")
+			end
+			if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end
+			self.icon:SetDesaturated(talentSaved(b) and true or false)
+		end)
+		return talentButton
+	end
+	local talentButtons = { newTalentButton("Interface\\Icons\\INV_Misc_Book_11"),
+		newTalentButton("Interface\\Icons\\INV_Misc_Book_09") }
 
 	-- consumables: a row of icons at the top right, each with how to get it on hover
 	local consumables = CreateFrame("Frame", nil, body)
@@ -834,7 +840,10 @@ local function build(panel)
 		local className = UnitClass("player")
 		local picked = db.choice and db.choice ~= "active" and db.choice ~= "other"
 		local noTalents = not v.treeName and not picked
-		local spec = noTalents and "" or ((not sharedRole(v.profileKey) and v.treeName) or prof.name)
+		-- no points spent: the class's usual list, its name in grey (the line below asks for talents)
+		local treeName = v.treeName or (v.treeIndex and GetTalentTabInfo(v.treeIndex))
+		local spec = (not sharedRole(v.profileKey) and treeName) or prof.name
+		if noTalents then spec = "|cff9d9d9d" .. spec .. "|r" end
 		local choices = (v.groups > 1) or #specChoices() > 1
 		specButton.choices = choices
 		specButton.text:SetText(spec)
@@ -864,12 +873,21 @@ local function build(panel)
 			or "|cff9d9d9dProgression isn't on for you here|r")
 		-- the talent build button: after the menu, or after the title without one
 		local _, cls = UnitClass("player")
-		local b = G.talentBuilds and (G.talentBuilds[v.profileKey] or G.talentBuilds[cls .. ":" .. (v.treeIndex or 0)])
-		talentButton.build = (b and b.class == cls and dragonAPI()) and b or nil
-		setShown(talentButton, talentButton.build ~= nil)
-		talentButton:ClearAllPoints()
-		talentButton:SetPoint("LEFT", titleTail, "RIGHT", 8, 0)
-		if talentButton.build then talentButton.icon:SetDesaturated(talentSaved(talentButton.build) and true or false) end
+		-- a second build is stored as KEY/2, its book right after the first
+		local builds = G.talentBuilds or {}
+		local key = builds[v.profileKey] and v.profileKey or (cls .. ":" .. (v.treeIndex or 0))
+		local anchor = titleTail
+		for i, talentButton in ipairs(talentButtons) do
+			local b = builds[i == 1 and key or (key .. "/" .. i)]
+			talentButton.build = (b and b.class == cls and dragonAPI()) and b or nil
+			setShown(talentButton, talentButton.build ~= nil)
+			talentButton:ClearAllPoints()
+			talentButton:SetPoint("LEFT", anchor, "RIGHT", i == 1 and 8 or 4, 0)
+			if talentButton.build then
+				talentButton.icon:SetDesaturated(talentSaved(talentButton.build) and true or false)
+				anchor = talentButton
+			end
+		end
 
 		-- consumables, left of the menu when it's there
 		local list = {}
@@ -1140,7 +1158,7 @@ local tipView, tipDirty = nil, true
 
 local function viewForTips()
 	if tipDirty or not tipView then
-		local db = JournalGearBISCharDB or {}
+		local db = JournalGearGuideCharDB or {}
 		local choice = (db.choice == "other") and "active" or db.choice
 		if not G.learned then
 			G.learned = true
@@ -1207,13 +1225,39 @@ tipEvents:SetScript("OnEvent", function () tipDirty = true end)
 J.On("READY", function () tipDirty = true end)
 G.MarkTipsDirty = function () tipDirty = true end
 
+-- For other addons (DialogueUI) and the upgrade arrows: the same answer as the tooltip line, for your active
+-- talents (or the list picked in the tab) at your progression stage.
+-- G.IsUpgrade(item[, carried]): item is an id or a link. Returns the row it's an upgrade for, or nil plus, for
+-- a token, the items it becomes that are upgrades. carried: it's in your bags, so the question is whether it
+-- beats what you wear (without it, an item you already have is never an upgrade).
+-- G.Knows(item): true when the list can judge the item at all (from level 55, an item or token it knows);
+-- where it can't, an arrow may fall back to Pawn.
+local function itemId(item)
+	if type(item) == "number" then return item end
+	return item and tonumber(tostring(item):match("item:(%d+)"))
+end
+function G.IsUpgrade(item, carried)
+	local id = itemId(item)
+	if not id then return nil end
+	local ok, row, becomes = pcall(function () return G.Verdict(viewForTips(), id, carried) end)
+	if not ok then return nil end
+	return row, becomes
+end
+function G.Knows(item)
+	local id = itemId(item)
+	if not id or not (G.items[id] or (G.tokens and G.tokens[id])) then return false end
+	local ok, view = pcall(viewForTips)
+	return ok and view ~= nil and not view.preview
+end
+G.Stage = stage
+
 local load
 Journal.RegisterTab({
-	key = "gear", name = "Gear", order = 23, icon = "Interface\\Icons\\INV_Chest_Plate16",
+	key = "gear", name = "Gear Guide", order = 23, icon = "Interface\\Icons\\INV_Chest_Plate16",
 	build = function (panel) load = build(panel) end,
 	onShow = function () if load then load() end end,
 })
 
-SLASH_JOURNALGEARBIS1 = "/gear"
-SLASH_JOURNALGEARBIS2 = "/bis"
-SlashCmdList.JOURNALGEARBIS = function () J.ToggleSection("gear") end
+SLASH_JOURNALGEARGUIDE1 = "/gear"
+SLASH_JOURNALGEARGUIDE2 = "/bis"
+SlashCmdList.JOURNALGEARGUIDE = function () J.ToggleSection("gear") end

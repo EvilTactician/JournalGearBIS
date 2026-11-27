@@ -1,11 +1,11 @@
--- JournalGearBIS's extras on top of the gear list: the best enchant for each item you wear, the glyphs for
+-- JournalGearGuide's extras on top of the gear list: the best enchant for each item you wear, the glyphs for
 -- your spec, and the consumables worth bringing. Extras.lua has the data; this adds them to Engine.lua's view
 -- as row.enchant, view.glyphs and view.consumables. Gear.lua draws them.
 --
 -- Stats with a cap (hit, expertise, armor penetration) count only up to it: past the cap, more of them is
 -- worth nothing, so an enchant giving them loses out.
 
-local G = JournalGearBIS
+local G = JournalGearGuide
 if not (G and G.enchants and G.Build and G.player) then return end
 local band, P = G.band, G.player
 

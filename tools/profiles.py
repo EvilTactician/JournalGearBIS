@@ -54,8 +54,15 @@ PROFILES = {
                        w=w(MELEE, str=2.0, agi=1.3, int=0.2, dps=12)),
     "SHAMAN_RESTO": dict(cls="SHAMAN", name="Restoration", role="Healer", weapons="caster", ranged="relic",
                          w=w(HEALER, int=0.7, spi=0.2, mp5=1.6)),
-    "MAGE": dict(cls="MAGE", name="Mage", role="Spell damage", weapons="caster", ranged="wand",
-                 w=w(CASTER, int=0.4, spi=0.1, crit=0.8, scrit=0.8, fire=0.5, frost=0.5, arcane=0.3)),
+    # Arcane casts arcane (Arcane Blast, Arcane Missiles); Arcane Mind and Mind Mastery make intellect worth more,
+    # and Molten Armor's glyph turns spirit into crit. Fire (Fireball or Frostfire Bolt, Living Bomb, Pyroblast)
+    # leans on crit through Ignite and Hot Streak; Frost (Frostbolt) on crit through Shatter.
+    "MAGE_ARCANE": dict(cls="MAGE", name="Arcane", role="Spell damage", weapons="caster", ranged="wand",
+                        w=w(CASTER, int=0.5, spi=0.3, crit=0.6, scrit=0.6, arcane=1.0)),
+    "MAGE_FIRE": dict(cls="MAGE", name="Fire", role="Spell damage", weapons="caster", ranged="wand",
+                      w=w(CASTER, int=0.3, spi=0.2, crit=0.9, scrit=0.9, fire=1.0)),
+    "MAGE_FROST": dict(cls="MAGE", name="Frost", role="Spell damage", weapons="caster", ranged="wand",
+                       w=w(CASTER, int=0.3, spi=0.2, crit=0.7, scrit=0.7, frost=1.0)),
     # Affliction and Demonology cast shadow (Corruption, Shadow Bolt); Destruction fire (Incinerate, Immolate,
     # Conflagrate). Spirit turns into spell power through Life Tap's glyph and Fel Armor.
     "WARLOCK_SHADOW": dict(cls="WARLOCK", name="Affliction & Demonology", role="Spell damage", weapons="caster",
@@ -83,7 +90,7 @@ BY_TREE = {
     "ROGUE": ["ROGUE_DAGGERS", "ROGUE_SWORDS", "ROGUE_DAGGERS"],
     "PRIEST": ["PRIEST_HEAL", "PRIEST_HEAL", "PRIEST_SHADOW"],
     "SHAMAN": ["SHAMAN_ELE", "SHAMAN_ENH", "SHAMAN_RESTO"],
-    "MAGE": ["MAGE", "MAGE", "MAGE"],
+    "MAGE": ["MAGE_ARCANE", "MAGE_FIRE", "MAGE_FROST"],
     "WARLOCK": ["WARLOCK_SHADOW", "WARLOCK_SHADOW", "WARLOCK_FIRE"],
     "DRUID": ["DRUID_BALANCE", "DRUID_CAT", "DRUID_RESTO"],
 }

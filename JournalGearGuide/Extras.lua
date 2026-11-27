@@ -1,4 +1,4 @@
--- Enchants, glyphs and consumables for JournalGearBIS, generated from the realm's world database and the
+-- Enchants, glyphs and consumables for JournalGearGuide, generated from the realm's world database and the
 -- client's DBC files (tools/gen.py). Don't edit by hand: tools/curated.py has the hand-picked lists.
 --
 --   enchants[slot] = { { e = enchant, spell = enchanting spell or item = the item that puts it on,
@@ -14,7 +14,7 @@
 --   elixirs[item] = 1 battle elixir, 2 guardian elixir, 3 both (a flask): one of each at a time
 --   professionConsumables[profession] = { { item, skill needed to use it, "what it's for" } }
 
-local G = JournalGearBIS
+local G = JournalGearGuide
 
 G.enchants = {
 	BACK = {
@@ -565,6 +565,53 @@ G.enchantProcs = {
 }
 
 G.glyphs = {
+	MAGE_ARCANE = {
+		major = {
+			{ 44955, 62210, 315, 8, 64, "", "Glyph of Arcane Blast" },
+			{ 42735, 56363, 115, 0, 15, "", "Glyph of Arcane Missiles" },
+			{ 42751, 56382, 385, 13, 62, "", "Glyph of Molten Armor" },
+			{ 42750, 56367, 280, 0, 30, "", "Glyph of Mana Gem" },
+			{ 42738, 56380, 155, 0, 20, "", "Glyph of Evocation" },
+		},
+		minor = {
+			{ 43339, 57924, 75, 0, 15, "", "Glyph of Arcane Intellect" },
+			{ 43364, 57925, 75, 0, 15, "", "Glyph of Slow Fall" },
+			{ 43357, 57926, 100, 0, 20, "", "Glyph of Fire Ward" },
+			{ 43360, 57927, 125, 0, 22, "", "Glyph of Frost Ward" },
+		},
+	},
+	MAGE_FIRE = {
+		major = {
+			{ 45737, 63091, 425, 13, 60, "Living Bomb", "Glyph of Living Bomb" },
+			{ 42751, 56382, 385, 13, 62, "", "Glyph of Molten Armor" },
+			{ 44684, 61205, 385, 13, 75, "Ice Shards", "Glyph of Frostfire" },
+			{ 42739, 56368, 385, 13, 15, "", "Glyph of Fireball" },
+			{ 42747, 56371, 205, 0, 20, "", "Glyph of Scorch" },
+			{ 42750, 56367, 280, 0, 30, "", "Glyph of Mana Gem" },
+			{ 42738, 56380, 155, 0, 20, "", "Glyph of Evocation" },
+		},
+		minor = {
+			{ 43339, 57924, 75, 0, 15, "", "Glyph of Arcane Intellect" },
+			{ 43364, 57925, 75, 0, 15, "", "Glyph of Slow Fall" },
+			{ 43357, 57926, 100, 0, 20, "", "Glyph of Fire Ward" },
+			{ 43360, 57927, 125, 0, 22, "", "Glyph of Frost Ward" },
+		},
+	},
+	MAGE_FROST = {
+		major = {
+			{ 50045, 70937, 250, 0, 50, "Summon Water Elemental", "Glyph of Eternal Water" },
+			{ 42742, 56370, 385, 13, 15, "", "Glyph of Frostbolt" },
+			{ 42751, 56382, 385, 13, 62, "", "Glyph of Molten Armor" },
+			{ 42750, 56367, 280, 0, 30, "", "Glyph of Mana Gem" },
+			{ 42738, 56380, 155, 0, 20, "", "Glyph of Evocation" },
+		},
+		minor = {
+			{ 43339, 57924, 75, 0, 15, "", "Glyph of Arcane Intellect" },
+			{ 43364, 57925, 75, 0, 15, "", "Glyph of Slow Fall" },
+			{ 43357, 57926, 100, 0, 20, "", "Glyph of Fire Ward" },
+			{ 43360, 57927, 125, 0, 22, "", "Glyph of Frost Ward" },
+		},
+	},
 	ROGUE_SWORDS = {
 		major = {
 			{ 42973, 56810, 235, 0, 15, "", "Glyph of Slice and Dice" },
@@ -788,6 +835,33 @@ G.consumables = {
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 	},
+	MAGE_ARCANE = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 13454, "" }, -- Greater Arcane Elixir
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
+	MAGE_FIRE = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 21546, "" }, -- Elixir of Greater Firepower
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
+	MAGE_FROST = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 13454, "" }, -- Greater Arcane Elixir
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
 	DRUID_BALANCE = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 13454, "" }, -- Greater Arcane Elixir
@@ -935,65 +1009,85 @@ G.extraItems = {
 }
 
 G.talentBuilds = {
-	["DRUID_CAT"] = { class = "DRUID", name = "GearBIS: Feral (Cat)", ranks = {
+	["DRUID_CAT"] = { class = "DRUID", name = "Gear Guide: Feral (Cat)", ranks = {
 		{  },
 		{ { 1, 2, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 3, 1, 2 }, { 3, 3, 3 }, { 4, 1, 2 }, { 4, 2, 3 }, { 4, 3, 2 }, { 4, 4, 2 }, { 5, 3, 1 }, { 6, 2, 5 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 1, 3 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 10, 2, 5 }, { 10, 3, 1 }, { 11, 2, 1 } },
 		{ { 1, 1, 2 }, { 1, 3, 5 }, { 2, 1, 5 }, { 2, 3, 3 }, { 3, 2, 1 }, { 3, 3, 2 } },
 	} },
-	["DRUID_BEAR"] = { class = "DRUID", name = "GearBIS: Feral (Bear)", ranks = {
+	["DRUID_BEAR"] = { class = "DRUID", name = "Gear Guide: Feral (Bear)", ranks = {
 		{  },
 		{ { 1, 2, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 2, 1 }, { 3, 3, 3 }, { 4, 1, 2 }, { 4, 2, 3 }, { 4, 3, 2 }, { 4, 4, 2 }, { 5, 3, 1 }, { 6, 1, 3 }, { 6, 2, 5 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 1, 3 }, { 8, 4, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 10, 3, 1 }, { 11, 2, 1 } },
 		{ { 1, 1, 2 }, { 1, 3, 3 }, { 2, 1, 5 }, { 3, 2, 1 } },
 	} },
-	["DRUID_RESTO"] = { class = "DRUID", name = "GearBIS: Restoration", ranks = {
+	["DRUID_RESTO"] = { class = "DRUID", name = "Gear Guide: Restoration", ranks = {
 		{ { 1, 3, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 3, 3, 1 } },
 		{  },
 		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 2, 3 }, { 2, 3, 3 }, { 3, 1, 3 }, { 3, 2, 1 }, { 3, 3, 2 }, { 4, 3, 3 }, { 5, 1, 1 }, { 5, 2, 5 }, { 6, 1, 2 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 2, 5 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 3, 5 }, { 11, 2, 1 } },
 	} },
-	["ROGUE:1"] = { class = "ROGUE", name = "GearBIS: Assassination", ranks = {
+	["ROGUE:1"] = { class = "ROGUE", name = "Gear Guide: Assassination", ranks = {
 		{ { 1, 3, 5 }, { 2, 1, 3 }, { 2, 4, 3 }, { 3, 3, 5 }, { 4, 2, 3 }, { 4, 3, 5 }, { 5, 2, 1 }, { 5, 4, 2 }, { 6, 2, 5 }, { 6, 3, 2 }, { 7, 2, 1 }, { 8, 1, 3 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 10, 2, 5 }, { 11, 2, 1 } },
 		{ { 1, 3, 5 }, { 2, 4, 5 }, { 3, 3, 3 } },
 		{ { 1, 1, 5 }, { 1, 3, 2 } },
 	} },
-	["ROGUE:2"] = { class = "ROGUE", name = "GearBIS: Combat", ranks = {
+	["ROGUE:2"] = { class = "ROGUE", name = "Gear Guide: Combat", ranks = {
 		{ { 1, 3, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 3, 3, 5 }, { 4, 2, 3 }, { 4, 3, 2 } },
 		{ { 1, 2, 2 }, { 1, 3, 5 }, { 2, 1, 2 }, { 2, 4, 5 }, { 3, 1, 1 }, { 4, 3, 3 }, { 4, 4, 5 }, { 5, 2, 1 }, { 5, 3, 5 }, { 6, 2, 2 }, { 6, 3, 2 }, { 7, 1, 3 }, { 7, 2, 1 }, { 8, 3, 5 }, { 9, 2, 1 }, { 9, 3, 2 }, { 10, 2, 5 }, { 11, 2, 1 } },
 		{  },
 	} },
-	["DRUID_BALANCE"] = { class = "DRUID", name = "GearBIS: Balance", ranks = {
+	["DRUID_BALANCE"] = { class = "DRUID", name = "Gear Guide: Balance", ranks = {
 		{ { 1, 2, 5 }, { 2, 1, 3 }, { 2, 2, 2 }, { 3, 2, 3 }, { 3, 3, 1 }, { 3, 4, 2 }, { 4, 2, 5 }, { 4, 3, 3 }, { 5, 1, 3 }, { 5, 2, 1 }, { 5, 3, 3 }, { 6, 2, 3 }, { 6, 3, 2 }, { 7, 2, 1 }, { 7, 3, 3 }, { 7, 4, 3 }, { 8, 3, 5 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 1 }, { 9, 4, 1 }, { 10, 2, 3 }, { 11, 2, 1 } },
 		{  },
 		{ { 1, 1, 2 }, { 1, 3, 5 }, { 2, 3, 3 }, { 3, 2, 1 }, { 3, 3, 2 } },
 	} },
-	["PRIEST:1"] = { class = "PRIEST", name = "GearBIS: Discipline", ranks = {
+	["PRIEST:1"] = { class = "PRIEST", name = "Gear Guide: Discipline", ranks = {
 		{ { 1, 3, 5 }, { 2, 2, 3 }, { 2, 3, 2 }, { 3, 1, 3 }, { 3, 2, 1 }, { 3, 3, 3 }, { 4, 2, 3 }, { 5, 2, 5 }, { 5, 3, 1 }, { 6, 1, 2 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 3 }, { 8, 1, 2 }, { 8, 2, 3 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 2 }, { 10, 2, 5 }, { 11, 2, 1 } },
 		{ { 1, 1, 2 }, { 1, 3, 5 }, { 2, 2, 5 }, { 3, 4, 3 }, { 4, 2, 2 } },
 		{  },
 	} },
-	["PRIEST:2"] = { class = "PRIEST", name = "GearBIS: Holy", ranks = {
+	["PRIEST:2"] = { class = "PRIEST", name = "Gear Guide: Holy", ranks = {
 		{ { 1, 3, 5 }, { 2, 2, 3 }, { 2, 3, 2 }, { 3, 1, 3 } },
 		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 5 }, { 2, 3, 5 }, { 3, 1, 1 }, { 3, 4, 3 }, { 4, 2, 3 }, { 5, 1, 2 }, { 5, 2, 1 }, { 5, 3, 5 }, { 6, 1, 2 }, { 6, 3, 5 }, { 7, 1, 3 }, { 8, 2, 5 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 10, 2, 5 }, { 11, 2, 1 } },
 		{  },
 	} },
-	["PRIEST:3"] = { class = "PRIEST", name = "GearBIS: Shadow", ranks = {
+	["PRIEST:3"] = { class = "PRIEST", name = "Gear Guide: Shadow", ranks = {
 		{ { 1, 3, 5 }, { 2, 2, 3 }, { 2, 3, 2 }, { 3, 1, 3 }, { 3, 2, 1 } },
 		{  },
 		{ { 1, 1, 3 }, { 1, 2, 2 }, { 1, 3, 5 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 5 }, { 3, 3, 1 }, { 4, 2, 2 }, { 4, 3, 2 }, { 4, 4, 3 }, { 5, 2, 1 }, { 5, 4, 2 }, { 6, 1, 2 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 5 }, { 8, 1, 2 }, { 8, 3, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 3, 5 }, { 11, 2, 1 } },
 	} },
-	["WARLOCK:1"] = { class = "WARLOCK", name = "GearBIS: Affliction", ranks = {
+	["WARLOCK:1"] = { class = "WARLOCK", name = "Gear Guide: Affliction", ranks = {
 		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 5 }, { 2, 3, 2 }, { 2, 4, 2 }, { 3, 2, 3 }, { 4, 2, 2 }, { 4, 4, 3 }, { 5, 1, 5 }, { 5, 2, 1 }, { 6, 2, 5 }, { 7, 1, 3 }, { 7, 2, 5 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 1 }, { 10, 2, 5 }, { 11, 2, 1 } },
 		{  },
 		{ { 1, 2, 5 }, { 1, 3, 5 }, { 3, 3, 5 }, { 4, 1, 1 } },
 	} },
-	["WARLOCK:2"] = { class = "WARLOCK", name = "GearBIS: Demonology", ranks = {
+	["WARLOCK:2"] = { class = "WARLOCK", name = "Gear Guide: Demonology", ranks = {
 		{  },
 		{ { 1, 3, 3 }, { 1, 4, 2 }, { 2, 2, 3 }, { 2, 3, 3 }, { 3, 2, 1 }, { 3, 3, 1 }, { 3, 4, 3 }, { 4, 2, 5 }, { 4, 3, 2 }, { 5, 3, 2 }, { 6, 2, 5 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 3 }, { 8, 2, 5 }, { 8, 3, 2 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
 		{ { 1, 2, 5 }, { 1, 3, 5 }, { 3, 3, 5 }, { 4, 1, 2 } },
 	} },
-	["WARLOCK:3"] = { class = "WARLOCK", name = "GearBIS: Destruction", ranks = {
+	["WARLOCK:3"] = { class = "WARLOCK", name = "Gear Guide: Destruction", ranks = {
 		{  },
 		{ { 1, 2, 3 }, { 1, 3, 3 }, { 1, 4, 1 }, { 2, 3, 3 }, { 3, 4, 3 } },
 		{ { 1, 3, 5 }, { 2, 1, 2 }, { 2, 2, 1 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 5 }, { 4, 1, 2 }, { 4, 2, 2 }, { 5, 2, 3 }, { 5, 3, 1 }, { 6, 3, 5 }, { 7, 2, 1 }, { 7, 3, 3 }, { 7, 4, 3 }, { 8, 2, 5 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+	} },
+	["MAGE_ARCANE"] = { class = "MAGE", name = "Gear Guide: Arcane", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 3 }, { 2, 3, 5 }, { 3, 2, 3 }, { 3, 3, 3 }, { 3, 4, 1 }, { 4, 3, 2 }, { 4, 4, 3 }, { 5, 2, 1 }, { 5, 4, 5 }, { 6, 2, 3 }, { 6, 3, 2 }, { 7, 1, 3 }, { 7, 2, 1 }, { 8, 2, 2 }, { 8, 3, 5 }, { 9, 3, 5 }, { 10, 2, 3 }, { 10, 3, 2 } },
+		{ { 1, 2, 3 } },
+		{ { 1, 2, 2 }, { 1, 3, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 1 } },
+	} },
+	["MAGE_FIRE"] = { class = "MAGE", name = "Gear Guide: Fire (Torment the Weak)", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 3 }, { 3, 3, 1 }, { 3, 4, 1 }, { 4, 4, 3 } },
+		{ { 1, 3, 5 }, { 2, 1, 5 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 1 }, { 3, 4, 2 }, { 4, 1, 3 }, { 4, 4, 3 }, { 5, 1, 3 }, { 5, 2, 3 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 3, 3 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{  },
+	} },
+	["MAGE_FIRE/2"] = { class = "MAGE", name = "Gear Guide: Fire (Frostfire Bolt)", ranks = {
+		{  },
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 1, 5 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 1 }, { 3, 4, 2 }, { 4, 1, 3 }, { 4, 4, 3 }, { 5, 1, 3 }, { 5, 2, 3 }, { 5, 3, 1 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 3, 3 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{ { 1, 2, 2 }, { 1, 3, 3 }, { 2, 1, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 1, 3 }, { 3, 2, 1 } },
+	} },
+	["MAGE_FROST"] = { class = "MAGE", name = "Gear Guide: Frost", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 3, 5 }, { 3, 2, 3 }, { 3, 3, 1 }, { 3, 4, 1 }, { 4, 4, 3 } },
+		{  },
+		{ { 1, 2, 5 }, { 1, 3, 3 }, { 2, 1, 3 }, { 2, 3, 3 }, { 3, 1, 3 }, { 3, 2, 1 }, { 4, 1, 2 }, { 4, 2, 3 }, { 4, 3, 3 }, { 5, 2, 1 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 5 }, { 8, 2, 2 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
 	} },
 }
 

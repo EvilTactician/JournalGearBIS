@@ -58,8 +58,36 @@ WARLOCK_COMMON = [
     "Staff of Dominance", "Wraith Blade", "Sapphiron's Left Eye", "Doomfinger",
     (22630, None),  # Atiesh, Greatstaff of the Guardian: the warlock one of the four sharing the name
 ]
+MAGE_COMMON = [
+    # pre-raid
+    "Crimson Felt Hat", "Spellweaver's Turban", "Diana's Pearl Necklace", "Boreal Mantle", "Felcloth Shoulders",
+    "Spritecaster Cape", "Amplifying Cloak", "Robe of the Archmage", "Robe of Winter Night", "Manacle Cuffs",
+    "Sublime Wristguards", "Hands of Power", "Ban'thok Sash", "Skyshroud Leggings", "Omnicast Boots",
+    "Maleki's Footwraps", "Eye of Orgrimmar", "Songstone of Ironforge", "Cyclopean Band", ("Briarwood Reed", 25),
+    "Eye of the Beast", "Witchblade", "Spirit of Aquementas", "Skul's Ghastly Touch", "Bonecreeper Stylus",
+    # raids
+    "Mish'undare, Circlet of the Mind Flayer", "Arcanist Crown", "Netherwind Crown", "Enigma Circlet",
+    "Frostfire Circlet", "Choker of Enlightenment", "Choker of the Fire Lord", "Gem of Trapped Innocents",
+    "Amulet of Vek'nilash", "Arcanist Mantle", "Netherwind Mantle", "Mantle of the Blackwing Cabal",
+    "Enigma Shoulderpads", "Frostfire Shoulderpads", "Cloak of Consumption", "Sapphiron Drape",
+    "Cloak of the Necropolis", "Arcanist Robes", "Netherwind Robes", "Enigma Robes", "Frostfire Robe",
+    "Bracers of Arcane Accuracy", "Netherwind Bindings", "Rockfury Bracers", "Frostfire Bindings",
+    "Gloves of the Hypnotic Flame", "Netherwind Gloves", "Dark Storm Gauntlets", "Frostfire Gloves",
+    "Mana Igniting Cord", "Netherwind Belt", "Eyestalk Waist Cord", "Frostfire Belt", "Arcanist Leggings",
+    "Netherwind Pants", "Enigma Leggings", "Leggings of Polarity", "Frostfire Leggings", "Netherwind Boots",
+    "Boots of Epiphany", "Enigma Boots", "Recomposed Boots", "Frostfire Sandals", "Ring of Spell Power",
+    "Band of Forced Concentration", "Ring of the Fallen God", "Band of the Inevitable", "Ring of the Eternal Flame",
+    "Frostfire Ring", ("Talisman of Ephemeral Power", 30), ("Mind Quickening Gem", 30), "Neltharion's Tear",
+    ("Zandalarian Hero Charm", 35), "The Restrained Essence of Sapphiron", (23207, 40),  # Mark of the Champion, the caster one
+    "Azuresong Mageblade", "Fire Runed Grimoire", "Staff of Dominance", "Staff of the Shadow Flame", "Wraith Blade",
+    "Sapphiron's Left Eye", "Crimson Shocker", "Wand of Qiraji Nobility", "Doomfinger",
+    (22589, None),  # Atiesh, Greatstaff of the Guardian: the mage one of the four sharing the name
+]
 
 CURATED = {
+    "MAGE_ARCANE": MAGE_COMMON,
+    "MAGE_FIRE": MAGE_COMMON,
+    "MAGE_FROST": MAGE_COMMON,
     "WARLOCK_SHADOW": WARLOCK_COMMON,
     "WARLOCK_FIRE": WARLOCK_COMMON,
     "ROGUE_SWORDS": ROGUE_COMMON + [
@@ -166,6 +194,7 @@ CRAFTED = {
     "Felcloth Shoulders": "Crafted: Tailoring",
     "Felcloth Gloves": "Crafted: Tailoring",
     "Robe of Winter Night": "Crafted: Tailoring",
+    "Robe of the Archmage": "Crafted: Tailoring",
     "Wolfshead Helm": "Crafted: Leatherworking",
     "Living Shoulders": "Crafted: Leatherworking",
 }
@@ -176,7 +205,27 @@ CRAFTED = {
 ROGUE_MINOR = ["Glyph of Vanish", "Glyph of Safe Fall", "Glyph of Distract", "Glyph of Blurred Speed", "Glyph of Pick Pocket"]
 PRIEST_MINOR = ["Glyph of Fortitude", "Glyph of Fading", "Glyph of Levitate", "Glyph of Shadow Protection"]
 WARLOCK_MINOR = ["Glyph of Drain Soul", "Glyph of Souls", "Glyph of Unending Breath", "Glyph of Enslave Demon"]
+MAGE_MINOR = ["Glyph of Arcane Intellect", "Glyph of Slow Fall", "Glyph of Fire Ward", "Glyph of Frost Ward"]
 GLYPHS = {
+    # Wrath's picks need Inscription past 300 (Arcane Blast, Molten Armor, Fireball, Frostfire, Frostbolt, Living
+    # Bomb); before that Arcane Missiles, Scorch, Eternal Water, Mana Gem and Evocation stand in.
+    "MAGE_ARCANE": {
+        "major": ["Glyph of Arcane Blast", "Glyph of Arcane Missiles", "Glyph of Molten Armor", "Glyph of Mana Gem",
+                  "Glyph of Evocation"],
+        "minor": MAGE_MINOR,
+    },
+    # Torment the Weak casts Fireball, Frostfire Bolt's build Frostfire Bolt: only the Frostfire build takes Ice
+    # Shards, so that's what tells them apart (a Frost talent, so it's never hinted to a Fire mage).
+    "MAGE_FIRE": {
+        "major": [("Glyph of Living Bomb", "Living Bomb"), "Glyph of Molten Armor", ("Glyph of Frostfire", "Ice Shards"),
+                  "Glyph of Fireball", "Glyph of Scorch", "Glyph of Mana Gem", "Glyph of Evocation"],
+        "minor": MAGE_MINOR,
+    },
+    "MAGE_FROST": {
+        "major": [("Glyph of Eternal Water", "Summon Water Elemental"), "Glyph of Frostbolt", "Glyph of Molten Armor",
+                  "Glyph of Mana Gem", "Glyph of Evocation"],
+        "minor": MAGE_MINOR,
+    },
     "ROGUE_SWORDS": {
         "major": ["Glyph of Slice and Dice", "Glyph of Sinister Strike",
                   "Glyph of Eviscerate", "Glyph of Expose Armor", "Glyph of Evasion"],
@@ -291,6 +340,8 @@ CURATED_NOTES = {
                         "Revered with the Cenarion Circle for it.",
     "Breastplate of Bloodthirst": "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast "
                                   "itself drops. The hide comes about 1 skin in 50.",
+    "Robe of the Archmage": "Tailoring 300 sews it, from a pattern that Firebrand Pyromancers drop in Lower Blackrock "
+                            "Spire. It binds when made, so you have to be the tailor.",
     "Manual Crowd Pummeler": "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit "
                              "of damage; you'd need several.",
 }
@@ -302,6 +353,7 @@ CURATED_NOTES = {
 ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
 WARLOCK_CONSUMABLES = [[("Brilliant Wizard Oil", "Put it on your weapon."), ("Wizard Oil", "Put it on your weapon.")], "Runn Tum Tuber Surprise", "Major Mana Potion"]
+MAGE_CONSUMABLES = WARLOCK_CONSUMABLES + [("Demonic Rune", "Costs some health.")]
 # An entry in a list of alternatives is shown as its first that's open at your stage, so nobody at
 # Molten Core is told to bring what only Zul'Gurub's Zandalar sell (Mageblood Elixir, the brilliant oils).
 def consumable_options(entry):
@@ -322,6 +374,10 @@ CONSUMABLES = {
     # no Demonic Rune: Life Tap gives warlocks mana for health already
     "WARLOCK_SHADOW": ["Flask of Supreme Power", "Elixir of Shadow Power"] + WARLOCK_CONSUMABLES,
     "WARLOCK_FIRE": ["Flask of Supreme Power", "Elixir of Greater Firepower"] + WARLOCK_CONSUMABLES,
+    # Frost too takes Greater Arcane Elixir: Elixir of Frost Power gives less than half its spell power
+    "MAGE_ARCANE": ["Flask of Supreme Power", "Greater Arcane Elixir"] + MAGE_CONSUMABLES,
+    "MAGE_FIRE": ["Flask of Supreme Power", "Elixir of Greater Firepower"] + MAGE_CONSUMABLES,
+    "MAGE_FROST": ["Flask of Supreme Power", "Greater Arcane Elixir"] + MAGE_CONSUMABLES,
     "DRUID_BALANCE": ["Flask of Supreme Power", "Greater Arcane Elixir", [("Brilliant Wizard Oil", "Put it on your weapon."), ("Wizard Oil", "Put it on your weapon.")],
                       "Runn Tum Tuber Surprise", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
     "DRUID_CAT": ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),

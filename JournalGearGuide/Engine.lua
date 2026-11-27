@@ -1,4 +1,4 @@
--- JournalGearBIS's logic: which spec list to show, what each item is worth to it, what you own, and for every
+-- JournalGearGuide's logic: which spec list to show, what each item is worth to it, what you own, and for every
 -- slot up to three steps from what you wear: what to get now (an easy item first where there is one, then the
 -- best you can get), what opens next, and the slot's best in slot. Below the level gearing starts, the list is
 -- a preview of your goals at the level cap.
@@ -6,7 +6,7 @@
 -- Profiles.lua has the stat weights, Curated.lua the hand-picked items and Data.lua the items and where they
 -- come from. Nothing here draws anything: Gear.lua is the tab.
 
-local G = JournalGearBIS
+local G = JournalGearGuide
 if not (G and G.items and G.profiles) then return end
 
 local band = bit and bit.band or function (a, b)
@@ -165,7 +165,7 @@ function G.Score(stats, weights, part)
 end
 
 -- Stats read off an item's tooltip, for items Data.lua doesn't have (or has without their random suffix).
-local scan = CreateFrame("GameTooltip", "JournalGearBISScanTip", nil, "GameTooltipTemplate")
+local scan = CreateFrame("GameTooltip", "JournalGearGuideScanTip", nil, "GameTooltipTemplate")
 local NAMED = {
 	["Agility"] = "agi", ["Strength"] = "str", ["Intellect"] = "int", ["Spirit"] = "spi", ["Stamina"] = "sta",
 	["Attack Power"] = "ap", ["Spell Power"] = "sp", ["Critical Strike Rating"] = "crit", ["Hit Rating"] = "hit",
@@ -202,7 +202,7 @@ function G.TooltipStats(link)
 	if not n or n < 2 then return nil end
 	local s = {}
 	for i = 2, n do
-		local fs = _G["JournalGearBISScanTipTextLeft" .. i]
+		local fs = _G["JournalGearGuideScanTipTextLeft" .. i]
 		local text = fs and fs:GetText()
 		if text then
 			local v, name = text:match("^%+(%d+) (.+)$")
@@ -1139,8 +1139,15 @@ local function owns(view, id)
 	return false
 end
 
-local function upgradeRow(view, id)
-	if owns(view, id) then return nil end
+-- carried: the item is in your bags, so only wearing it already counts as having it
+local function upgradeRow(view, id, carried)
+	if carried then
+		for _, w in pairs(view.worn) do
+			if w.id == id then return nil end
+		end
+	elseif owns(view, id) then
+		return nil
+	end
 	for _, r in ipairs(view.rows) do
 		if not r.hidden then
 			for _, c in ipairs(r.candidates) do
@@ -1154,15 +1161,16 @@ local function upgradeRow(view, id)
 end
 
 -- For an item: the row it's an upgrade for, or nil. For a token: the items it becomes that are, or nil.
-function G.Verdict(view, id)
+-- carried: asked for an item in your bags (better than what you wear?).
+function G.Verdict(view, id, carried)
 	if not view or view.preview then return nil end
-	local r = upgradeRow(view, id)
+	local r = upgradeRow(view, id, carried)
 	if r then return r, nil end
 	local becomes = G.tokens and G.tokens[id]
 	if not becomes then return nil end
 	local list = {}
 	for _, other in ipairs(becomes) do
-		if upgradeRow(view, other) then table.insert(list, other) end
+		if upgradeRow(view, other, carried) then table.insert(list, other) end
 	end
 	if #list == 0 then return nil end
 	return nil, list

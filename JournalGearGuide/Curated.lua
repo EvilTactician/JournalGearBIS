@@ -3,9 +3,285 @@
 -- (Hand of Justice, Kiss of the Spider) a value in the profile's units. Add specs or items freely:
 -- the item must also be in Data.lua.
 
-local G = JournalGearBIS
+local G = JournalGearGuide
 
 G.curated = {
+	MAGE_ARCANE = {
+		{ 18727 }, -- Crimson Felt Hat
+		{ 22267 }, -- Spellweaver's Turban
+		{ 22403 }, -- Diana's Pearl Necklace
+		{ 11782 }, -- Boreal Mantle
+		{ 14112 }, -- Felcloth Shoulders
+		{ 11623 }, -- Spritecaster Cape
+		{ 18350 }, -- Amplifying Cloak
+		{ 14152 }, -- Robe of the Archmage
+		{ 14136 }, -- Robe of Winter Night
+		{ 11962 }, -- Manacle Cuffs
+		{ 18497 }, -- Sublime Wristguards
+		{ 13253 }, -- Hands of Power
+		{ 11662 }, -- Ban'thok Sash
+		{ 13170 }, -- Skyshroud Leggings
+		{ 11822 }, -- Omnicast Boots
+		{ 18735 }, -- Maleki's Footwraps
+		{ 12545 }, -- Eye of Orgrimmar
+		{ 12543 }, -- Songstone of Ironforge
+		{ 11824 }, -- Cyclopean Band
+		{ 12930, 25 }, -- Briarwood Reed
+		{ 13968 }, -- Eye of the Beast
+		{ 13964 }, -- Witchblade
+		{ 11904 }, -- Spirit of Aquementas
+		{ 13396 }, -- Skul's Ghastly Touch
+		{ 13938 }, -- Bonecreeper Stylus
+		{ 19375 }, -- Mish'undare, Circlet of the Mind Flayer
+		{ 16795 }, -- Arcanist Crown
+		{ 16914 }, -- Netherwind Crown
+		{ 21347 }, -- Enigma Circlet
+		{ 22498 }, -- Frostfire Circlet
+		{ 17109 }, -- Choker of Enlightenment
+		{ 18814 }, -- Choker of the Fire Lord
+		{ 23057 }, -- Gem of Trapped Innocents
+		{ 21608 }, -- Amulet of Vek'nilash
+		{ 16797 }, -- Arcanist Mantle
+		{ 16917 }, -- Netherwind Mantle
+		{ 19370 }, -- Mantle of the Blackwing Cabal
+		{ 21345 }, -- Enigma Shoulderpads
+		{ 22499 }, -- Frostfire Shoulderpads
+		{ 19857 }, -- Cloak of Consumption
+		{ 17078 }, -- Sapphiron Drape
+		{ 23050 }, -- Cloak of the Necropolis
+		{ 16798 }, -- Arcanist Robes
+		{ 16916 }, -- Netherwind Robes
+		{ 21343 }, -- Enigma Robes
+		{ 22496 }, -- Frostfire Robe
+		{ 19374 }, -- Bracers of Arcane Accuracy
+		{ 16918 }, -- Netherwind Bindings
+		{ 21186 }, -- Rockfury Bracers
+		{ 22503 }, -- Frostfire Bindings
+		{ 18808 }, -- Gloves of the Hypnotic Flame
+		{ 16913 }, -- Netherwind Gloves
+		{ 21585 }, -- Dark Storm Gauntlets
+		{ 22501 }, -- Frostfire Gloves
+		{ 19136 }, -- Mana Igniting Cord
+		{ 16818 }, -- Netherwind Belt
+		{ 22730 }, -- Eyestalk Waist Cord
+		{ 22502 }, -- Frostfire Belt
+		{ 16796 }, -- Arcanist Leggings
+		{ 16915 }, -- Netherwind Pants
+		{ 21346 }, -- Enigma Leggings
+		{ 23070 }, -- Leggings of Polarity
+		{ 22497 }, -- Frostfire Leggings
+		{ 16912 }, -- Netherwind Boots
+		{ 21600 }, -- Boots of Epiphany
+		{ 21344 }, -- Enigma Boots
+		{ 21648 }, -- Recomposed Boots
+		{ 22500 }, -- Frostfire Sandals
+		{ 19147 }, -- Ring of Spell Power
+		{ 19403 }, -- Band of Forced Concentration
+		{ 21709 }, -- Ring of the Fallen God
+		{ 23031 }, -- Band of the Inevitable
+		{ 23237 }, -- Ring of the Eternal Flame
+		{ 23062 }, -- Frostfire Ring
+		{ 18820, 30 }, -- Talisman of Ephemeral Power
+		{ 19339, 30 }, -- Mind Quickening Gem
+		{ 19379 }, -- Neltharion's Tear
+		{ 19950, 35 }, -- Zandalarian Hero Charm
+		{ 23046 }, -- The Restrained Essence of Sapphiron
+		{ 23207, 40 }, -- Mark of the Champion
+		{ 17103 }, -- Azuresong Mageblade
+		{ 19142 }, -- Fire Runed Grimoire
+		{ 18842 }, -- Staff of Dominance
+		{ 19356 }, -- Staff of the Shadow Flame
+		{ 22807 }, -- Wraith Blade
+		{ 23049 }, -- Sapphiron's Left Eye
+		{ 17077 }, -- Crimson Shocker
+		{ 21603 }, -- Wand of Qiraji Nobility
+		{ 22821 }, -- Doomfinger
+		{ 22589 }, -- Atiesh, Greatstaff of the Guardian
+	},
+	MAGE_FIRE = {
+		{ 18727 }, -- Crimson Felt Hat
+		{ 22267 }, -- Spellweaver's Turban
+		{ 22403 }, -- Diana's Pearl Necklace
+		{ 11782 }, -- Boreal Mantle
+		{ 14112 }, -- Felcloth Shoulders
+		{ 11623 }, -- Spritecaster Cape
+		{ 18350 }, -- Amplifying Cloak
+		{ 14152 }, -- Robe of the Archmage
+		{ 14136 }, -- Robe of Winter Night
+		{ 11962 }, -- Manacle Cuffs
+		{ 18497 }, -- Sublime Wristguards
+		{ 13253 }, -- Hands of Power
+		{ 11662 }, -- Ban'thok Sash
+		{ 13170 }, -- Skyshroud Leggings
+		{ 11822 }, -- Omnicast Boots
+		{ 18735 }, -- Maleki's Footwraps
+		{ 12545 }, -- Eye of Orgrimmar
+		{ 12543 }, -- Songstone of Ironforge
+		{ 11824 }, -- Cyclopean Band
+		{ 12930, 25 }, -- Briarwood Reed
+		{ 13968 }, -- Eye of the Beast
+		{ 13964 }, -- Witchblade
+		{ 11904 }, -- Spirit of Aquementas
+		{ 13396 }, -- Skul's Ghastly Touch
+		{ 13938 }, -- Bonecreeper Stylus
+		{ 19375 }, -- Mish'undare, Circlet of the Mind Flayer
+		{ 16795 }, -- Arcanist Crown
+		{ 16914 }, -- Netherwind Crown
+		{ 21347 }, -- Enigma Circlet
+		{ 22498 }, -- Frostfire Circlet
+		{ 17109 }, -- Choker of Enlightenment
+		{ 18814 }, -- Choker of the Fire Lord
+		{ 23057 }, -- Gem of Trapped Innocents
+		{ 21608 }, -- Amulet of Vek'nilash
+		{ 16797 }, -- Arcanist Mantle
+		{ 16917 }, -- Netherwind Mantle
+		{ 19370 }, -- Mantle of the Blackwing Cabal
+		{ 21345 }, -- Enigma Shoulderpads
+		{ 22499 }, -- Frostfire Shoulderpads
+		{ 19857 }, -- Cloak of Consumption
+		{ 17078 }, -- Sapphiron Drape
+		{ 23050 }, -- Cloak of the Necropolis
+		{ 16798 }, -- Arcanist Robes
+		{ 16916 }, -- Netherwind Robes
+		{ 21343 }, -- Enigma Robes
+		{ 22496 }, -- Frostfire Robe
+		{ 19374 }, -- Bracers of Arcane Accuracy
+		{ 16918 }, -- Netherwind Bindings
+		{ 21186 }, -- Rockfury Bracers
+		{ 22503 }, -- Frostfire Bindings
+		{ 18808 }, -- Gloves of the Hypnotic Flame
+		{ 16913 }, -- Netherwind Gloves
+		{ 21585 }, -- Dark Storm Gauntlets
+		{ 22501 }, -- Frostfire Gloves
+		{ 19136 }, -- Mana Igniting Cord
+		{ 16818 }, -- Netherwind Belt
+		{ 22730 }, -- Eyestalk Waist Cord
+		{ 22502 }, -- Frostfire Belt
+		{ 16796 }, -- Arcanist Leggings
+		{ 16915 }, -- Netherwind Pants
+		{ 21346 }, -- Enigma Leggings
+		{ 23070 }, -- Leggings of Polarity
+		{ 22497 }, -- Frostfire Leggings
+		{ 16912 }, -- Netherwind Boots
+		{ 21600 }, -- Boots of Epiphany
+		{ 21344 }, -- Enigma Boots
+		{ 21648 }, -- Recomposed Boots
+		{ 22500 }, -- Frostfire Sandals
+		{ 19147 }, -- Ring of Spell Power
+		{ 19403 }, -- Band of Forced Concentration
+		{ 21709 }, -- Ring of the Fallen God
+		{ 23031 }, -- Band of the Inevitable
+		{ 23237 }, -- Ring of the Eternal Flame
+		{ 23062 }, -- Frostfire Ring
+		{ 18820, 30 }, -- Talisman of Ephemeral Power
+		{ 19339, 30 }, -- Mind Quickening Gem
+		{ 19379 }, -- Neltharion's Tear
+		{ 19950, 35 }, -- Zandalarian Hero Charm
+		{ 23046 }, -- The Restrained Essence of Sapphiron
+		{ 23207, 40 }, -- Mark of the Champion
+		{ 17103 }, -- Azuresong Mageblade
+		{ 19142 }, -- Fire Runed Grimoire
+		{ 18842 }, -- Staff of Dominance
+		{ 19356 }, -- Staff of the Shadow Flame
+		{ 22807 }, -- Wraith Blade
+		{ 23049 }, -- Sapphiron's Left Eye
+		{ 17077 }, -- Crimson Shocker
+		{ 21603 }, -- Wand of Qiraji Nobility
+		{ 22821 }, -- Doomfinger
+		{ 22589 }, -- Atiesh, Greatstaff of the Guardian
+	},
+	MAGE_FROST = {
+		{ 18727 }, -- Crimson Felt Hat
+		{ 22267 }, -- Spellweaver's Turban
+		{ 22403 }, -- Diana's Pearl Necklace
+		{ 11782 }, -- Boreal Mantle
+		{ 14112 }, -- Felcloth Shoulders
+		{ 11623 }, -- Spritecaster Cape
+		{ 18350 }, -- Amplifying Cloak
+		{ 14152 }, -- Robe of the Archmage
+		{ 14136 }, -- Robe of Winter Night
+		{ 11962 }, -- Manacle Cuffs
+		{ 18497 }, -- Sublime Wristguards
+		{ 13253 }, -- Hands of Power
+		{ 11662 }, -- Ban'thok Sash
+		{ 13170 }, -- Skyshroud Leggings
+		{ 11822 }, -- Omnicast Boots
+		{ 18735 }, -- Maleki's Footwraps
+		{ 12545 }, -- Eye of Orgrimmar
+		{ 12543 }, -- Songstone of Ironforge
+		{ 11824 }, -- Cyclopean Band
+		{ 12930, 25 }, -- Briarwood Reed
+		{ 13968 }, -- Eye of the Beast
+		{ 13964 }, -- Witchblade
+		{ 11904 }, -- Spirit of Aquementas
+		{ 13396 }, -- Skul's Ghastly Touch
+		{ 13938 }, -- Bonecreeper Stylus
+		{ 19375 }, -- Mish'undare, Circlet of the Mind Flayer
+		{ 16795 }, -- Arcanist Crown
+		{ 16914 }, -- Netherwind Crown
+		{ 21347 }, -- Enigma Circlet
+		{ 22498 }, -- Frostfire Circlet
+		{ 17109 }, -- Choker of Enlightenment
+		{ 18814 }, -- Choker of the Fire Lord
+		{ 23057 }, -- Gem of Trapped Innocents
+		{ 21608 }, -- Amulet of Vek'nilash
+		{ 16797 }, -- Arcanist Mantle
+		{ 16917 }, -- Netherwind Mantle
+		{ 19370 }, -- Mantle of the Blackwing Cabal
+		{ 21345 }, -- Enigma Shoulderpads
+		{ 22499 }, -- Frostfire Shoulderpads
+		{ 19857 }, -- Cloak of Consumption
+		{ 17078 }, -- Sapphiron Drape
+		{ 23050 }, -- Cloak of the Necropolis
+		{ 16798 }, -- Arcanist Robes
+		{ 16916 }, -- Netherwind Robes
+		{ 21343 }, -- Enigma Robes
+		{ 22496 }, -- Frostfire Robe
+		{ 19374 }, -- Bracers of Arcane Accuracy
+		{ 16918 }, -- Netherwind Bindings
+		{ 21186 }, -- Rockfury Bracers
+		{ 22503 }, -- Frostfire Bindings
+		{ 18808 }, -- Gloves of the Hypnotic Flame
+		{ 16913 }, -- Netherwind Gloves
+		{ 21585 }, -- Dark Storm Gauntlets
+		{ 22501 }, -- Frostfire Gloves
+		{ 19136 }, -- Mana Igniting Cord
+		{ 16818 }, -- Netherwind Belt
+		{ 22730 }, -- Eyestalk Waist Cord
+		{ 22502 }, -- Frostfire Belt
+		{ 16796 }, -- Arcanist Leggings
+		{ 16915 }, -- Netherwind Pants
+		{ 21346 }, -- Enigma Leggings
+		{ 23070 }, -- Leggings of Polarity
+		{ 22497 }, -- Frostfire Leggings
+		{ 16912 }, -- Netherwind Boots
+		{ 21600 }, -- Boots of Epiphany
+		{ 21344 }, -- Enigma Boots
+		{ 21648 }, -- Recomposed Boots
+		{ 22500 }, -- Frostfire Sandals
+		{ 19147 }, -- Ring of Spell Power
+		{ 19403 }, -- Band of Forced Concentration
+		{ 21709 }, -- Ring of the Fallen God
+		{ 23031 }, -- Band of the Inevitable
+		{ 23237 }, -- Ring of the Eternal Flame
+		{ 23062 }, -- Frostfire Ring
+		{ 18820, 30 }, -- Talisman of Ephemeral Power
+		{ 19339, 30 }, -- Mind Quickening Gem
+		{ 19379 }, -- Neltharion's Tear
+		{ 19950, 35 }, -- Zandalarian Hero Charm
+		{ 23046 }, -- The Restrained Essence of Sapphiron
+		{ 23207, 40 }, -- Mark of the Champion
+		{ 17103 }, -- Azuresong Mageblade
+		{ 19142 }, -- Fire Runed Grimoire
+		{ 18842 }, -- Staff of Dominance
+		{ 19356 }, -- Staff of the Shadow Flame
+		{ 22807 }, -- Wraith Blade
+		{ 23049 }, -- Sapphiron's Left Eye
+		{ 17077 }, -- Crimson Shocker
+		{ 21603 }, -- Wand of Qiraji Nobility
+		{ 22821 }, -- Doomfinger
+		{ 22589 }, -- Atiesh, Greatstaff of the Guardian
+	},
 	WARLOCK_SHADOW = {
 		{ 18727 }, -- Crimson Felt Hat
 		{ 22267 }, -- Spellweaver's Turban
@@ -481,5 +757,6 @@ G.curated = {
 G.curatedNotes = {
 	[21186] = "The end of a long Cenarion Circle quest chain in Silithus, opened by Ahn'Qiraj: you need Revered with the Cenarion Circle for it.", -- Rockfury Bracers
 	[12757] = "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast itself drops. The hide comes about 1 skin in 50.", -- Breastplate of Bloodthirst
+	[14152] = "Tailoring 300 sews it, from a pattern that Firebrand Pyromancers drop in Lower Blackrock Spire. It binds when made, so you have to be the tailor.", -- Robe of the Archmage
 	[9449] = "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit of damage; you'd need several.", -- Manual Crowd Pummeler
 }
