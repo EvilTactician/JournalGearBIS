@@ -1,7 +1,7 @@
-# Journal: Gear Guide 0.4.4
+# Journal: Gear Guide 0.5.0
 
 > [!WARNING]
-> **Early alpha (version 0.4.4-alpha).** Journal: Gear Guide is in active development and isn't ready for a
+> **Early alpha (version 0.5.0-alpha).** Journal: Gear Guide is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest**, **Druid**, **Warlock** and **Mage** have hand-picked lists so far; every other class runs on
 > stat weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.4.4-green)](https://github.com/EvilTactician/JournalGearGuide)
+[![Version](https://img.shields.io/badge/Version-0.5.0-green)](https://github.com/EvilTactician/JournalGearGuide)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear Guide tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -227,8 +227,9 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.3.0-alpha | Druid finished, with the spec switcher in the title, one-hand or two-hand plans, things to know about bosses and items, and talent builds for DragonUI. |
 | 0.3.1 to 0.3.4-alpha | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap; consumables only once your stage opens them, with a stand-in before then; glyph swaps that fill your open sockets with the best glyphs first. |
 | 0.4.0-alpha | Warlock finished. |
-| **0.4.1 to 0.4.4-alpha** (now) | Mage: a list each for Arcane, Fire and Frost, with hand-picked items, glyphs and consumables; talent builds for all three, and two books for Fire (Torment the Weak and Frostfire Bolt). With no talent points spent, the title names the list it shows, in grey. Renamed from JournalGearBIS to JournalGearGuide (the Gear Guide tab); green upgrade arrows on item icons. |
-| 0.5.0-alpha and on | One more class's hand-picked lists in each version. |
+| 0.4.1 to 0.4.4-alpha | Mage: a list each for Arcane, Fire and Frost, with hand-picked items, glyphs and consumables; talent builds for all three, and two books for Fire (Torment the Weak and Frostfire Bolt). With no talent points spent, the title names the list it shows, in grey. Renamed from JournalGearBIS to JournalGearGuide (the Gear Guide tab); green upgrade arrows on item icons. |
+| **0.5.0-alpha** (now) | Mage finished, as Journal: Gear Guide. |
+| 0.6.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
 
