@@ -267,16 +267,21 @@ function G.GlyphsFor()
 	local lists = G.glyphs and G.glyphs[P.profileKey]
 	if not lists then return nil end
 	-- the glyphs you have in any socket, and how many sockets of each kind are open
-	local have, open = {}, nil
+	-- and, by kind, the glyphs in them and the open sockets with none
+	local have, open, inSockets, empty = {}, nil, { major = {}, minor = {} }, { major = 0, minor = 0 }
 	if GetGlyphSocketInfo then
 		open = { major = 0, minor = 0 }
 		for i = 1, 6 do
 			local enabled, kind, spell = GetGlyphSocketInfo(i)
+			local k = kind == 1 and "major" or "minor"
 			if enabled then
-				local k = kind == 1 and "major" or "minor"
 				open[k] = open[k] + 1
+				if not spell then empty[k] = empty[k] + 1 end
 			end
-			if spell then have[spell] = true end
+			if spell then
+				have[spell] = true
+				table.insert(inSockets[k], spell)
+			end
 		end
 	end
 	local out = {}
@@ -299,33 +304,41 @@ function G.GlyphsFor()
 				end
 			end
 		end
-		-- Best first, whichever socket you have them in. One you have counts as Equipped wherever it sits; one you
-		-- don't is Missing while you have a socket for it (swap out a weaker one), else locked until the next opens.
+		-- Best first, whichever socket you have them in. Your open sockets go to the best ones on the list (two of
+		-- each kind until level 70 and 80, as in Classic). One you have counts as Equipped wherever it sits. One you
+		-- don't goes in an empty socket (Missing), else in place of one that shouldn't be there (Swap in): a glyph
+		-- not on the list first, then the weakest one on it, which waits for the socket that opens later.
 		local count = open and open[kind] or 0
 		if not open then
 			for _, lvl in ipairs(G.GLYPH_LEVELS[kind]) do if P.realLevel >= lvl then count = count + 1 end end
 		end
-		local missing = 0
-		for i, s in ipairs(slots) do
-			s.unlock = G.GLYPH_LEVELS[kind][i]
-			s.locked = false
-			if not s.equipped then
-				missing = missing + 1
-				s.locked = i > count
+		local onList = {}
+		for i, sl in ipairs(slots) do
+			sl.unlock = G.GLYPH_LEVELS[kind][i]
+			sl.locked = not sl.equipped and i > count
+			onList[sl.glyph.spell] = true
+		end
+		-- what can make room, in the order to take it out: off the list, then the list's weakest past your sockets
+		local spare = {}
+		for _, spell in ipairs(inSockets[kind]) do
+			if not onList[spell] then
+				table.insert(spare, { name = (GetSpellInfo and GetSpellInfo(spell)) or "your other glyph", offList = true })
 			end
 		end
-		-- a weaker one you have, to swap for a missing one (each weaker one once)
-		local taken = {}
-		for _, s in ipairs(slots) do
-			if not s.equipped and not s.locked then
-				for k = #slots, 1, -1 do
-					local w = slots[k]
-					if w.equipped and not taken[k] and w.order > s.order and k > count then
-						s.swap, taken[k] = w.glyph.name, true
-						-- the weaker one waits for the socket that opens later
-						w.waits, w.swapFor = true, s.glyph.name
-						break
-					end
+		for k = #slots, count + 1, -1 do
+			if slots[k].equipped then table.insert(spare, { slot = slots[k], name = slots[k].glyph.name }) end
+		end
+		local free = empty[kind]
+		for i = 1, math.min(count, #slots) do
+			local sl = slots[i]
+			if not sl.equipped then
+				if free > 0 then
+					free = free - 1
+				elseif #spare > 0 then
+					local o = table.remove(spare, 1)
+					sl.swap, sl.swapOffList = o.name, o.offList
+					-- the weaker one on the list waits for the socket that opens later
+					if o.slot then o.slot.waits, o.slot.swapFor = true, sl.glyph.name end
 				end
 			end
 		end

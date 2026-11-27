@@ -607,8 +607,8 @@ local function build(panel)
 		end
 		if e.hint then GameTooltip:AddLine(e.hint .. ".", 0.8, 0.8, 0.8, true) end
 		if e.swap then
-			GameTooltip:AddLine("Better than your " .. e.swap .. ", which is lower on this list: put this one in its socket.",
-				1, 0.82, 0, true)
+			GameTooltip:AddLine("Better than your " .. e.swap .. (e.swapOffList and ", which isn't among the best for your spec"
+				or ", which is lower on this list") .. ": put this one in its socket.", 1, 0.82, 0, true)
 		end
 		if e.waits then
 			GameTooltip:AddLine("Your socket for this one opens at level " .. e.unlock .. ". Until then, swap it out for "

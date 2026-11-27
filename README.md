@@ -1,7 +1,7 @@
-# Journal: Gear 0.3.3
+# Journal: Gear 0.3.4
 
 > [!WARNING]
-> **Early alpha (version 0.3.3-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.3.4-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest**, **Druid** and **Warlock** have hand-picked lists so far; every other class runs on
 > stat weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.3.3-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.3.4-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -43,7 +43,9 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   (Suppression, Elemental Precision, Shadow Focus), as long as it covers your spec's spells.
 - **Glyphs:** at the bottom of the list, the three major and three minor glyphs for your spec, best first:
   the best you can use, never the same glyph twice. The ones you have count whichever socket they're in;
-  a missing one says which weaker glyph of yours to swap out. A slot you haven't opened yet says **Requires level N** in red.
+  your open sockets go to the best ones first (two of each kind until level 70 and 80). A missing one goes in an
+  empty socket, or says which glyph of yours to swap out: one not on the list first, then the weakest one on it,
+  which waits for the socket that opens later. A slot you haven't opened yet says **Requires level N** in red.
   Glyphs that need a talent you don't have give way to the next, with a note naming the talent. During
   Classic, Inscription stops at 300, so glyphs that need more open at a later stage.
 - **Recommended consumables:** a row of icons at the top: the potions, elixirs, food, poisons and oils for
@@ -214,7 +216,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
 | 0.2.1 to 0.2.8-alpha | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
 | 0.3.0-alpha | Druid finished, with the spec switcher in the title, one-hand or two-hand plans, things to know about bosses and items, and talent builds for DragonUI. |
-| **0.3.1 to 0.3.3-alpha** (now) | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap; consumables only once your stage opens them, with a stand-in before then. |
+| **0.3.1 to 0.3.4-alpha** (now) | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap; consumables only once your stage opens them, with a stand-in before then; glyph swaps that fill your open sockets with the best glyphs first. |
 | 0.4.0-alpha | Warlock finished. |
 | 0.5.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
