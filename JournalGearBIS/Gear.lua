@@ -840,7 +840,10 @@ local function build(panel)
 		local className = UnitClass("player")
 		local picked = db.choice and db.choice ~= "active" and db.choice ~= "other"
 		local noTalents = not v.treeName and not picked
-		local spec = noTalents and "" or ((not sharedRole(v.profileKey) and v.treeName) or prof.name)
+		-- no points spent: the class's usual list, its name in grey (the line below asks for talents)
+		local treeName = v.treeName or (v.treeIndex and GetTalentTabInfo(v.treeIndex))
+		local spec = (not sharedRole(v.profileKey) and treeName) or prof.name
+		if noTalents then spec = "|cff9d9d9d" .. spec .. "|r" end
 		local choices = (v.groups > 1) or #specChoices() > 1
 		specButton.choices = choices
 		specButton.text:SetText(spec)
