@@ -1,4 +1,4 @@
--- Spec profiles for JournalGearBIS: what each stat is worth, and which weapons a spec uses. Edit freely.
+-- Spec profiles for JournalGearGuide: what each stat is worth, and which weapons a spec uses. Edit freely.
 --
 --   weights: per point of a stat, in the profile's own units (attack power for melee and hunters, spell power
 --            for casters and healers, stamina for tanks). Ratings are per rating point.
@@ -10,7 +10,7 @@
 --   speed:   per hand, { speed, worth per second away from it, "slow" or "fast" }: a weapon quicker ("fast":
 --            slower) than that loses that much of its value per second, up to a tenth. Not hand-picked items.
 
-local G = JournalGearBIS
+local G = JournalGearGuide
 
 G.profiles = {
 	ROGUE_SWORDS = { class = "ROGUE", name = "Swords & maces", role = "Melee damage", weapons = "dw", ranged = "ranged", mh = { [4] = true, [7] = true, [13] = true }, oh = { [4] = true, [7] = true, [13] = true, [15] = true }, speed = { mh = { 2.6, 0.08, "slow" }, oh = { 1.5, 0.08, "fast" } },

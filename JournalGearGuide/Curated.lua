@@ -3,7 +3,7 @@
 -- (Hand of Justice, Kiss of the Spider) a value in the profile's units. Add specs or items freely:
 -- the item must also be in Data.lua.
 
-local G = JournalGearBIS
+local G = JournalGearGuide
 
 G.curated = {
 	MAGE_ARCANE = {

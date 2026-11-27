@@ -1,7 +1,7 @@
-# Journal: Gear 0.4.2
+# Journal: Gear Guide 0.4.3
 
 > [!WARNING]
-> **Early alpha (version 0.4.2-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.4.3-alpha).** Journal: Gear Guide is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest**, **Druid**, **Warlock** and **Mage** have hand-picked lists so far; every other class runs on
 > stat weights alone. The full version (1.0) is coming soon.
@@ -10,10 +10,10 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.4.2-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.4.3-green)](https://github.com/EvilTactician/JournalGearGuide)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
-**A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
+**A World of Warcraft 3.3.5a addon that adds a Gear Guide tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
 running [mod-individual-progression](https://github.com/Grimfeather/mod-individual-progression).**
 
 </div>
@@ -61,7 +61,7 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
 Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest**, **Druid**, **Warlock** and **Mage**.
 
 - **Talent builds (with DragonUI):** a book icon at the end of the title saves a level 80 talent build for
-  your spec to DragonUI's talent builds, named "GearBIS: …" so you can tell where it came from. There you
+  your spec to DragonUI's talent builds, named "Gear Guide: …" so you can tell where it came from. There you
   can follow it as a plan; below level 80, spend your points along it as far as they go. The builds are
   the first ones Warcraft Tavern's Wrath guides list for each spec (Combat and Balance picked by hand from
   its calculator, and the five points Arcane mage's guide leaves open picked by hand), checked against the
@@ -76,6 +76,13 @@ for your spec: in a loot window, a Need or Greed roll, a chat link, a vendor or 
 includes items the list doesn't show as a step, so a good drop is never missed, and raid tokens (tier
 tokens, Head of Onyxia), which also say what to exchange them for. The line doesn't show for items you
 own (worn or in your bags), for anything no better than what you have, or before level 55.
+
+**Upgrade arrows:** the same items get a green arrow on their icon in the loot window, Need or Greed
+rolls, quest rewards and choices, and at vendors. In your bags and bank (DragonUI's Bagster too), an item
+gets the arrow when it beats what you're wearing. Where the list can't judge an item (before level 55, or
+gear it doesn't know), the arrow follows Pawn if you have it. The arrow is DialogueUI's, so its quest
+windows can show the same one; other addons can ask `JournalGearGuide.IsUpgrade(item)` and
+`JournalGearGuide.ShowsArrow(link)`.
 
 At the top, **Where to go next** names the two dungeons with the most upgrades for you right now, two more
 that are also good, and the raid with the most (Upper Blackrock Spire counts as a raid). Each says how many
@@ -220,7 +227,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.3.0-alpha | Druid finished, with the spec switcher in the title, one-hand or two-hand plans, things to know about bosses and items, and talent builds for DragonUI. |
 | 0.3.1 to 0.3.4-alpha | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap; consumables only once your stage opens them, with a stand-in before then; glyph swaps that fill your open sockets with the best glyphs first. |
 | 0.4.0-alpha | Warlock finished. |
-| **0.4.1 to 0.4.2-alpha** (now) | Mage: a list each for Arcane, Fire and Frost, with hand-picked items, glyphs and consumables; talent builds for all three, and two books for Fire (Torment the Weak and Frostfire Bolt). With no talent points spent, the title names the list it shows, in grey. |
+| **0.4.1 to 0.4.3-alpha** (now) | Mage: a list each for Arcane, Fire and Frost, with hand-picked items, glyphs and consumables; talent builds for all three, and two books for Fire (Torment the Weak and Frostfire Bolt). With no talent points spent, the title names the list it shows, in grey. Renamed from JournalGearBIS to JournalGearGuide (the Gear Guide tab); green upgrade arrows on item icons. |
 | 0.5.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
@@ -240,14 +247,15 @@ Nothing needs installing on the server beyond those two modules.
 
 ## Installation
 
-**[Download the latest version](https://github.com/EvilTactician/JournalGearBIS/archive/refs/heads/main.zip)**
+**[Download the latest version](https://github.com/EvilTactician/JournalGearGuide/archive/refs/heads/main.zip)**
 
-1. Open the downloaded `JournalGearBIS-main.zip`. Inside is a folder called `JournalGearBIS-main`, and
-   inside that is the `JournalGearBIS` folder: that's the one you need. The outer folders are just
+1. Open the downloaded `JournalGearGuide-main.zip`. Inside is a folder called `JournalGearGuide-main`, and
+   inside that is the `JournalGearGuide` folder: that's the one you need. The outer folders are just
    GitHub's packaging, and `tools` is only for regenerating the data.
-2. Copy that inner `JournalGearBIS` folder into `World of Warcraft\Interface\AddOns`. It must keep that
-   exact name, so `Interface\AddOns\JournalGearBIS\JournalGearBIS.toc` is where the files end up, not
-   inside a `JournalGearBIS-main` folder.
+2. Copy that inner `JournalGearGuide` folder into `World of Warcraft\Interface\AddOns`. It must keep that
+   exact name, so `Interface\AddOns\JournalGearGuide\JournalGearGuide.toc` is where the files end up, not
+   inside a `JournalGearGuide-main` folder. This addon used to be called JournalGearBIS: if you have a
+   `JournalGearBIS` folder there, delete it.
 3. Make sure **Journal** is installed and enabled.
 4. Restart the game. A `/reload` isn't enough the first time, because the game only finds new addons
    when it starts.
@@ -278,7 +286,7 @@ the Lua copies. You need Python 3 and:
 for f in Spell AreaTable SpellItemEnchantment SkillLineAbility GlyphProperties; do python3 tools/rangezip.py $f.dbc; done
 python3 tools/sqlload.py     # a few minutes: loads the tables and applies the module's changes
 python3 tools/extract.py     # where every item comes from
-python3 tools/gen.py         # writes the Lua files into JournalGearBIS/
+python3 tools/gen.py         # writes the Lua files into JournalGearGuide/
 ```
 
 ## Things to know

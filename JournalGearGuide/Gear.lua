@@ -1,11 +1,11 @@
--- The Journal's Gear tab: for your spec, every slot's way from what you wear to the best Classic has, a step at
+-- The Journal's Gear Guide tab: for your spec, every slot's way from what you wear to the best Classic has, a step at
 -- a time, and where to go next for the most upgrades. Engine.lua works it all out; this draws it.
 --
 -- Your progression stage and the raids' entrances and bosses come from the Journal (EvilTactician's fork) and
 -- mod-individual-progression, so a step for a raid you haven't opened shows as what's next, not as a goal.
 
 local J = Journal
-local G = JournalGearBIS
+local G = JournalGearGuide
 
 if not (J and J.RegisterTab and (J.API or 0) >= 1 and J.CreateInset and J.CreateScrollArea and J.CreatePool
 		and G and G.Build) then return end
@@ -190,8 +190,8 @@ end
 -- the tab
 
 local function build(panel)
-	JournalGearBISCharDB = JournalGearBISCharDB or {}
-	local db = JournalGearBISCharDB
+	JournalGearGuideCharDB = JournalGearGuideCharDB or {}
+	local db = JournalGearGuideCharDB
 	local view
 
 	local status = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -262,7 +262,7 @@ local function build(panel)
 		end
 		return out
 	end
-	local specMenu = CreateFrame("Frame", "JournalGearBISSpecMenu", UIParent, "UIDropDownMenuTemplate")
+	local specMenu = CreateFrame("Frame", "JournalGearGuideSpecMenu", UIParent, "UIDropDownMenuTemplate")
 	local function openSpecMenu(self)
 		local list = { { text = "Show the list for", isTitle = true, notCheckable = true } }
 		local current = db.choice or "active"
@@ -355,7 +355,7 @@ local function build(panel)
 			local b, api = self.build, dragonAPI()
 			if not b or not api then return end
 			local ranks = buildRanks(b)
-			local tag = "|cffffd100GearBIS:|r "
+			local tag = "|cffffd100Gear Guide:|r "
 			if not ranks then
 				DEFAULT_CHAT_FRAME:AddMessage(tag .. "this build doesn't fit your talent trees, so it wasn't saved.")
 				return
@@ -1158,7 +1158,7 @@ local tipView, tipDirty = nil, true
 
 local function viewForTips()
 	if tipDirty or not tipView then
-		local db = JournalGearBISCharDB or {}
+		local db = JournalGearGuideCharDB or {}
 		local choice = (db.choice == "other") and "active" or db.choice
 		if not G.learned then
 			G.learned = true
@@ -1225,13 +1225,39 @@ tipEvents:SetScript("OnEvent", function () tipDirty = true end)
 J.On("READY", function () tipDirty = true end)
 G.MarkTipsDirty = function () tipDirty = true end
 
+-- For other addons (DialogueUI) and the upgrade arrows: the same answer as the tooltip line, for your active
+-- talents (or the list picked in the tab) at your progression stage.
+-- G.IsUpgrade(item[, carried]): item is an id or a link. Returns the row it's an upgrade for, or nil plus, for
+-- a token, the items it becomes that are upgrades. carried: it's in your bags, so the question is whether it
+-- beats what you wear (without it, an item you already have is never an upgrade).
+-- G.Knows(item): true when the list can judge the item at all (from level 55, an item or token it knows);
+-- where it can't, an arrow may fall back to Pawn.
+local function itemId(item)
+	if type(item) == "number" then return item end
+	return item and tonumber(tostring(item):match("item:(%d+)"))
+end
+function G.IsUpgrade(item, carried)
+	local id = itemId(item)
+	if not id then return nil end
+	local ok, row, becomes = pcall(function () return G.Verdict(viewForTips(), id, carried) end)
+	if not ok then return nil end
+	return row, becomes
+end
+function G.Knows(item)
+	local id = itemId(item)
+	if not id or not (G.items[id] or (G.tokens and G.tokens[id])) then return false end
+	local ok, view = pcall(viewForTips)
+	return ok and view ~= nil and not view.preview
+end
+G.Stage = stage
+
 local load
 Journal.RegisterTab({
-	key = "gear", name = "Gear", order = 23, icon = "Interface\\Icons\\INV_Chest_Plate16",
+	key = "gear", name = "Gear Guide", order = 23, icon = "Interface\\Icons\\INV_Chest_Plate16",
 	build = function (panel) load = build(panel) end,
 	onShow = function () if load then load() end end,
 })
 
-SLASH_JOURNALGEARBIS1 = "/gear"
-SLASH_JOURNALGEARBIS2 = "/bis"
-SlashCmdList.JOURNALGEARBIS = function () J.ToggleSection("gear") end
+SLASH_JOURNALGEARGUIDE1 = "/gear"
+SLASH_JOURNALGEARGUIDE2 = "/bis"
+SlashCmdList.JOURNALGEARGUIDE = function () J.ToggleSection("gear") end

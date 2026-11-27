@@ -1,4 +1,4 @@
-"""Builds the Classic gear data for JournalGearBIS from the realm's world DB (db.pkl from sqlload.py)."""
+"""Builds the Classic gear data for JournalGearGuide from the realm's world DB (db.pkl from sqlload.py)."""
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.environ.get("GEARBIS_BUILD", os.path.join(HERE, "build"))

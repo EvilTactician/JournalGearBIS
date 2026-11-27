@@ -1,4 +1,4 @@
--- Classic gear for JournalGearBIS, generated from the realm's world database (AzerothCore with
+-- Classic gear for JournalGearGuide, generated from the realm's world database (AzerothCore with
 -- mod-individual-progression's Classic item and loot changes). Don't edit by hand: Curated.lua and Profiles.lua
 -- are the files to change.
 --
@@ -15,8 +15,8 @@
 --              { "X", "how it's made", profession, skill }
 --   profession gear (Engineering goggles) adds: profession and skill needed to wear it, after sources
 
-JournalGearBIS = JournalGearBIS or {}
-local G = JournalGearBIS
+JournalGearGuide = JournalGearGuide or {}
+local G = JournalGearGuide
 
 G.instances = {
 	[70] = { name = "Uldaman", raid = false, players = 5, stage = 0, level = 37, map = 70 },

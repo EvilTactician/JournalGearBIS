@@ -1,4 +1,4 @@
-"""Writes JournalGearBIS's Classic data (Data.lua) and spec profiles (Profiles.lua)."""
+"""Writes JournalGearGuide's Classic data (Data.lua) and spec profiles (Profiles.lua)."""
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.environ.get("GEARBIS_BUILD", os.path.join(HERE, "build"))
@@ -307,7 +307,7 @@ def src_lua(i, crafted=True):
 
 
 L = []
-L.append("-- Classic gear for JournalGearBIS, generated from the realm's world database (AzerothCore with")
+L.append("-- Classic gear for JournalGearGuide, generated from the realm's world database (AzerothCore with")
 L.append("-- mod-individual-progression's Classic item and loot changes). Don't edit by hand: Curated.lua and Profiles.lua")
 L.append("-- are the files to change.")
 L.append("--")
@@ -324,8 +324,8 @@ L.append("--              { \"V\", \"vendor\", price in copper, faction, standin
 L.append("--              { \"X\", \"how it's made\", profession, skill }")
 L.append("--   profession gear (Engineering goggles) adds: profession and skill needed to wear it, after sources")
 L.append("")
-L.append("JournalGearBIS = JournalGearBIS or {}")
-L.append("local G = JournalGearBIS")
+L.append("JournalGearGuide = JournalGearGuide or {}")
+L.append("local G = JournalGearGuide")
 L.append("")
 L.append("G.instances = {")
 for k in sorted(INSTANCES):
@@ -390,11 +390,11 @@ L.append("G.tokens = {")
 for tk in sorted(tokens):
     L.append("\t[%d] = { %s }, -- %s" % (tk, ", ".join(str(x) for x in sorted(tokens[tk])), items[tk]["name"] if tk in items else "?"))
 L.append("}")
-open(os.path.join(HERE, "..", "JournalGearBIS", "Data.lua"), "w").write("\n".join(L) + "\n")
+open(os.path.join(HERE, "..", "JournalGearGuide", "Data.lua"), "w").write("\n".join(L) + "\n")
 
 # ---------------------------------------------------------------- Profiles.lua
 P = []
-P.append("-- Spec profiles for JournalGearBIS: what each stat is worth, and which weapons a spec uses. Edit freely.")
+P.append("-- Spec profiles for JournalGearGuide: what each stat is worth, and which weapons a spec uses. Edit freely.")
 P.append("--")
 P.append("--   weights: per point of a stat, in the profile's own units (attack power for melee and hunters, spell power")
 P.append("--            for casters and healers, stamina for tanks). Ratings are per rating point.")
@@ -406,7 +406,7 @@ P.append("--   ranged:  \"ranged\" bows, guns, crossbows and thrown; \"wand\"; \
 P.append("--   speed:   per hand, { speed, worth per second away from it, \"slow\" or \"fast\" }: a weapon quicker (\"fast\":")
 P.append("--            slower) than that loses that much of its value per second, up to a tenth. Not hand-picked items.")
 P.append("")
-P.append("local G = JournalGearBIS")
+P.append("local G = JournalGearGuide")
 P.append("")
 P.append("G.profiles = {")
 for k, p in PROFILES.items():
@@ -426,7 +426,7 @@ P.append("G.byTree = {")
 for c, lst in BY_TREE.items():
     P.append("\t%s = { %s }," % (c, ", ".join(lstr(x) for x in lst)))
 P.append("}")
-open(os.path.join(HERE, "..", "JournalGearBIS", "Profiles.lua"), "w").write("\n".join(P) + "\n")
+open(os.path.join(HERE, "..", "JournalGearGuide", "Profiles.lua"), "w").write("\n".join(P) + "\n")
 
 # ---------------------------------------------------------------- Curated.lua
 C = []
@@ -435,7 +435,7 @@ C.append("-- tier's step over the stat-weighted pick. { item, value } gives an i
 C.append("-- (Hand of Justice, Kiss of the Spider) a value in the profile's units. Add specs or items freely:")
 C.append("-- the item must also be in Data.lua.")
 C.append("")
-C.append("local G = JournalGearBIS")
+C.append("local G = JournalGearGuide")
 C.append("")
 C.append("G.curated = {")
 for prof, lst in curated.items():
@@ -452,7 +452,7 @@ for name, note in CURATED_NOTES.items():
         if i in curated_ids:
             C.append("\t[%d] = %s, -- %s" % (i, lstr(note), name))
 C.append("}")
-open(os.path.join(HERE, "..", "JournalGearBIS", "Curated.lua"), "w").write("\n".join(C) + "\n")
+open(os.path.join(HERE, "..", "JournalGearGuide", "Curated.lua"), "w").write("\n".join(C) + "\n")
 print("done", file=sys.stderr)
 
 # ---------------------------------------------------------------- Extras.lua: enchants, glyphs, consumables
@@ -584,7 +584,7 @@ for i in sorted(EXTRA):
             e, i, max(ENCH[e][37], it["RequiredLevel"] or 0), classes, weapon_mask(sid)))
 
 X = []
-X.append("-- Enchants, glyphs and consumables for JournalGearBIS, generated from the realm's world database and the")
+X.append("-- Enchants, glyphs and consumables for JournalGearGuide, generated from the realm's world database and the")
 X.append("-- client's DBC files (tools/gen.py). Don't edit by hand: tools/curated.py has the hand-picked lists.")
 X.append("--")
 X.append("--   enchants[slot] = { { e = enchant, spell = enchanting spell or item = the item that puts it on,")
@@ -600,7 +600,7 @@ X.append("--   consumables[profile] = { { item, \"note\" } }")
 X.append("--   elixirs[item] = 1 battle elixir, 2 guardian elixir, 3 both (a flask): one of each at a time")
 X.append("--   professionConsumables[profession] = { { item, skill needed to use it, \"what it's for\" } }")
 X.append("")
-X.append("local G = JournalGearBIS")
+X.append("local G = JournalGearGuide")
 X.append("")
 X.append("G.enchants = {")
 for slot in sorted(options):
@@ -749,5 +749,5 @@ X.append("G.talentHit = {")
 for cls, rows in sorted(talent_hit().items()):
     X.append("\t%s = { %s }," % (cls, ", ".join("{ %d, %d, %d, %d, %d, %s }" % (r[:5] + (lstr(r[5]),)) for r in rows)))
 X.append("}")
-open(os.path.join(HERE, "..", "JournalGearBIS", "Extras.lua"), "w").write("\n".join(X) + "\n")
+open(os.path.join(HERE, "..", "JournalGearGuide", "Extras.lua"), "w").write("\n".join(X) + "\n")
 print("extras: %d enchants, %d items" % (len(known), len(extra_items)), file=sys.stderr)
