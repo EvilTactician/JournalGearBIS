@@ -258,7 +258,7 @@ end
 -- glyphs
 
 -- The levels the glyph slots open at, in order.
-G.GLYPH_LEVELS = { major = { 15, 50, 80 }, minor = { 15, 30, 70 } }
+G.GLYPH_LEVELS = { major = { 15, 30, 80 }, minor = { 15, 50, 70 } }
 
 -- Your spec's glyphs: { major = { slot, ... }, minor = { ... } }, each slot { glyph, unlock (level), locked,
 -- equipped, hint }, or nil for a spec without hand-picked glyphs yet. The best three of each kind you can use,
@@ -337,24 +337,35 @@ end
 -----------------------------------------
 -- consumables
 
--- Your spec's consumables: { { id, note, sources, count } }, or nil without a hand-picked list.
+-- Your spec's consumables: { { id, note, sources, count } }, or nil without a hand-picked list. Only what's open at
+-- your stage: an entry with alternatives (Mageblood Elixir, then Elixir of Greater Intellect) shows the
+-- first of them that does; one without and nothing open by then (Dirge's chops before Ahn'Qiraj) isn't shown.
 function G.ConsumablesFor()
 	local list = G.consumables and G.consumables[P.profileKey]
 	if not list then return nil end
-	local out = {}
+	local out, taken = {}, false
 	for _, t in ipairs(list) do
-		local x = G.extraItems[t[1]]
-		local srcs = {}
-		for _, s in ipairs(x and x[4] or {}) do
-			local src = G.ReadSource(s)
-			if src then table.insert(srcs, src) end
+		if not t[3] then taken = false end
+		if not taken then
+			local x = G.extraItems[t[1]]
+			local srcs, first = {}, nil
+			for _, s in ipairs(x and x[4] or {}) do
+				local src = G.ReadSource(s)
+				if src then
+					table.insert(srcs, src)
+					first = math.min(first or 99, src.stage or 0)
+				end
+			end
+			if (first or 0) <= P.stage then
+				taken = true
+				table.sort(srcs, function (a, b)
+					if a.open ~= b.open then return a.open end
+					return (a.tier or 0) < (b.tier or 0)
+				end)
+				table.insert(out, { id = t[1], note = t[2] ~= "" and t[2] or nil, sources = srcs, name = x and x[1],
+					count = GetItemCount and GetItemCount(t[1]) or 0 })
+			end
 		end
-		table.sort(srcs, function (a, b)
-			if a.open ~= b.open then return a.open end
-			return (a.tier or 0) < (b.tier or 0)
-		end)
-		table.insert(out, { id = t[1], note = t[2] ~= "" and t[2] or nil, sources = srcs, name = x and x[1],
-			count = GetItemCount and GetItemCount(t[1]) or 0 })
 	end
 	return out
 end

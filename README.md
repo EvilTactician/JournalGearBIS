@@ -1,7 +1,7 @@
-# Journal: Gear 0.3.2
+# Journal: Gear 0.3.3
 
 > [!WARNING]
-> **Early alpha (version 0.3.2-alpha).** Journal: Gear is in active development and isn't ready for a
+> **Early alpha (version 0.3.3-alpha).** Journal: Gear is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
 > versions. Only **Rogue**, **Priest**, **Druid** and **Warlock** have hand-picked lists so far; every other class runs on
 > stat weights alone. The full version (1.0) is coming soon.
@@ -10,7 +10,7 @@
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.3.2-green)](https://github.com/EvilTactician/JournalGearBIS)
+[![Version](https://img.shields.io/badge/Version-0.3.3-green)](https://github.com/EvilTactician/JournalGearBIS)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -47,7 +47,9 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   Glyphs that need a talent you don't have give way to the next, with a note naming the talent. During
   Classic, Inscription stops at 300, so glyphs that need more open at a later stage.
 - **Recommended consumables:** a row of icons at the top: the potions, elixirs, food, poisons and oils for
-  your spec. Hover one for how to get it now (and, for poisons, which hand it goes on). Elixirs say which
+  your spec. Only what your progression stage has opened shows: before Zul'Gurub, Elixir of Greater Intellect
+  and Lesser Mana Oil stand in for Mageblood Elixir and Brilliant Mana Oil, which only its Zandalar sell.
+  Hover one for how to get it now (and, for poisons, which hand it goes on). Elixirs say which
   others they don't stack with: one battle and one guardian elixir at a time, and a flask counts as both. If you're an
   engineer, an Engineering icon at the end lists the explosives only engineers can use.
 - **Profession gear:** gear only a profession can wear, such as Engineering goggles, only shows when you
@@ -212,7 +214,7 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.2.0-alpha | Rogue and Priest finished: weapon speeds, spec poisons, which elixirs stack, glyph swaps, and a way up from dungeons through Upper Blackrock Spire to the big raids. |
 | 0.2.1 to 0.2.8-alpha | Druid: hand-picked lists, glyphs and consumables for Balance, Feral (cat and bear) and Restoration; feral attack power from weapons; world drops, Ring of Law bosses and skinning quests; level 80 talent builds saved to DragonUI. |
 | 0.3.0-alpha | Druid finished, with the spec switcher in the title, one-hand or two-hand plans, things to know about bosses and items, and talent builds for DragonUI. |
-| **0.3.1 to 0.3.2-alpha** (now) | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap. |
+| **0.3.1 to 0.3.3-alpha** (now) | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap; consumables only once your stage opens them, with a stand-in before then. |
 | 0.4.0-alpha | Warlock finished. |
 | 0.5.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |

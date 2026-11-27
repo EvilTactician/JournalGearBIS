@@ -133,7 +133,7 @@ def classic_gear(e):
 # kits, scopes), the curated consumables, gear only a profession can wear (Engineering goggles and trinkets), and
 # the recipes that make them. Classic items only: ids below The Burning Crusade's.
 from crafts import Crafts, CLASSIC_CAP
-from curated import CONSUMABLES, PROFESSION_CONSUMABLES, CURATED
+from curated import CONSUMABLES, PROFESSION_CONSUMABLES, CURATED, consumable_options
 crafts = Crafts(BUILD, R, items)
 CLASSIC_ID = 23728
 
@@ -148,8 +148,8 @@ def profession_gear(it):
             and it["ItemLevel"] <= 92 and it["RequiredLevel"] <= 60 and it["ItemLevel"] >= 35)
 
 
-consumable_names = {e if isinstance(e, str) else e[0] for lst in list(CONSUMABLES.values()) + list(PROFESSION_CONSUMABLES.values())
-                    for e in lst}
+consumable_names = {o[0] for lst in list(CONSUMABLES.values()) + list(PROFESSION_CONSUMABLES.values())
+                    for e in lst for o in consumable_options(e)}
 # hand-picked gear, whatever its level (Manual Crowd Pummeler is level 34)
 curated_names = {e if isinstance(e, str) else e[0] for lst in CURATED.values() for e in lst}
 curated_ids = {i for i, it in items.items() if i < CLASSIC_ID and (it["name"] in curated_names or i in curated_names)

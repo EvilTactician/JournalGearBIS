@@ -756,7 +756,9 @@ G.consumables = {
 	PRIEST_HEAL = {
 		{ 13511, "" }, -- Flask of Distilled Wisdom
 		{ 20007, "" }, -- Mageblood Elixir
+		{ 9179, "", true }, -- Elixir of Greater Intellect
 		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
+		{ 20747, "Put it on your weapon.", true }, -- Lesser Mana Oil
 		{ 13931, "" }, -- Nightfin Soup
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -765,6 +767,7 @@ G.consumables = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 9264, "" }, -- Elixir of Shadow Power
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -773,6 +776,7 @@ G.consumables = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 9264, "" }, -- Elixir of Shadow Power
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 	},
@@ -780,6 +784,7 @@ G.consumables = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 21546, "" }, -- Elixir of Greater Firepower
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 	},
@@ -787,6 +792,7 @@ G.consumables = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 13454, "" }, -- Greater Arcane Elixir
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -802,12 +808,15 @@ G.consumables = {
 		{ 13452, "" }, -- Elixir of the Mongoose
 		{ 13445, "" }, -- Elixir of Superior Defense
 		{ 21023, "" }, -- Dirge's Kickin' Chimaerok Chops
+		{ 12216, "", true }, -- Spiced Chili Crab
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	DRUID_RESTO = {
 		{ 13511, "" }, -- Flask of Distilled Wisdom
 		{ 20007, "" }, -- Mageblood Elixir
+		{ 9179, "", true }, -- Elixir of Greater Intellect
 		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
+		{ 20747, "Put it on your weapon.", true }, -- Lesser Mana Oil
 		{ 13931, "" }, -- Nightfin Soup
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -815,6 +824,7 @@ G.consumables = {
 }
 
 G.elixirs = {
+	[9179] = 2, -- Elixir of Greater Intellect
 	[9264] = 1, -- Elixir of Shadow Power
 	[12820] = 1, -- Winterfall Firewater
 	[13445] = 2, -- Elixir of Superior Defense
@@ -851,6 +861,7 @@ G.extraItems = {
 	[7969] = { "Mithril Spurs", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 235, 0, "recipe drops in Uldaman", 70 } } },
 	[8173] = { "Thick Armor Kit", 1, 30, { { "D", 70, 0.25, "Olaf" }, { "Q", 338, "The Green Hills of Stranglethorn", 0, 0, 0, 40, 30, { 583, "Welcome to the Jungle", 1, 0, 2 }, { 583, "Welcome to the Jungle", 1, 0, 2 }, 0 }, { "X", "Crafted: Leatherworking", 165, 200, 0, "from a trainer", 0 } } },
 	[8928] = { "Instant Poison VI", 1, 60, { { "V", "Jasper Fel <Shady Dealer>", 500, 0, 0, 0 }, { "V", "Sloan McCoy <Poison Supplier>", 500, 0, 0, 0 }, { "V", "Samor Festivus <Shady Dealer>", 500, 0, 0, 0 }, { "V", "Sly Garrett <Shady Goods>", 500, 0, 0, 0 }, { "V", "Gerald Crawley <Poison Supplier>", 500, 0, 0, 0 }, { "V", "Malissa <Poison Supplier>", 500, 0, 0, 0 }, { "V", "Rekkul <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Hula'mahi <Reagents and Herbs>", 500, 0, 0, 0 }, { "V", "Jaysin Lanyda <Poisons & Reagents>", 500, 0, 0, 0 }, { "V", "Patrice Dwyer <Poison Supplies>", 500, 0, 0, 0 }, { "V", "Kyrai <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Fahran Silentblade <Tools & Supplies>", 500, 0, 0, 0 }, { "V", "Ezekiel Graves <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Tynnus Venomsprout <Shady Dealer>", 500, 0, 0, 0 }, { "V", "Smudge Thunderwood <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Khur Hornstriker <Reagent Vendor>", 500, 0, 0, 0 }, { "V", "Bortega <Reagents & Poison Supplies>", 500, 0, 0, 0 }, { "V", "Miles Sidney <Poison Supplies>", 500, 0, 0, 0 } } },
+	[9179] = { "Elixir of Greater Intellect", 1, 37, { { "X", "Crafted: Alchemy", 171, 235, 0, "from a trainer", 0 } } },
 	[9264] = { "Elixir of Shadow Power", 1, 40, { { "X", "Crafted: Alchemy", 171, 250, 0, "recipe sold by Maria Lumere", 0 } } },
 	[10546] = { "Deadly Scope", 1, 30, { { "X", "Crafted: Engineering", 202, 210, 0, "recipe sold by Knaz Blunderflame", 0 } } },
 	[10548] = { "Sniper Scope", 1, 40, { { "X", "Crafted: Engineering", 202, 240, 1, "recipe drops in Onyxia's Lair", 249 } } },
@@ -864,6 +875,7 @@ G.extraItems = {
 	[11647] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11648] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11649] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
+	[12216] = { "Spiced Chili Crab", 1, 40, { { "X", "Crafted: Cooking", 185, 225, 0, "recipe sold by Banalash", 0 } } },
 	[12645] = { "Thorium Shield Spike", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 275, 0, "from a recipe", 0 } } },
 	[12662] = { "Demonic Rune", 2, 0, { { "D", 229, 0.1, "Burning Felguard" }, { "D", 309, 0.163, "Mad Servant" }, { "D", 429, 0.52, "Wildspawn Trickster, Wildspawn Rogue, Wildspawn Shadowstalker and others" }, { "D", 329, 0.08, "Balnazzar" } } },
 	[12820] = { "Winterfall Firewater", 1, 45, {  } },
@@ -906,8 +918,10 @@ G.extraItems = {
 	[20076] = { "Zandalar Signet of Mojo", 3, 0, { { "Q", 8246, "Signets of the Zandalar", 309, 3, 0, 60, 58, { 8246, "Signets of the Zandalar", 1, 0, 1 }, { 8246, "Signets of the Zandalar", 1, 0, 1 }, 0 } } },
 	[20077] = { "Zandalar Signet of Might", 3, 0, { { "Q", 8246, "Signets of the Zandalar", 309, 3, 0, 60, 58, { 8246, "Signets of the Zandalar", 1, 0, 1 }, { 8246, "Signets of the Zandalar", 1, 0, 1 }, 0 } } },
 	[20078] = { "Zandalar Signet of Serenity", 3, 0, { { "Q", 8246, "Signets of the Zandalar", 309, 3, 0, 60, 58, { 8246, "Signets of the Zandalar", 1, 0, 1 }, { 8246, "Signets of the Zandalar", 1, 0, 1 }, 0 } } },
+	[20747] = { "Lesser Mana Oil", 1, 40, { { "X", "Crafted: Enchanting", 333, 250, 0, "recipe sold by Kania", 0 } } },
 	[20748] = { "Brilliant Mana Oil", 1, 45, { { "X", "Crafted: Enchanting", 333, 300, 3, "recipe sold by Rin'wosho the Trader (Friendly)", 0 } } },
 	[20749] = { "Brilliant Wizard Oil", 1, 45, { { "X", "Crafted: Enchanting", 333, 300, 3, "recipe sold by Rin'wosho the Trader (Honored)", 0 } } },
+	[20750] = { "Wizard Oil", 1, 40, { { "X", "Crafted: Enchanting", 333, 275, 0, "recipe sold by Kania", 0 } } },
 	[20844] = { "Deadly Poison V", 1, 60, { { "V", "Jasper Fel <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Sloan McCoy <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Samor Festivus <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Sly Garrett <Shady Goods>", 600, 0, 0, 0 }, { "V", "Gerald Crawley <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Malissa <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Rekkul <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Hula'mahi <Reagents and Herbs>", 600, 0, 0, 0 }, { "V", "Jaysin Lanyda <Poisons & Reagents>", 600, 0, 0, 0 }, { "V", "Patrice Dwyer <Poison Supplies>", 600, 0, 0, 0 }, { "V", "Kyrai <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Fahran Silentblade <Tools & Supplies>", 600, 0, 0, 0 }, { "V", "Ezekiel Graves <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Tynnus Venomsprout <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Smudge Thunderwood <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Khur Hornstriker <Reagent Vendor>", 600, 0, 0, 0 }, { "V", "Bortega <Reagents & Poison Supplies>", 600, 0, 0, 0 }, { "V", "Miles Sidney <Poison Supplies>", 600, 0, 0, 0 } } },
 	[21023] = { "Dirge's Kickin' Chimaerok Chops", 1, 55, { { "Q", 8586, "Dirge's Kickin' Chimaerok Chops", 0, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 12 }, { 8286, "What Tomorrow Brings", 1, 0, 12 }, 0 }, { "X", "Crafted: Cooking", 185, 300, 4, "recipe from the quest Dirge's Kickin' Chimaerok Chops", 0 } } },
 	[21546] = { "Elixir of Greater Firepower", 1, 40, { { "X", "Crafted: Alchemy", 171, 250, 0, "from a recipe", 0 } } },

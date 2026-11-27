@@ -1071,6 +1071,8 @@ function G.Build(choice, stage)
 					twoWins = mh.final.value >= pairValue }
 				mh.final.handsCompare = cmp
 				if alt then alt.handsCompare = cmp end
+				-- the off-hand row is for the one-hander (yours, or the one to get), not the two-hander
+				if ohRow then ohRow.withOneHander = true end
 			end
 		end
 		-- Mixed: each step says which it is, and the off-hand row says it's only for the one-handers.
