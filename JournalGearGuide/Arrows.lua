@@ -150,9 +150,10 @@ if GroupLootFrame_OnShow then
 	end)
 end
 
--- Quest rewards and choices, in the quest window and the quest log
-if QuestInfo_ShowRewards then
-	hooksecurefunc("QuestInfo_ShowRewards", function ()
+-- Quest rewards and choices, in the quest window and the quest log. The quest templates keep their own reference
+-- to QuestInfo_ShowRewards, so a hook on it never runs: QuestInfo_Display, which shows them, is called by name.
+if QuestInfo_Display then
+	hooksecurefunc("QuestInfo_Display", function ()
 		local log = QuestInfoFrame and QuestInfoFrame.questLog
 		for i = 1, MAX_NUM_ITEMS or 10 do
 			local button = _G["QuestInfoItem" .. i]
