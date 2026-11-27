@@ -56,8 +56,12 @@ PROFILES = {
                          w=w(HEALER, int=0.7, spi=0.2, mp5=1.6)),
     "MAGE": dict(cls="MAGE", name="Mage", role="Spell damage", weapons="caster", ranged="wand",
                  w=w(CASTER, int=0.4, spi=0.1, crit=0.8, scrit=0.8, fire=0.5, frost=0.5, arcane=0.3)),
-    "WARLOCK": dict(cls="WARLOCK", name="Warlock", role="Spell damage", weapons="caster", ranged="wand",
-                    w=w(CASTER, int=0.3, sta=0.3, crit=0.4, scrit=0.4, spi=0.05, shadow=1.0, fire=0.3)),
+    # Affliction and Demonology cast shadow (Corruption, Shadow Bolt); Destruction fire (Incinerate, Immolate,
+    # Conflagrate). Spirit turns into spell power through Life Tap's glyph and Fel Armor.
+    "WARLOCK_SHADOW": dict(cls="WARLOCK", name="Affliction & Demonology", role="Spell damage", weapons="caster",
+                           ranged="wand", w=w(CASTER, int=0.3, sta=0.3, crit=0.4, scrit=0.4, spi=0.1, shadow=1.0)),
+    "WARLOCK_FIRE": dict(cls="WARLOCK", name="Destruction", role="Spell damage", weapons="caster", ranged="wand",
+                         w=w(CASTER, int=0.3, sta=0.2, crit=0.8, scrit=0.8, spi=0.1, fire=1.0)),
     "DRUID_BALANCE": dict(cls="DRUID", name="Balance", role="Spell damage", weapons="caster", ranged="relic",
                           w=w(CASTER, int=0.4, spi=0.1, mp5=0.4, nature=0.6, arcane=0.6)),
     "DRUID_CAT": dict(cls="DRUID", name="Feral (cat)", role="Melee damage", weapons="2h", ranged="relic",
@@ -80,7 +84,7 @@ BY_TREE = {
     "PRIEST": ["PRIEST_HEAL", "PRIEST_HEAL", "PRIEST_SHADOW"],
     "SHAMAN": ["SHAMAN_ELE", "SHAMAN_ENH", "SHAMAN_RESTO"],
     "MAGE": ["MAGE", "MAGE", "MAGE"],
-    "WARLOCK": ["WARLOCK", "WARLOCK", "WARLOCK"],
+    "WARLOCK": ["WARLOCK_SHADOW", "WARLOCK_SHADOW", "WARLOCK_FIRE"],
     "DRUID": ["DRUID_BALANCE", "DRUID_CAT", "DRUID_RESTO"],
 }
 

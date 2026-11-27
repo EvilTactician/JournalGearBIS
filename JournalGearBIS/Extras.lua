@@ -629,6 +629,39 @@ G.glyphs = {
 			{ 43370, 57987, 175, 0, 34, "", "Glyph of Levitate" },
 		},
 	},
+	WARLOCK_SHADOW = {
+		major = {
+			{ 45785, 63320, 425, 13, 15, "", "Glyph of Life Tap" },
+			{ 45779, 63302, 425, 13, 60, "Haunt", "Glyph of Haunt" },
+			{ 50077, 70947, 375, 8, 15, "", "Glyph of Quick Decay" },
+			{ 42459, 56246, 385, 13, 50, "Summon Felguard", "Glyph of Felguard" },
+			{ 45780, 63303, 425, 13, 60, "Metamorphosis", "Glyph of Metamorphosis" },
+			{ 42455, 56218, 85, 0, 15, "", "Glyph of Corruption" },
+			{ 42467, 56240, 165, 0, 15, "", "Glyph of Shadow Bolt" },
+		},
+		minor = {
+			{ 43390, 58070, 75, 0, 15, "", "Glyph of Drain Soul" },
+			{ 43394, 58094, 385, 13, 68, "", "Glyph of Souls" },
+			{ 43389, 58079, 100, 0, 15, "", "Glyph of Unending Breath" },
+			{ 43393, 58107, 150, 0, 30, "", "Glyph of Enslave Demon" },
+		},
+	},
+	WARLOCK_FIRE = {
+		major = {
+			{ 42454, 56235, 385, 13, 40, "Conflagrate", "Glyph of Conflagrate" },
+			{ 42453, 56242, 350, 8, 28, "", "Glyph of Incinerate" },
+			{ 45785, 63320, 425, 13, 15, "", "Glyph of Life Tap" },
+			{ 42464, 56228, 385, 13, 15, "", "Glyph of Immolate" },
+			{ 42467, 56240, 165, 0, 15, "", "Glyph of Shadow Bolt" },
+			{ 42466, 56226, 215, 0, 18, "", "Glyph of Searing Pain" },
+		},
+		minor = {
+			{ 43390, 58070, 75, 0, 15, "", "Glyph of Drain Soul" },
+			{ 43394, 58094, 385, 13, 68, "", "Glyph of Souls" },
+			{ 43389, 58079, 100, 0, 15, "", "Glyph of Unending Breath" },
+			{ 43393, 58107, 150, 0, 30, "", "Glyph of Enslave Demon" },
+		},
+	},
 	DRUID_BALANCE = {
 		major = {
 			{ 40916, 54845, 220, 0, 20, "", "Glyph of Starfire" },
@@ -723,7 +756,9 @@ G.consumables = {
 	PRIEST_HEAL = {
 		{ 13511, "" }, -- Flask of Distilled Wisdom
 		{ 20007, "" }, -- Mageblood Elixir
+		{ 9179, "", true }, -- Elixir of Greater Intellect
 		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
+		{ 20747, "Put it on your weapon.", true }, -- Lesser Mana Oil
 		{ 13931, "" }, -- Nightfin Soup
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -732,14 +767,32 @@ G.consumables = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 9264, "" }, -- Elixir of Shadow Power
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
+	WARLOCK_SHADOW = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 9264, "" }, -- Elixir of Shadow Power
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+	},
+	WARLOCK_FIRE = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 21546, "" }, -- Elixir of Greater Firepower
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
 	},
 	DRUID_BALANCE = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 13454, "" }, -- Greater Arcane Elixir
 		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -755,12 +808,15 @@ G.consumables = {
 		{ 13452, "" }, -- Elixir of the Mongoose
 		{ 13445, "" }, -- Elixir of Superior Defense
 		{ 21023, "" }, -- Dirge's Kickin' Chimaerok Chops
+		{ 12216, "", true }, -- Spiced Chili Crab
 		{ 13446, "" }, -- Major Healing Potion
 	},
 	DRUID_RESTO = {
 		{ 13511, "" }, -- Flask of Distilled Wisdom
 		{ 20007, "" }, -- Mageblood Elixir
+		{ 9179, "", true }, -- Elixir of Greater Intellect
 		{ 20748, "Put it on your weapon." }, -- Brilliant Mana Oil
+		{ 20747, "Put it on your weapon.", true }, -- Lesser Mana Oil
 		{ 13931, "" }, -- Nightfin Soup
 		{ 13444, "" }, -- Major Mana Potion
 		{ 12662, "Costs some health." }, -- Demonic Rune
@@ -768,6 +824,7 @@ G.consumables = {
 }
 
 G.elixirs = {
+	[9179] = 2, -- Elixir of Greater Intellect
 	[9264] = 1, -- Elixir of Shadow Power
 	[12820] = 1, -- Winterfall Firewater
 	[13445] = 2, -- Elixir of Superior Defense
@@ -777,6 +834,7 @@ G.elixirs = {
 	[13511] = 3, -- Flask of Distilled Wisdom
 	[13512] = 3, -- Flask of Supreme Power
 	[20007] = 2, -- Mageblood Elixir
+	[21546] = 1, -- Elixir of Greater Firepower
 }
 
 G.professionConsumables = {
@@ -803,6 +861,7 @@ G.extraItems = {
 	[7969] = { "Mithril Spurs", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 235, 0, "recipe drops in Uldaman", 70 } } },
 	[8173] = { "Thick Armor Kit", 1, 30, { { "D", 70, 0.25, "Olaf" }, { "Q", 338, "The Green Hills of Stranglethorn", 0, 0, 0, 40, 30, { 583, "Welcome to the Jungle", 1, 0, 2 }, { 583, "Welcome to the Jungle", 1, 0, 2 }, 0 }, { "X", "Crafted: Leatherworking", 165, 200, 0, "from a trainer", 0 } } },
 	[8928] = { "Instant Poison VI", 1, 60, { { "V", "Jasper Fel <Shady Dealer>", 500, 0, 0, 0 }, { "V", "Sloan McCoy <Poison Supplier>", 500, 0, 0, 0 }, { "V", "Samor Festivus <Shady Dealer>", 500, 0, 0, 0 }, { "V", "Sly Garrett <Shady Goods>", 500, 0, 0, 0 }, { "V", "Gerald Crawley <Poison Supplier>", 500, 0, 0, 0 }, { "V", "Malissa <Poison Supplier>", 500, 0, 0, 0 }, { "V", "Rekkul <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Hula'mahi <Reagents and Herbs>", 500, 0, 0, 0 }, { "V", "Jaysin Lanyda <Poisons & Reagents>", 500, 0, 0, 0 }, { "V", "Patrice Dwyer <Poison Supplies>", 500, 0, 0, 0 }, { "V", "Kyrai <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Fahran Silentblade <Tools & Supplies>", 500, 0, 0, 0 }, { "V", "Ezekiel Graves <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Tynnus Venomsprout <Shady Dealer>", 500, 0, 0, 0 }, { "V", "Smudge Thunderwood <Poison Vendor>", 500, 0, 0, 0 }, { "V", "Khur Hornstriker <Reagent Vendor>", 500, 0, 0, 0 }, { "V", "Bortega <Reagents & Poison Supplies>", 500, 0, 0, 0 }, { "V", "Miles Sidney <Poison Supplies>", 500, 0, 0, 0 } } },
+	[9179] = { "Elixir of Greater Intellect", 1, 37, { { "X", "Crafted: Alchemy", 171, 235, 0, "from a trainer", 0 } } },
 	[9264] = { "Elixir of Shadow Power", 1, 40, { { "X", "Crafted: Alchemy", 171, 250, 0, "recipe sold by Maria Lumere", 0 } } },
 	[10546] = { "Deadly Scope", 1, 30, { { "X", "Crafted: Engineering", 202, 210, 0, "recipe sold by Knaz Blunderflame", 0 } } },
 	[10548] = { "Sniper Scope", 1, 40, { { "X", "Crafted: Engineering", 202, 240, 1, "recipe drops in Onyxia's Lair", 249 } } },
@@ -816,6 +875,7 @@ G.extraItems = {
 	[11647] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11648] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11649] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
+	[12216] = { "Spiced Chili Crab", 1, 40, { { "X", "Crafted: Cooking", 185, 225, 0, "recipe sold by Banalash", 0 } } },
 	[12645] = { "Thorium Shield Spike", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 275, 0, "from a recipe", 0 } } },
 	[12662] = { "Demonic Rune", 2, 0, { { "D", 229, 0.1, "Burning Felguard" }, { "D", 309, 0.163, "Mad Servant" }, { "D", 429, 0.52, "Wildspawn Trickster, Wildspawn Rogue, Wildspawn Shadowstalker and others" }, { "D", 329, 0.08, "Balnazzar" } } },
 	[12820] = { "Winterfall Firewater", 1, 45, {  } },
@@ -858,10 +918,13 @@ G.extraItems = {
 	[20076] = { "Zandalar Signet of Mojo", 3, 0, { { "Q", 8246, "Signets of the Zandalar", 309, 3, 0, 60, 58, { 8246, "Signets of the Zandalar", 1, 0, 1 }, { 8246, "Signets of the Zandalar", 1, 0, 1 }, 0 } } },
 	[20077] = { "Zandalar Signet of Might", 3, 0, { { "Q", 8246, "Signets of the Zandalar", 309, 3, 0, 60, 58, { 8246, "Signets of the Zandalar", 1, 0, 1 }, { 8246, "Signets of the Zandalar", 1, 0, 1 }, 0 } } },
 	[20078] = { "Zandalar Signet of Serenity", 3, 0, { { "Q", 8246, "Signets of the Zandalar", 309, 3, 0, 60, 58, { 8246, "Signets of the Zandalar", 1, 0, 1 }, { 8246, "Signets of the Zandalar", 1, 0, 1 }, 0 } } },
+	[20747] = { "Lesser Mana Oil", 1, 40, { { "X", "Crafted: Enchanting", 333, 250, 0, "recipe sold by Kania", 0 } } },
 	[20748] = { "Brilliant Mana Oil", 1, 45, { { "X", "Crafted: Enchanting", 333, 300, 3, "recipe sold by Rin'wosho the Trader (Friendly)", 0 } } },
 	[20749] = { "Brilliant Wizard Oil", 1, 45, { { "X", "Crafted: Enchanting", 333, 300, 3, "recipe sold by Rin'wosho the Trader (Honored)", 0 } } },
+	[20750] = { "Wizard Oil", 1, 40, { { "X", "Crafted: Enchanting", 333, 275, 0, "recipe sold by Kania", 0 } } },
 	[20844] = { "Deadly Poison V", 1, 60, { { "V", "Jasper Fel <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Sloan McCoy <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Samor Festivus <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Sly Garrett <Shady Goods>", 600, 0, 0, 0 }, { "V", "Gerald Crawley <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Malissa <Poison Supplier>", 600, 0, 0, 0 }, { "V", "Rekkul <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Hula'mahi <Reagents and Herbs>", 600, 0, 0, 0 }, { "V", "Jaysin Lanyda <Poisons & Reagents>", 600, 0, 0, 0 }, { "V", "Patrice Dwyer <Poison Supplies>", 600, 0, 0, 0 }, { "V", "Kyrai <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Fahran Silentblade <Tools & Supplies>", 600, 0, 0, 0 }, { "V", "Ezekiel Graves <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Tynnus Venomsprout <Shady Dealer>", 600, 0, 0, 0 }, { "V", "Smudge Thunderwood <Poison Vendor>", 600, 0, 0, 0 }, { "V", "Khur Hornstriker <Reagent Vendor>", 600, 0, 0, 0 }, { "V", "Bortega <Reagents & Poison Supplies>", 600, 0, 0, 0 }, { "V", "Miles Sidney <Poison Supplies>", 600, 0, 0, 0 } } },
 	[21023] = { "Dirge's Kickin' Chimaerok Chops", 1, 55, { { "Q", 8586, "Dirge's Kickin' Chimaerok Chops", 0, 4, 0, 60, 60, { 8286, "What Tomorrow Brings", 1, 0, 12 }, { 8286, "What Tomorrow Brings", 1, 0, 12 }, 0 }, { "X", "Crafted: Cooking", 185, 300, 4, "recipe from the quest Dirge's Kickin' Chimaerok Chops", 0 } } },
+	[21546] = { "Elixir of Greater Firepower", 1, 40, { { "X", "Crafted: Alchemy", 171, 250, 0, "from a recipe", 0 } } },
 	[22635] = { "Savage Guard", 3, 55, { { "Q", 9208, "The Savage Guard - Arcanum of Protection", 0, 3, 0, 60, 60, { 9208, "The Savage Guard - Arcanum of Protection", 1, 0, 1 }, { 9208, "The Savage Guard - Arcanum of Protection", 1, 0, 1 }, 0 }, { "Q", 9209, "The Savage Guard - Arcanum of Rapidity", 0, 3, 0, 60, 60, { 9209, "The Savage Guard - Arcanum of Rapidity", 1, 0, 1 }, { 9209, "The Savage Guard - Arcanum of Rapidity", 1, 0, 1 }, 0 }, { "Q", 9210, "The Savage Guard - Arcanum of Focus", 0, 3, 0, 60, 60, { 9210, "The Savage Guard - Arcanum of Focus", 1, 0, 1 }, { 9210, "The Savage Guard - Arcanum of Focus", 1, 0, 1 }, 0 } } },
 	[22636] = { "Ice Guard", 3, 55, { { "Q", 9211, "The Ice Guard", 0, 6, 0, 60, 60, { 9211, "The Ice Guard", 1, 0, 1 }, { 9211, "The Ice Guard", 1, 0, 1 }, 0 } } },
 	[22638] = { "Shadow Guard", 3, 55, { { "Q", 9213, "The Shadow Guard", 0, 6, 0, 60, 60, { 9213, "The Shadow Guard", 1, 0, 1 }, { 9213, "The Shadow Guard", 1, 0, 1 }, 0 } } },
@@ -917,4 +980,32 @@ G.talentBuilds = {
 		{  },
 		{ { 1, 1, 3 }, { 1, 2, 2 }, { 1, 3, 5 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 5 }, { 3, 3, 1 }, { 4, 2, 2 }, { 4, 3, 2 }, { 4, 4, 3 }, { 5, 2, 1 }, { 5, 4, 2 }, { 6, 1, 2 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 5 }, { 8, 1, 2 }, { 8, 3, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 3, 5 }, { 11, 2, 1 } },
 	} },
+	["WARLOCK:1"] = { class = "WARLOCK", name = "GearBIS: Affliction", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 5 }, { 2, 3, 2 }, { 2, 4, 2 }, { 3, 2, 3 }, { 4, 2, 2 }, { 4, 4, 3 }, { 5, 1, 5 }, { 5, 2, 1 }, { 6, 2, 5 }, { 7, 1, 3 }, { 7, 2, 5 }, { 8, 3, 3 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 1 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{  },
+		{ { 1, 2, 5 }, { 1, 3, 5 }, { 3, 3, 5 }, { 4, 1, 1 } },
+	} },
+	["WARLOCK:2"] = { class = "WARLOCK", name = "GearBIS: Demonology", ranks = {
+		{  },
+		{ { 1, 3, 3 }, { 1, 4, 2 }, { 2, 2, 3 }, { 2, 3, 3 }, { 3, 2, 1 }, { 3, 3, 1 }, { 3, 4, 3 }, { 4, 2, 5 }, { 4, 3, 2 }, { 5, 3, 2 }, { 6, 2, 5 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 3 }, { 8, 2, 5 }, { 8, 3, 2 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{ { 1, 2, 5 }, { 1, 3, 5 }, { 3, 3, 5 }, { 4, 1, 2 } },
+	} },
+	["WARLOCK:3"] = { class = "WARLOCK", name = "GearBIS: Destruction", ranks = {
+		{  },
+		{ { 1, 2, 3 }, { 1, 3, 3 }, { 1, 4, 1 }, { 2, 3, 3 }, { 3, 4, 3 } },
+		{ { 1, 3, 5 }, { 2, 1, 2 }, { 2, 2, 1 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 5 }, { 4, 1, 2 }, { 4, 2, 2 }, { 5, 2, 3 }, { 5, 3, 1 }, { 6, 3, 5 }, { 7, 2, 1 }, { 7, 3, 3 }, { 7, 4, 3 }, { 8, 2, 5 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+	} },
+}
+
+-- talentHit[class] = { { tree, tier, column, % per rank, school mask, kind } }
+G.talentHit = {
+	DEATHKNIGHT = { { 3, 1, 2, 1, 126, "all" } },
+	DRUID = { { 1, 6, 3, 2, 126, "school" } },
+	HUNTER = { { 3, 3, 4, 2, 126, "tree" } },
+	MAGE = { { 3, 2, 3, 1, 126, "all" }, { 1, 1, 2, 1, 126, "tree" } },
+	PALADIN = { { 1, 10, 3, 2, 126, "all" } },
+	PRIEST = { { 3, 2, 3, 1, 126, "tree" } },
+	ROGUE = { { 2, 2, 4, 1, 126, "all" } },
+	SHAMAN = { { 1, 6, 1, 1, 28, "school" } },
+	WARLOCK = { { 1, 1, 2, 1, 36, "school" } },
 }

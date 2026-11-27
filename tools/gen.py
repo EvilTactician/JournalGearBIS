@@ -457,7 +457,7 @@ print("done", file=sys.stderr)
 
 # ---------------------------------------------------------------- Extras.lua: enchants, glyphs, consumables
 from crafts import Crafts, CLASSIC_CAP
-from curated import GLYPHS, CONSUMABLES, ENCHANT_PROCS, PROFESSION_CONSUMABLES
+from curated import GLYPHS, CONSUMABLES, ENCHANT_PROCS, PROFESSION_CONSUMABLES, consumable_options
 crafts = early_crafts
 ENCH, ench_str, _ = dbc_load(os.path.join(BUILD, "dbc", "SpellItemEnchantment.dbc"))
 GLYPH_PROPS = dbc_load(os.path.join(BUILD, "dbc", "GlyphProperties.dbc"))[0]
@@ -671,23 +671,28 @@ X.append("G.consumables = {")
 for prof, lst in CONSUMABLES.items():
     X.append("\t%s = {" % prof)
     rows = []
-    for entry in lst:
-        name, note = (entry, "") if isinstance(entry, str) else entry
-        ids = [i for i in byname.get(name, []) if i in EXTRA]
-        if not ids:
-            print("consumable not found:", name, file=sys.stderr)
-            continue
-        extra_items.add(ids[0])
-        rows.append((0 if _groups.get(items[ids[0]].get("spellid_1") or 0) else 1, ids[0], note, name))
-    for _, i, note, name in sorted(rows, key=lambda r: r[0]):
-        X.append("\t\t{ %d, %s }, -- %s" % (i, lstr(note), name))
+    for n, entry in enumerate(lst):
+        opts = []
+        for name, note in consumable_options(entry):
+            ids = [i for i in byname.get(name, []) if i in EXTRA]
+            if not ids:
+                print("consumable not found:", name, file=sys.stderr)
+                continue
+            extra_items.add(ids[0])
+            opts.append((ids[0], note, name))
+        if opts:
+            rows.append((0 if _groups.get(items[opts[0][0]].get("spellid_1") or 0) else 1, n, opts))
+    # { id, note, alternative: the entry's later options, shown when the ones before them aren't open yet }
+    for _, _, opts in sorted(rows, key=lambda r: r[0]):
+        for k, (i, note, name) in enumerate(opts):
+            X.append("\t\t{ %d, %s%s }, -- %s" % (i, lstr(note), ", true" if k else "", name))
     X.append("\t},")
 X.append("}")
 
 
 X.append("")
 X.append("G.elixirs = {")
-_cons = {e if isinstance(e, str) else e[0] for lst in CONSUMABLES.values() for e in lst}
+_cons = {o[0] for lst in CONSUMABLES.values() for e in lst for o in consumable_options(e)}
 for i in sorted(extra_items):
     g = _groups.get(items[i].get("spellid_1") or 0)
     if g and items[i]["name"] in _cons:
@@ -734,6 +739,15 @@ for key, (cls, name, trees) in all_builds().items():
     for t in trees:
         X.append("\t\t{ " + ", ".join("{ %d, %d, %d }" % x for x in t) + " },")
     X.append("\t} },")
+X.append("}")
+
+# talents that add spell hit, for the hit cap (tools/talentbuilds.py talent_hit)
+from talentbuilds import talent_hit
+X.append("")
+X.append("-- talentHit[class] = { { tree, tier, column, % per rank, school mask, kind } }")
+X.append("G.talentHit = {")
+for cls, rows in sorted(talent_hit().items()):
+    X.append("\t%s = { %s }," % (cls, ", ".join("{ %d, %d, %d, %d, %d, %s }" % (r[:5] + (lstr(r[5]),)) for r in rows)))
 X.append("}")
 open(os.path.join(HERE, "..", "JournalGearBIS", "Extras.lua"), "w").write("\n".join(X) + "\n")
 print("extras: %d enchants, %d items" % (len(known), len(extra_items)), file=sys.stderr)

@@ -38,7 +38,30 @@ ROGUE_COMMON = [
     "Satyr's Bow", "Blackcrow", "Striker's Mark", "Dragonbreath Hand Cannon", "Nerubian Slavemaker",
 ]
 
+WARLOCK_COMMON = [
+    # pre-raid
+    "Crimson Felt Hat", "Spellweaver's Turban", "Diana's Pearl Necklace", "Felcloth Shoulders", "Burial Shawl",
+    "Spritecaster Cape", "Amplifying Cloak", "Robe of the Void", "Robe of Winter Night", "Shadowy Bracers",
+    "Sublime Wristguards", "Hands of Power", "Felcloth Gloves", "Ban'thok Sash", "Thuzadin Sash",
+    "Skyshroud Leggings", "Maleki's Footwraps", "Omnicast Boots", "Eye of Orgrimmar", "Songstone of Ironforge",
+    "Cyclopean Band", ("Briarwood Reed", 25), "Eye of the Beast", "Witchblade", "Spirit of Aquementas",
+    "Skul's Ghastly Touch", "Bonecreeper Stylus",
+    # raids
+    "Mish'undare, Circlet of the Mind Flayer", "Felheart Horns", "Nemesis Skullcap", "Plagueheart Circlet",
+    "Choker of the Fire Lord", "Gem of Trapped Innocents", "Mantle of the Blackwing Cabal", "Nemesis Spaulders",
+    "Plagueheart Shoulderpads", "Sapphiron Drape", "Cloak of the Necropolis", "Nemesis Robes", "Plagueheart Robe",
+    "Rockfury Bracers", "Plagueheart Bindings", "Dark Storm Gauntlets", "Plagueheart Gloves", "Eyestalk Waist Cord",
+    "Plagueheart Belt", "Leggings of Polarity", "Plagueheart Leggings", "Boots of Epiphany", "Plagueheart Sandals",
+    "Ring of Spell Power", "Band of the Inevitable", "Ring of the Fallen God", "Plagueheart Ring",
+    ("Talisman of Ephemeral Power", 30), "Neltharion's Tear", ("Zandalarian Hero Charm", 35),
+    "The Restrained Essence of Sapphiron", (23207, 40),  # Mark of the Champion, the caster one
+    "Staff of Dominance", "Wraith Blade", "Sapphiron's Left Eye", "Doomfinger",
+    (22630, None),  # Atiesh, Greatstaff of the Guardian: the warlock one of the four sharing the name
+]
+
 CURATED = {
+    "WARLOCK_SHADOW": WARLOCK_COMMON,
+    "WARLOCK_FIRE": WARLOCK_COMMON,
     "ROGUE_SWORDS": ROGUE_COMMON + [
         "Dal'Rend's Sacred Charge", "Dal'Rend's Tribal Guardian", "Brutality Blade", "Vis'kag the Bloodletter",
         "Chromatically Tempered Sword", "Maladath, Runed Blade of the Black Flight", "The Hungering Cold",
@@ -152,6 +175,7 @@ CRAFTED = {
 # don't have gives way to the next, with a note under it.
 ROGUE_MINOR = ["Glyph of Vanish", "Glyph of Safe Fall", "Glyph of Distract", "Glyph of Blurred Speed", "Glyph of Pick Pocket"]
 PRIEST_MINOR = ["Glyph of Fortitude", "Glyph of Fading", "Glyph of Levitate", "Glyph of Shadow Protection"]
+WARLOCK_MINOR = ["Glyph of Drain Soul", "Glyph of Souls", "Glyph of Unending Breath", "Glyph of Enslave Demon"]
 GLYPHS = {
     "ROGUE_SWORDS": {
         "major": ["Glyph of Slice and Dice", "Glyph of Sinister Strike",
@@ -172,6 +196,20 @@ GLYPHS = {
         "major": [("Glyph of Shadow", "Shadowform"), "Glyph of Mind Flay", "Glyph of Shadow Word: Pain", "Glyph of Fade",
                   "Glyph of Inner Fire"],
         "minor": ["Glyph of Fortitude", "Glyph of Shadow Protection", "Glyph of Fading", "Glyph of Levitate"],
+    },
+    # Affliction: Life Tap, Haunt, Quick Decay; Demonology: Life Tap, Quick Decay, Felguard (Metamorphosis when the
+    # Felguard can't fight). Each tree's talent glyph stays out of the other's list.
+    "WARLOCK_SHADOW": {
+        "major": ["Glyph of Life Tap", ("Glyph of Haunt", "Haunt"), "Glyph of Quick Decay",
+                  ("Glyph of Felguard", "Summon Felguard"), ("Glyph of Metamorphosis", "Metamorphosis"),
+                  "Glyph of Corruption", "Glyph of Shadow Bolt"],
+        "minor": WARLOCK_MINOR,
+    },
+    "WARLOCK_FIRE": {
+        # the last two are for before Northrend's glyphs (Inscription past 300), while you cast Shadow Bolt
+        "major": [("Glyph of Conflagrate", "Conflagrate"), "Glyph of Incinerate", "Glyph of Life Tap",
+                  "Glyph of Immolate", "Glyph of Shadow Bolt", "Glyph of Searing Pain"],
+        "minor": WARLOCK_MINOR,
     },
     "DRUID_BALANCE": {
         "major": ["Glyph of Starfire", "Glyph of Moonfire", ("Glyph of Insect Swarm", "Insect Swarm"),
@@ -249,6 +287,8 @@ EVENT_BOSSES = {
 
 # A line under a hand-picked item's tooltip, for the ones worth a word: optional extras and odd ways to get them.
 CURATED_NOTES = {
+    "Rockfury Bracers": "The end of a long Cenarion Circle quest chain in Silithus, opened by Ahn'Qiraj: you need "
+                        "Revered with the Cenarion Circle for it.",
     "Breastplate of Bloodthirst": "Skinning The Beast needs 310: 300 plus Finkle's Skinner (+10), a dagger The Beast "
                                   "itself drops. The hide comes about 1 skin in 50.",
     "Manual Crowd Pummeler": "Optional: 3 uses of its haste, then it's just a weapon. Only for squeezing out every bit "
@@ -261,23 +301,34 @@ CURATED_NOTES = {
 # a later one that doesn't stack with an earlier one is its cheaper stand-in.
 ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
+WARLOCK_CONSUMABLES = [[("Brilliant Wizard Oil", "Put it on your weapon."), ("Wizard Oil", "Put it on your weapon.")], "Runn Tum Tuber Surprise", "Major Mana Potion"]
+# An entry in a list of alternatives is shown as its first that's open at your stage, so nobody at
+# Molten Core is told to bring what only Zul'Gurub's Zandalar sell (Mageblood Elixir, the brilliant oils).
+def consumable_options(entry):
+    """[(name, note)] for an entry: a name, (name, note), or a list of those, best first."""
+    return [(e, "") if isinstance(e, str) else tuple(e) for e in (entry if isinstance(entry, list) else [entry])]
+
+
 CONSUMABLES = {
     "ROGUE_SWORDS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand, the faster weapon.")]
     + ROGUE_CONSUMABLES,
     "ROGUE_DAGGERS": [("Instant Poison VI", "Put it on your main hand."), ("Deadly Poison V", "Put it on your off hand, the faster dagger.")]
     + ROGUE_CONSUMABLES,
-    "PRIEST_HEAL": ["Flask of Distilled Wisdom", ("Brilliant Mana Oil", "Put it on your weapon."), "Mageblood Elixir",
+    "PRIEST_HEAL": ["Flask of Distilled Wisdom", [("Brilliant Mana Oil", "Put it on your weapon."), ("Lesser Mana Oil", "Put it on your weapon.")], ["Mageblood Elixir", "Elixir of Greater Intellect"],
                     "Nightfin Soup", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
     "PRIEST_SHADOW": ["Flask of Supreme Power", "Elixir of Shadow Power",
-                      ("Brilliant Wizard Oil", "Put it on your weapon."), "Runn Tum Tuber Surprise", "Major Mana Potion",
+                      [("Brilliant Wizard Oil", "Put it on your weapon."), ("Wizard Oil", "Put it on your weapon.")], "Runn Tum Tuber Surprise", "Major Mana Potion",
                       ("Demonic Rune", "Costs some health.")],
-    "DRUID_BALANCE": ["Flask of Supreme Power", "Greater Arcane Elixir", ("Brilliant Wizard Oil", "Put it on your weapon."),
+    # no Demonic Rune: Life Tap gives warlocks mana for health already
+    "WARLOCK_SHADOW": ["Flask of Supreme Power", "Elixir of Shadow Power"] + WARLOCK_CONSUMABLES,
+    "WARLOCK_FIRE": ["Flask of Supreme Power", "Elixir of Greater Firepower"] + WARLOCK_CONSUMABLES,
+    "DRUID_BALANCE": ["Flask of Supreme Power", "Greater Arcane Elixir", [("Brilliant Wizard Oil", "Put it on your weapon."), ("Wizard Oil", "Put it on your weapon.")],
                       "Runn Tum Tuber Surprise", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
     "DRUID_CAT": ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                   "Grilled Squid", "Major Healing Potion"],
     "DRUID_BEAR": ["Flask of the Titans", "Elixir of the Mongoose", "Elixir of Superior Defense",
-                   "Dirge's Kickin' Chimaerok Chops", "Major Healing Potion"],
-    "DRUID_RESTO": ["Flask of Distilled Wisdom", "Mageblood Elixir", ("Brilliant Mana Oil", "Put it on your weapon."),
+                   ["Dirge's Kickin' Chimaerok Chops", "Spiced Chili Crab"], "Major Healing Potion"],
+    "DRUID_RESTO": ["Flask of Distilled Wisdom", ["Mageblood Elixir", "Elixir of Greater Intellect"], [("Brilliant Mana Oil", "Put it on your weapon."), ("Lesser Mana Oil", "Put it on your weapon.")],
                     "Nightfin Soup", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
 }
 

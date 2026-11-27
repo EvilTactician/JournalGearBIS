@@ -318,12 +318,13 @@ local function scanOwned()
 			if header and expanded and opened[name] and CollapseSkillHeader then CollapseSkillHeader(k) end
 		end
 	end
-	-- your talents: points in each, by name
-	P.talents = {}
+	-- your talents: points in each, by name, the tree each is in, and points by tree, tier and column
+	P.talents, P.talentTree, P.talentAt = {}, {}, {}
 	for tab = 1, (GetNumTalentTabs and GetNumTalentTabs() or 0) do
 		for i = 1, (GetNumTalents and GetNumTalents(tab) or 0) do
-			local name, _, _, _, rank = GetTalentInfo(tab, i)
-			if name then P.talents[name] = rank or 0 end
+			local name, _, tier, column, rank = GetTalentInfo(tab, i)
+			if name then P.talents[name], P.talentTree[name] = rank or 0, tab end
+			if tier then P.talentAt[tab .. ":" .. tier .. ":" .. column] = rank or 0 end
 		end
 	end
 end
@@ -658,7 +659,12 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	local base = owned.value
 	if row.key == "MH" and (prof.weapons == "caster" or prof.weapons == "hunter") then
 		for _, c in ipairs(cands) do
-			if c.item.inv ~= 17 then c.value = c.value + (ohRef or 0) end
+			if c.item.inv ~= 17 then
+				-- a one-hander that adds next to nothing itself (a stamina-only quest sword) is no step up: it
+				-- would only look like one for the off-hand counted with it
+				c.weak = not c.curated and c.value < (ohRef or 0) * 0.25
+				c.value = c.value + (ohRef or 0)
+			end
 		end
 		local w = not P.preview and P.worn[16]
 		if w and not w.twoHand then base = base + (ohRef or 0) end
@@ -672,7 +678,8 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 	end
 	local pool = {}
 	for _, c in ipairs(cands) do
-		if not wornIds[c.item.id] and not (exclude and exclude[c.item.id]) and c.value > owned.value * MIN_GAIN + 0.5 then
+		if not wornIds[c.item.id] and not (exclude and exclude[c.item.id]) and not c.weak
+			and c.value > owned.value * MIN_GAIN + 0.5 then
 			table.insert(pool, c)
 		end
 	end
@@ -981,7 +988,7 @@ function G.Build(choice, stage)
 	end
 	local prof = G.profiles[profileKey]
 	if not prof then return nil, "class" end
-	P.profileKey, P.profile = profileKey, prof
+	P.profileKey, P.profile, P.treeIndex = profileKey, prof, treeIndex
 
 	-- The off-hand you'd pair with a one-hander: yours, or the best you can get.
 	local ohRef = 0
@@ -1064,6 +1071,8 @@ function G.Build(choice, stage)
 					twoWins = mh.final.value >= pairValue }
 				mh.final.handsCompare = cmp
 				if alt then alt.handsCompare = cmp end
+				-- the off-hand row is for the one-hander (yours, or the one to get), not the two-hander
+				if ohRow then ohRow.withOneHander = true end
 			end
 		end
 		-- Mixed: each step says which it is, and the off-hand row says it's only for the one-handers.

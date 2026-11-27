@@ -19,12 +19,45 @@ G.CAPS = {
 	{ keys = { "mhit", "hit" }, roles = { ["Melee damage"] = true, ["Ranged damage"] = true }, rating = 6, cap = 8,
 		extra = function () return GetHitModifier and GetHitModifier() or 0 end, per = 9.84 },
 	{ keys = { "shit", "hit" }, roles = { ["Spell damage"] = true }, rating = 8, cap = 17,
-		extra = function () return GetSpellHitModifier and GetSpellHitModifier() or 0 end, per = 8 },
+		extra = function () return G.TalentSpellHit() end, per = 8 },
 	{ keys = { "exp" }, roles = { ["Melee damage"] = true }, rating = 24, cap = 26, per = 2.46,
 		have = function () return GetExpertise and GetExpertise() or 0 end },
 	{ keys = { "arp" }, roles = { ["Melee damage"] = true, ["Ranged damage"] = true }, rating = 25, cap = 100, per = 4.69,
 		have = function () return GetArmorPenetration and GetArmorPenetration() or 0 end },
 }
+
+-- The school your spec's list values most (its biggest school damage weight), as a bit; nil for none.
+local SCHOOL_BIT = { holy = 2, fire = 4, nature = 8, frost = 16, shadow = 32, arcane = 64 }
+local function mainSchool()
+	local best, bit = 0, nil
+	for k, b in pairs(SCHOOL_BIT) do
+		local w = P.profile and P.profile.weights[k] or 0
+		if w > best then best, bit = w, b end
+	end
+	return bit
+end
+
+-- Spell hit beyond rating: what the client counts (racials, buffs, talents for all spells) plus the talents it
+-- doesn't: hit with some schools only (Suppression, Elemental Precision) when they cover your spec's school, and
+-- hit with one tree's spells (Shadow Focus) when that's your spec's tree. Talents the client may count are
+-- taken as the larger of the two, so none is counted twice.
+function G.TalentSpellHit()
+	local api = GetSpellHitModifier and GetSpellHitModifier() or 0
+	local _, class = UnitClass("player")
+	local all, more, school = 0, 0, mainSchool()
+	for _, t in ipairs(G.talentHit and G.talentHit[class] or {}) do
+		local rank = P.talentAt and P.talentAt[t[1] .. ":" .. t[2] .. ":" .. t[3]] or 0
+		local pct = rank * t[4]
+		if t[6] == "all" then
+			all = all + pct
+		elseif t[6] == "school" then
+			if not school or band(t[5], school) ~= 0 then more = more + pct end
+		elseif t[6] == "tree" and t[1] == P.treeIndex then
+			more = more + pct
+		end
+	end
+	return math.max(api, all) + more
+end
 
 -- Rating points still worth having, by stat key (none for a stat with no cap).
 local function headroom()
@@ -225,7 +258,7 @@ end
 -- glyphs
 
 -- The levels the glyph slots open at, in order.
-G.GLYPH_LEVELS = { major = { 15, 50, 80 }, minor = { 15, 30, 70 } }
+G.GLYPH_LEVELS = { major = { 15, 30, 80 }, minor = { 15, 50, 70 } }
 
 -- Your spec's glyphs: { major = { slot, ... }, minor = { ... } }, each slot { glyph, unlock (level), locked,
 -- equipped, hint }, or nil for a spec without hand-picked glyphs yet. The best three of each kind you can use,
@@ -234,16 +267,21 @@ function G.GlyphsFor()
 	local lists = G.glyphs and G.glyphs[P.profileKey]
 	if not lists then return nil end
 	-- the glyphs you have in any socket, and how many sockets of each kind are open
-	local have, open = {}, nil
+	-- and, by kind, the glyphs in them and the open sockets with none
+	local have, open, inSockets, empty = {}, nil, { major = {}, minor = {} }, { major = 0, minor = 0 }
 	if GetGlyphSocketInfo then
 		open = { major = 0, minor = 0 }
 		for i = 1, 6 do
 			local enabled, kind, spell = GetGlyphSocketInfo(i)
+			local k = kind == 1 and "major" or "minor"
 			if enabled then
-				local k = kind == 1 and "major" or "minor"
 				open[k] = open[k] + 1
+				if not spell then empty[k] = empty[k] + 1 end
 			end
-			if spell then have[spell] = true end
+			if spell then
+				have[spell] = true
+				table.insert(inSockets[k], spell)
+			end
 		end
 	end
 	local out = {}
@@ -255,40 +293,52 @@ function G.GlyphsFor()
 				name = t[7] }
 			if g.stage <= P.stage and g.level <= P.level then
 				if g.talent and (P.talents[g.talent] or 0) == 0 then
-					hint = hint or ("Better with the " .. g.talent .. " talent: " .. g.name)
+					-- a list two specs share (Affliction and Demonology): another tree's glyph isn't for you
+					local tree = P.talentTree and P.talentTree[g.talent]
+					if not (tree and P.treeIndex and tree ~= P.treeIndex) then
+						hint = hint or ("Better with the " .. g.talent .. " talent: " .. g.name)
+					end
 				else
 					table.insert(slots, { glyph = g, equipped = have[g.spell], hint = hint, order = #slots + 1 })
 					hint = nil
 				end
 			end
 		end
-		-- Best first, whichever socket you have them in. One you have counts as Equipped wherever it sits; one you
-		-- don't is Missing while you have a socket for it (swap out a weaker one), else locked until the next opens.
+		-- Best first, whichever socket you have them in. Your open sockets go to the best ones on the list (two of
+		-- each kind until level 70 and 80, as in Classic). One you have counts as Equipped wherever it sits. One you
+		-- don't goes in an empty socket (Missing), else in place of one that shouldn't be there (Swap in): a glyph
+		-- not on the list first, then the weakest one on it, which waits for the socket that opens later.
 		local count = open and open[kind] or 0
 		if not open then
 			for _, lvl in ipairs(G.GLYPH_LEVELS[kind]) do if P.realLevel >= lvl then count = count + 1 end end
 		end
-		local missing = 0
-		for i, s in ipairs(slots) do
-			s.unlock = G.GLYPH_LEVELS[kind][i]
-			s.locked = false
-			if not s.equipped then
-				missing = missing + 1
-				s.locked = i > count
+		local onList = {}
+		for i, sl in ipairs(slots) do
+			sl.unlock = G.GLYPH_LEVELS[kind][i]
+			sl.locked = not sl.equipped and i > count
+			onList[sl.glyph.spell] = true
+		end
+		-- what can make room, in the order to take it out: off the list, then the list's weakest past your sockets
+		local spare = {}
+		for _, spell in ipairs(inSockets[kind]) do
+			if not onList[spell] then
+				table.insert(spare, { name = (GetSpellInfo and GetSpellInfo(spell)) or "your other glyph", offList = true })
 			end
 		end
-		-- a weaker one you have, to swap for a missing one (each weaker one once)
-		local taken = {}
-		for _, s in ipairs(slots) do
-			if not s.equipped and not s.locked then
-				for k = #slots, 1, -1 do
-					local w = slots[k]
-					if w.equipped and not taken[k] and w.order > s.order and k > count then
-						s.swap, taken[k] = w.glyph.name, true
-						-- the weaker one waits for the socket that opens later
-						w.waits, w.swapFor = true, s.glyph.name
-						break
-					end
+		for k = #slots, count + 1, -1 do
+			if slots[k].equipped then table.insert(spare, { slot = slots[k], name = slots[k].glyph.name }) end
+		end
+		local free = empty[kind]
+		for i = 1, math.min(count, #slots) do
+			local sl = slots[i]
+			if not sl.equipped then
+				if free > 0 then
+					free = free - 1
+				elseif #spare > 0 then
+					local o = table.remove(spare, 1)
+					sl.swap, sl.swapOffList = o.name, o.offList
+					-- the weaker one on the list waits for the socket that opens later
+					if o.slot then o.slot.waits, o.slot.swapFor = true, sl.glyph.name end
 				end
 			end
 		end
@@ -300,24 +350,35 @@ end
 -----------------------------------------
 -- consumables
 
--- Your spec's consumables: { { id, note, sources, count } }, or nil without a hand-picked list.
+-- Your spec's consumables: { { id, note, sources, count } }, or nil without a hand-picked list. Only what's open at
+-- your stage: an entry with alternatives (Mageblood Elixir, then Elixir of Greater Intellect) shows the
+-- first of them that does; one without and nothing open by then (Dirge's chops before Ahn'Qiraj) isn't shown.
 function G.ConsumablesFor()
 	local list = G.consumables and G.consumables[P.profileKey]
 	if not list then return nil end
-	local out = {}
+	local out, taken = {}, false
 	for _, t in ipairs(list) do
-		local x = G.extraItems[t[1]]
-		local srcs = {}
-		for _, s in ipairs(x and x[4] or {}) do
-			local src = G.ReadSource(s)
-			if src then table.insert(srcs, src) end
+		if not t[3] then taken = false end
+		if not taken then
+			local x = G.extraItems[t[1]]
+			local srcs, first = {}, nil
+			for _, s in ipairs(x and x[4] or {}) do
+				local src = G.ReadSource(s)
+				if src then
+					table.insert(srcs, src)
+					first = math.min(first or 99, src.stage or 0)
+				end
+			end
+			if (first or 0) <= P.stage then
+				taken = true
+				table.sort(srcs, function (a, b)
+					if a.open ~= b.open then return a.open end
+					return (a.tier or 0) < (b.tier or 0)
+				end)
+				table.insert(out, { id = t[1], note = t[2] ~= "" and t[2] or nil, sources = srcs, name = x and x[1],
+					count = GetItemCount and GetItemCount(t[1]) or 0 })
+			end
 		end
-		table.sort(srcs, function (a, b)
-			if a.open ~= b.open then return a.open end
-			return (a.tier or 0) < (b.tier or 0)
-		end)
-		table.insert(out, { id = t[1], note = t[2] ~= "" and t[2] or nil, sources = srcs, name = x and x[1],
-			count = GetItemCount and GetItemCount(t[1]) or 0 })
 	end
 	return out
 end
