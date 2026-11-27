@@ -44,8 +44,14 @@ BUILDS = {
     "PRIEST:3": ("PRIEST", "GearBIS: Shadow", "tavern",
                  "C22222A2222255566888C666559999aeefffhjjddmmmkkpqqqqqssuuuxyyyFFFFFI9C00011A9",
                  "warcrafttavern.com/wotlk/guides/pve-shadow-priest-talents-builds-glyphs"),
+    "WARLOCK:1": ("WARLOCK", "GearBIS: Affliction", "tavern",
+                  "A00222227711999C1111122222aaaaacA1fffddhggggglllllooopppppuuuxywwwEEEEEI66",
+                  "the user's Warcraft Tavern link (55/0/16)"),
     "WARLOCK:2": ("WARLOCK", "GearBIS: Demonology", "wowhead", "IZ0GchkAbihsgzAoE00Vb",
                   "warcrafttavern.com/wotlk/guides/pve-demonology-warlock-talents-builds-glyphs (Deep Demonology)"),
+    "WARLOCK:3": ("WARLOCK", "GearBIS: Destruction", "tavern",
+                  "B1112223666bbbC222226664488aaaaaccddhhhimmmmmpqqqrrrtttttwwwxyyyuEEEEEIu5",
+                  "the user's Warcraft Tavern link (0/13/58)"),
 }
 
 CLASS = {1: "WARRIOR", 2: "PALADIN", 4: "HUNTER", 8: "ROGUE", 16: "PRIEST", 32: "DEATHKNIGHT", 64: "SHAMAN",

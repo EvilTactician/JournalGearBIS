@@ -993,15 +993,21 @@ local function build(panel)
 					st.icon:SetTexture(GetItemIcon and GetItemIcon(e.item.id) or J.ItemIcon(e.item.id))
 					st.icon:SetDesaturated(not e.open)
 					-- the main hand mixes one- and two-handers: which this one is
-					local hands = ""
+					-- (a long name like Atiesh's gets the shorter wording, so "better" isn't cut off)
+					st.name:SetWidth(width - 230)
+					st.name:SetText(itemName(e.item))
 					if r.mixedHands or e.handsCompare then
 						local cmp = e.handsCompare
 						local wins = cmp and ((e.item.inv == 17) == cmp.twoWins)
-						hands = (e.item.inv == 17 and "two-hand" or "one-hand, with an off-hand") .. (wins and ": the better choice" or "")
-						hands = "  |cff9d9d9d(" .. hands .. ")|r"
+						local kind = e.item.inv == 17 and "two-hand" or "one-hand"
+						local tries = { (e.item.inv == 17 and "two-hand" or "one-hand, with an off-hand")
+								.. (wins and ": the better choice" or ""),
+							kind .. (wins and ": better" or ""), wins and "better" or kind }
+						for _, t in ipairs(tries) do
+							st.name:SetText(itemName(e.item) .. "  |cff9d9d9d(" .. t .. ")|r")
+							if st.name:GetStringWidth() <= width - 230 then break end
+						end
 					end
-					st.name:SetText(itemName(e.item) .. hands)
-					st.name:SetWidth(width - 230)
 					-- an optional extra (Manual Crowd Pummeler) says so on its line too, not just in its tooltip
 					local note = G.curatedNotes and G.curatedNotes[e.item.id]
 					st.source:SetText(G.SourceText(e.src) .. ((note and note:find("^Optional")) and hint("optional") or ""))
