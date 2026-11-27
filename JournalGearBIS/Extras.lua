@@ -565,6 +565,53 @@ G.enchantProcs = {
 }
 
 G.glyphs = {
+	MAGE_ARCANE = {
+		major = {
+			{ 44955, 62210, 315, 8, 64, "", "Glyph of Arcane Blast" },
+			{ 42735, 56363, 115, 0, 15, "", "Glyph of Arcane Missiles" },
+			{ 42751, 56382, 385, 13, 62, "", "Glyph of Molten Armor" },
+			{ 42750, 56367, 280, 0, 30, "", "Glyph of Mana Gem" },
+			{ 42738, 56380, 155, 0, 20, "", "Glyph of Evocation" },
+		},
+		minor = {
+			{ 43339, 57924, 75, 0, 15, "", "Glyph of Arcane Intellect" },
+			{ 43364, 57925, 75, 0, 15, "", "Glyph of Slow Fall" },
+			{ 43357, 57926, 100, 0, 20, "", "Glyph of Fire Ward" },
+			{ 43360, 57927, 125, 0, 22, "", "Glyph of Frost Ward" },
+		},
+	},
+	MAGE_FIRE = {
+		major = {
+			{ 45737, 63091, 425, 13, 60, "Living Bomb", "Glyph of Living Bomb" },
+			{ 42751, 56382, 385, 13, 62, "", "Glyph of Molten Armor" },
+			{ 44684, 61205, 385, 13, 75, "Ice Shards", "Glyph of Frostfire" },
+			{ 42739, 56368, 385, 13, 15, "", "Glyph of Fireball" },
+			{ 42747, 56371, 205, 0, 20, "", "Glyph of Scorch" },
+			{ 42750, 56367, 280, 0, 30, "", "Glyph of Mana Gem" },
+			{ 42738, 56380, 155, 0, 20, "", "Glyph of Evocation" },
+		},
+		minor = {
+			{ 43339, 57924, 75, 0, 15, "", "Glyph of Arcane Intellect" },
+			{ 43364, 57925, 75, 0, 15, "", "Glyph of Slow Fall" },
+			{ 43357, 57926, 100, 0, 20, "", "Glyph of Fire Ward" },
+			{ 43360, 57927, 125, 0, 22, "", "Glyph of Frost Ward" },
+		},
+	},
+	MAGE_FROST = {
+		major = {
+			{ 50045, 70937, 250, 0, 50, "Summon Water Elemental", "Glyph of Eternal Water" },
+			{ 42742, 56370, 385, 13, 15, "", "Glyph of Frostbolt" },
+			{ 42751, 56382, 385, 13, 62, "", "Glyph of Molten Armor" },
+			{ 42750, 56367, 280, 0, 30, "", "Glyph of Mana Gem" },
+			{ 42738, 56380, 155, 0, 20, "", "Glyph of Evocation" },
+		},
+		minor = {
+			{ 43339, 57924, 75, 0, 15, "", "Glyph of Arcane Intellect" },
+			{ 43364, 57925, 75, 0, 15, "", "Glyph of Slow Fall" },
+			{ 43357, 57926, 100, 0, 20, "", "Glyph of Fire Ward" },
+			{ 43360, 57927, 125, 0, 22, "", "Glyph of Frost Ward" },
+		},
+	},
 	ROGUE_SWORDS = {
 		major = {
 			{ 42973, 56810, 235, 0, 15, "", "Glyph of Slice and Dice" },
@@ -788,6 +835,33 @@ G.consumables = {
 		{ 18254, "" }, -- Runn Tum Tuber Surprise
 		{ 13444, "" }, -- Major Mana Potion
 	},
+	MAGE_ARCANE = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 13454, "" }, -- Greater Arcane Elixir
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
+	MAGE_FIRE = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 21546, "" }, -- Elixir of Greater Firepower
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
+	MAGE_FROST = {
+		{ 13512, "" }, -- Flask of Supreme Power
+		{ 13454, "" }, -- Greater Arcane Elixir
+		{ 20749, "Put it on your weapon." }, -- Brilliant Wizard Oil
+		{ 20750, "Put it on your weapon.", true }, -- Wizard Oil
+		{ 18254, "" }, -- Runn Tum Tuber Surprise
+		{ 13444, "" }, -- Major Mana Potion
+		{ 12662, "Costs some health." }, -- Demonic Rune
+	},
 	DRUID_BALANCE = {
 		{ 13512, "" }, -- Flask of Supreme Power
 		{ 13454, "" }, -- Greater Arcane Elixir
@@ -994,6 +1068,26 @@ G.talentBuilds = {
 		{  },
 		{ { 1, 2, 3 }, { 1, 3, 3 }, { 1, 4, 1 }, { 2, 3, 3 }, { 3, 4, 3 } },
 		{ { 1, 3, 5 }, { 2, 1, 2 }, { 2, 2, 1 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 5 }, { 4, 1, 2 }, { 4, 2, 2 }, { 5, 2, 3 }, { 5, 3, 1 }, { 6, 3, 5 }, { 7, 2, 1 }, { 7, 3, 3 }, { 7, 4, 3 }, { 8, 2, 5 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+	} },
+	["MAGE_ARCANE"] = { class = "MAGE", name = "GearBIS: Arcane", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 3 }, { 2, 3, 5 }, { 3, 2, 3 }, { 3, 3, 3 }, { 3, 4, 1 }, { 4, 3, 2 }, { 4, 4, 3 }, { 5, 2, 1 }, { 5, 4, 5 }, { 6, 2, 3 }, { 6, 3, 2 }, { 7, 1, 3 }, { 7, 2, 1 }, { 8, 2, 2 }, { 8, 3, 5 }, { 9, 3, 5 }, { 10, 2, 3 }, { 10, 3, 2 } },
+		{ { 1, 2, 3 } },
+		{ { 1, 2, 2 }, { 1, 3, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 1 } },
+	} },
+	["MAGE_FIRE"] = { class = "MAGE", name = "GearBIS: Fire (Torment the Weak)", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 3 }, { 3, 3, 1 }, { 3, 4, 1 }, { 4, 4, 3 } },
+		{ { 1, 3, 5 }, { 2, 1, 5 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 1 }, { 3, 4, 2 }, { 4, 1, 3 }, { 4, 4, 3 }, { 5, 1, 3 }, { 5, 2, 3 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 3, 3 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{  },
+	} },
+	["MAGE_FIRE/2"] = { class = "MAGE", name = "GearBIS: Fire (Frostfire Bolt)", ranks = {
+		{  },
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 1, 5 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 1 }, { 3, 4, 2 }, { 4, 1, 3 }, { 4, 4, 3 }, { 5, 1, 3 }, { 5, 2, 3 }, { 5, 3, 1 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 3, 2 }, { 8, 3, 3 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{ { 1, 2, 2 }, { 1, 3, 3 }, { 2, 1, 3 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 1, 3 }, { 3, 2, 1 } },
+	} },
+	["MAGE_FROST"] = { class = "MAGE", name = "GearBIS: Frost", ranks = {
+		{ { 1, 1, 2 }, { 1, 2, 3 }, { 2, 3, 5 }, { 3, 2, 3 }, { 3, 3, 1 }, { 3, 4, 1 }, { 4, 4, 3 } },
+		{  },
+		{ { 1, 2, 5 }, { 1, 3, 3 }, { 2, 1, 3 }, { 2, 3, 3 }, { 3, 1, 3 }, { 3, 2, 1 }, { 4, 1, 2 }, { 4, 2, 3 }, { 4, 3, 3 }, { 5, 2, 1 }, { 6, 3, 3 }, { 7, 2, 1 }, { 7, 3, 5 }, { 8, 2, 2 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
 	} },
 }
 

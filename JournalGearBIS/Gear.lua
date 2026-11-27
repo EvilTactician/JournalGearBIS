@@ -324,51 +324,57 @@ local function build(panel)
 		end
 		return ranks
 	end
-	local talentButton = CreateFrame("Button", nil, body)
-	talentButton:SetSize(20, 20)
-	talentButton.icon = talentButton:CreateTexture(nil, "ARTWORK")
-	talentButton.icon:SetAllPoints(talentButton)
-	talentButton.icon:SetTexture("Interface\\Icons\\INV_Misc_Book_11")
-	talentButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
 	local function talentSaved(b)
 		local api, ranks = dragonAPI(), buildRanks(b)
 		return api and ranks and type(api.HasTalentBuild) == "function" and api.HasTalentBuild(b.class, b.name, ranks)
 	end
-	talentButton:SetScript("OnEnter", function (self)
-		local b = self.build
-		if not b then return end
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:AddLine("Talent build: " .. b.name)
-		if talentSaved(b) then
-			GameTooltip:AddLine("Already in DragonUI's talent builds.", 0.25, 1, 0.25, true)
-		else
-			GameTooltip:AddLine("Click to save this level 80 build to DragonUI's talent builds, where you can "
-				.. "follow it as a plan. Below level 80, spend your points along it as far as they go.", 1, 1, 1, true)
-		end
-		GameTooltip:AddLine("From Warcraft Tavern's guide for the spec.", 0.6, 0.6, 0.6, true)
-		GameTooltip:Show()
-	end)
-	talentButton:SetScript("OnLeave", function () GameTooltip:Hide() end)
-	talentButton:SetScript("OnClick", function (self)
-		local b, api = self.build, dragonAPI()
-		if not b or not api then return end
-		local ranks = buildRanks(b)
-		local tag = "|cffffd100GearBIS:|r "
-		if not ranks then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "this build doesn't fit your talent trees, so it wasn't saved.")
-			return
-		end
-		local result, err = api.SaveTalentBuild(b.class, b.name, ranks, 80)
-		if result == "exists" then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. b.name .. " is already in DragonUI's talent builds.")
-		elseif result then
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "Saved " .. b.name .. " to DragonUI's talent builds.")
-		else
-			DEFAULT_CHAT_FRAME:AddMessage(tag .. "DragonUI didn't save the build" .. (err and (": " .. err) or "") .. ".")
-		end
-		if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end
-		self.icon:SetDesaturated(talentSaved(b) and true or false)
-	end)
+	-- one book per build: most lists have one, a few a second (Fire mage: Torment the Weak and Frostfire Bolt)
+	local function newTalentButton(icon)
+		local talentButton = CreateFrame("Button", nil, body)
+		talentButton:SetSize(20, 20)
+		talentButton.icon = talentButton:CreateTexture(nil, "ARTWORK")
+		talentButton.icon:SetAllPoints(talentButton)
+		talentButton.icon:SetTexture(icon)
+		talentButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+		talentButton:SetScript("OnEnter", function (self)
+			local b = self.build
+			if not b then return end
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:AddLine("Talent build: " .. b.name)
+			if talentSaved(b) then
+				GameTooltip:AddLine("Already in DragonUI's talent builds.", 0.25, 1, 0.25, true)
+			else
+				GameTooltip:AddLine("Click to save this level 80 build to DragonUI's talent builds, where you can "
+					.. "follow it as a plan. Below level 80, spend your points along it as far as they go.", 1, 1, 1, true)
+			end
+			GameTooltip:AddLine("From Warcraft Tavern's guide for the spec.", 0.6, 0.6, 0.6, true)
+			GameTooltip:Show()
+		end)
+		talentButton:SetScript("OnLeave", function () GameTooltip:Hide() end)
+		talentButton:SetScript("OnClick", function (self)
+			local b, api = self.build, dragonAPI()
+			if not b or not api then return end
+			local ranks = buildRanks(b)
+			local tag = "|cffffd100GearBIS:|r "
+			if not ranks then
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. "this build doesn't fit your talent trees, so it wasn't saved.")
+				return
+			end
+			local result, err = api.SaveTalentBuild(b.class, b.name, ranks, 80)
+			if result == "exists" then
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. b.name .. " is already in DragonUI's talent builds.")
+			elseif result then
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. "Saved " .. b.name .. " to DragonUI's talent builds.")
+			else
+				DEFAULT_CHAT_FRAME:AddMessage(tag .. "DragonUI didn't save the build" .. (err and (": " .. err) or "") .. ".")
+			end
+			if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end
+			self.icon:SetDesaturated(talentSaved(b) and true or false)
+		end)
+		return talentButton
+	end
+	local talentButtons = { newTalentButton("Interface\\Icons\\INV_Misc_Book_11"),
+		newTalentButton("Interface\\Icons\\INV_Misc_Book_09") }
 
 	-- consumables: a row of icons at the top right, each with how to get it on hover
 	local consumables = CreateFrame("Frame", nil, body)
@@ -864,12 +870,21 @@ local function build(panel)
 			or "|cff9d9d9dProgression isn't on for you here|r")
 		-- the talent build button: after the menu, or after the title without one
 		local _, cls = UnitClass("player")
-		local b = G.talentBuilds and (G.talentBuilds[v.profileKey] or G.talentBuilds[cls .. ":" .. (v.treeIndex or 0)])
-		talentButton.build = (b and b.class == cls and dragonAPI()) and b or nil
-		setShown(talentButton, talentButton.build ~= nil)
-		talentButton:ClearAllPoints()
-		talentButton:SetPoint("LEFT", titleTail, "RIGHT", 8, 0)
-		if talentButton.build then talentButton.icon:SetDesaturated(talentSaved(talentButton.build) and true or false) end
+		-- a second build is stored as KEY/2, its book right after the first
+		local builds = G.talentBuilds or {}
+		local key = builds[v.profileKey] and v.profileKey or (cls .. ":" .. (v.treeIndex or 0))
+		local anchor = titleTail
+		for i, talentButton in ipairs(talentButtons) do
+			local b = builds[i == 1 and key or (key .. "/" .. i)]
+			talentButton.build = (b and b.class == cls and dragonAPI()) and b or nil
+			setShown(talentButton, talentButton.build ~= nil)
+			talentButton:ClearAllPoints()
+			talentButton:SetPoint("LEFT", anchor, "RIGHT", i == 1 and 8 or 4, 0)
+			if talentButton.build then
+				talentButton.icon:SetDesaturated(talentSaved(talentButton.build) and true or false)
+				anchor = talentButton
+			end
+		end
 
 		-- consumables, left of the menu when it's there
 		local list = {}

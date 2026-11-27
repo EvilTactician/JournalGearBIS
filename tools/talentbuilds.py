@@ -52,6 +52,18 @@ BUILDS = {
     "WARLOCK:3": ("WARLOCK", "GearBIS: Destruction", "tavern",
                   "B1112223666bbbC222226664488aaaaaccddhhhimmmmmpqqqrrrtttttwwwxyyyuEEEEEIu5",
                   "the user's Warcraft Tavern link (0/13/58)"),
+    "MAGE_ARCANE": ("MAGE", "GearBIS: Arcane", "tavern",
+                    "A0011122266666999aaabeefffhjjjjjlllmmooopttuuuuuyyyyyEEEFFB111C11222556669",
+                    "warcrafttavern.com/wotlk/guides/pve-arcane-mage-talents-builds-glyphs (Standard: its 66 points, "
+                    "and the user's pick for the 5 left: Student of the Mind 3, Arcane Meditation 2)"),
+    # A list with a second build: KEY/2, shown as a second book after the first.
+    "MAGE_FIRE": ("MAGE", "GearBIS: Fire (Torment the Weak)", "wowhead", "of0fck0cZ0EcbRhIhVubhct",
+                  "warcrafttavern.com/wotlk/guides/pve-fire-mage-talents-builds-glyphs (Torment the Weak)"),
+    "MAGE_FIRE/2": ("MAGE", "GearBIS: Fire (Frostfire Bolt)", "wowhead", "oZfVcbRhIuVubhctMIfco",
+                    "warcrafttavern.com/wotlk/guides/pve-fire-mage-talents-builds-glyphs (Frostfire Bolt)"),
+    "MAGE_FROST": ("MAGE", "GearBIS: Frost", "tavern",
+                   "A0011166666baC111116664448889ccdddh222eeemmmqqqqqttuupxyyywwwEEEEEIA999fff",
+                   "warcrafttavern.com/wotlk/guides/pve-frost-mage-talents-builds-glyphs (Standard)"),
 }
 
 CLASS = {1: "WARRIOR", 2: "PALADIN", 4: "HUNTER", 8: "ROGUE", 16: "PRIEST", 32: "DEATHKNIGHT", 64: "SHAMAN",
