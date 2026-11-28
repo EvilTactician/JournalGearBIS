@@ -793,7 +793,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 
 	return {
 		row = row, owned = owned, steps = shown, upgrades = upgrades, final = final,
-		best = final == nil, openSteps = #steps, candidates = cands,
+		best = final == nil, openSteps = #steps, candidates = cands, ohRef = row.key == "MH" and ohRef or nil,
 	}
 end
 
@@ -1169,11 +1169,56 @@ local function upgradeRow(view, id, carried)
 	elseif owns(view, id) then
 		return nil
 	end
+	-- Weapons for a caster or hunter go as a pair, against the pair you wear (not the off-hand the list plans
+	-- with): a two-hander against your main hand and off-hand together; a one-hander or off-hand while you wear a
+	-- two-hander together with the best item for the other hand in your bags (or else the best you can get now).
+	local mhRow, ohRow
+	if view.profile.weapons == "caster" or view.profile.weapons == "hunter" then
+		for _, r in ipairs(view.rows) do
+			if r.row.key == "MH" then mhRow = r elseif r.row.key == "OH" then ohRow = r end
+		end
+	end
+	local pairOf
+	if mhRow then
+		local ohRef = mhRow.ohRef or 0
+		local main = view.worn[16]
+		local twoOn = main and main.twoHand
+		local ohWorn = ohRow and ohRow.owned.value or 0
+		local mhOwn = main and (twoOn and mhRow.owned.value or (mhRow.owned.value - ohRef)) or 0
+		local current = twoOn and mhOwn or (mhOwn + ohWorn)
+		local function bestCarried(row, own)
+			local best
+			for _, c in ipairs(row and row.candidates or {}) do
+				if view.bags[c.item.id] and (row ~= mhRow or c.item.inv ~= 17) then best = math.max(best or 0, own(c)) end
+			end
+			return best
+		end
+		local mhOnly = function (c) return c.value - ohRef end
+		local mhOpen
+		for _, c in ipairs(mhRow.candidates) do
+			if c.open and c.item.inv ~= 17 and not c.weak then mhOpen = math.max(mhOpen or 0, mhOnly(c)) end
+		end
+		pairOf = function (r, c)
+			if r == mhRow and c.item.inv == 17 then return c.value, current end
+			if r == mhRow then
+				local partner = twoOn and (bestCarried(ohRow, function (o) return o.value end) or ohRef) or ohWorn
+				return mhOnly(c) + partner, current
+			end
+			if r == ohRow and twoOn then
+				return c.value + (bestCarried(mhRow, mhOnly) or mhOpen or 0), current
+			end
+		end
+	end
 	for _, r in ipairs(view.rows) do
-		if not r.hidden then
+		if not r.hidden or (pairOf and r == ohRow) then
 			for _, c in ipairs(r.candidates) do
-				if c.item.id == id and c.item.req <= view.level + 2 and c.value >= r.owned.value * G.TOOLTIP_GAIN + 0.5 then
-					return r
+				if c.item.id == id and c.item.req <= view.level + 2 then
+					local value, base = c.value, r.owned.value
+					if pairOf then
+						local v, b = pairOf(r, c)
+						if v then value, base = v, b end
+					end
+					if value >= base * G.TOOLTIP_GAIN + 0.5 then return r end
 				end
 			end
 		end
