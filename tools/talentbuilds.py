@@ -52,6 +52,16 @@ BUILDS = {
     "WARLOCK:3": ("WARLOCK", "Gear Guide: Destruction", "tavern",
                   "B1112223666bbbC222226664488aaaaaccddhhhimmmmmpqqqrrrtttttwwwxyyyuEEEEEIu5",
                   "the user's Warcraft Tavern link (0/13/58)"),
+    # Fury with or without Titan's Grip: the one Fury build (class:tree keys reach both lists)
+    "WARRIOR:1": ("WARRIOR", "Gear Guide: Arms", "tavern",
+                  "A0002244666889aabbbdddeeeggggghnnpqqsttuuwwwxyyEEEEIEtrrkkB00022222666888",
+                  "the user's Warcraft Tavern link (Standard, 57/14/0)"),
+    "WARRIOR:2": ("WARRIOR", "Gear Guide: Fury", "tavern",
+                  "B2222200011bbbbbccccchgggemmmmmpooorvvvvvxyyyrEEEEEIA2200066655aabbbddd9Bk",
+                  "the user's Warcraft Tavern link (Standard, 19/52/0, with Titan's Grip)"),
+    "WARRIOR:3": ("WARRIOR", "Gear Guide: Protection", "tavern",
+                  "B000A0001111144aabbbC1111122255566666899aabbbbbgghiimmmmmooptttwxyyyEEEFFI",
+                  "the user's Warcraft Tavern link (15/3/53)"),
     "MAGE_ARCANE": ("MAGE", "Gear Guide: Arcane", "tavern",
                     "A0011122266666999aaabeefffhjjjjjlllmmooopttuuuuuyyyyyEEEFFB111C11222556669",
                     "warcrafttavern.com/wotlk/guides/pve-arcane-mage-talents-builds-glyphs (Standard: its 66 points, "

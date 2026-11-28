@@ -1,16 +1,16 @@
-# Journal: Gear Guide 0.5.0
+# Journal: Gear Guide 0.5.2
 
 > [!WARNING]
-> **Early alpha (version 0.5.0-alpha).** Journal: Gear Guide is in active development and isn't ready for a
+> **Early alpha (version 0.5.2-alpha).** Journal: Gear Guide is in active development and isn't ready for a
 > live realm or a proper playthrough yet. Expect missing pieces, rough edges and lists that change between
-> versions. Only **Rogue**, **Priest**, **Druid**, **Warlock** and **Mage** have hand-picked lists so far; every other class runs on
+> versions. Only **Rogue**, **Priest**, **Druid**, **Warlock**, **Mage** and **Warrior** have hand-picked lists so far; every other class runs on
 > stat weights alone. The full version (1.0) is coming soon.
 
 <div align="center">
 
 ![Interface Version](https://img.shields.io/badge/Interface-30300-blue)
 ![WoW Version](https://img.shields.io/badge/WoW-3.3.5a-orange)
-[![Version](https://img.shields.io/badge/Version-0.5.0-green)](https://github.com/EvilTactician/JournalGearGuide)
+[![Version](https://img.shields.io/badge/Version-0.5.2-green)](https://github.com/EvilTactician/JournalGearGuide)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 **A World of Warcraft 3.3.5a addon that adds a Gear Guide tab to [mod-forever-journal](https://github.com/EvilTactician/wow-mod-forever-journal), for realms
@@ -41,6 +41,8 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
 - **Stat caps** count: past the hit cap (and expertise and armor penetration caps), more of that stat is
   worth nothing, so an enchant that gives it loses out. Spell hit from talents counts toward the cap too
   (Suppression, Elemental Precision, Shadow Focus, Arcane Focus), as long as it covers your spec's spells.
+  A warrior or paladin tank's defense counts up to 440, where bosses can't land critical strikes on you
+  (bears get that from a talent instead).
 - **Glyphs:** at the bottom of the list, the three major and three minor glyphs for your spec, best first:
   the best you can use, never the same glyph twice. The ones you have count whichever socket they're in;
   your open sockets go to the best ones first (two of each kind until level 70 and 80). A missing one goes in an
@@ -58,7 +60,7 @@ what you're wearing, it says **Best in Slot until The Burning Crusade**.
   have the profession at the skill it needs, and only when it's clearly better than what you can get
   otherwise: it's often costly and hard to make.
 
-Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest**, **Druid**, **Warlock** and **Mage**.
+Glyphs and consumables are hand-picked, so for now they're there for **Rogue**, **Priest**, **Druid**, **Warlock**, **Mage** and **Warrior**.
 
 - **Talent builds (with DragonUI):** a book icon at the end of the title saves a level 80 talent build for
   your spec to DragonUI's talent builds, named "Gear Guide: …" so you can tell where it came from. There you
@@ -157,6 +159,10 @@ the off-hand row keeps going until you have the staff. The better of the two in 
 the one-hander with the best off-hand) says "the better choice". The list follows what you wear: with a one-hander on, the
 off-hand row stays even when the only upgrade left is a two-hander; with the two-hander on, it goes.
 
+**Titan's Grip:** a Fury warrior with Titan's Grip gets the **Fury (Titan's Grip)** list, where either hand
+takes a two-hander or a one-hander (each step says which). Titan's Grip costs 10% damage with a two-hander
+on, so two-handers count for that much less. Without the talent, the Fury list is two one-handers.
+
 **Feral weapons:** in Cat and Bear Form a weapon's damage doesn't count, but the realm turns any weapon's
 damage past 54.8 per second into feral attack power (14 for each point above it). Only two-handers get
 there, so a feral druid's list shows two-handed weapons only, with no off-hand.
@@ -213,7 +219,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 - **Hand-picked items** in `Curated.lua` win their raid or dungeon step over the stat-weighted pick. In
   this alpha they cover **Rogue** (swords and maces, and daggers), **Priest** (Holy and Discipline, and
   Shadow), **Druid** (Balance, Feral cat, Feral bear and Restoration), **Warlock** (Affliction and
-  Demonology, and Destruction) and **Mage** (Arcane, Fire and Frost).
+  Demonology, and Destruction), **Mage** (Arcane, Fire and Frost) and **Warrior** (Arms; Fury, with and
+  without Titan's Grip; Protection).
 
 ## Versions
 
@@ -228,7 +235,8 @@ different stage for a raid on your realm, the tab uses the realm's.
 | 0.3.1 to 0.3.4-alpha | Warlock: hand-picked lists, glyphs and consumables for Affliction and Demonology (shadow) and Destruction (fire); talent builds for all three; spell hit from talents counted toward the hit cap; consumables only once your stage opens them, with a stand-in before then; glyph swaps that fill your open sockets with the best glyphs first. |
 | 0.4.0-alpha | Warlock finished. |
 | 0.4.1 to 0.4.4-alpha | Mage: a list each for Arcane, Fire and Frost, with hand-picked items, glyphs and consumables; talent builds for all three, and two books for Fire (Torment the Weak and Frostfire Bolt). With no talent points spent, the title names the list it shows, in grey. Renamed from JournalGearBIS to JournalGearGuide (the Gear Guide tab); green upgrade arrows on item icons. |
-| **0.5.0-alpha** (now) | Mage finished, as Journal: Gear Guide. |
+| 0.5.0-alpha | Mage finished, as Journal: Gear Guide. |
+| **0.5.1 to 0.5.2-alpha** (now) | Warrior: hand-picked lists, glyphs and consumables for Arms, Fury and Protection, a Fury (Titan's Grip) list, the tank defense cap, and talent builds for all three. Upgrade arrows judge a one-hander and an off-hand as a pair against a two-hander; a craft whose recipe drops in a raid is that raid's step. |
 | 0.6.0-alpha and on | One more class's hand-picked lists in each version. |
 | **1.0.0** | The full Classic version: every class's lists worked out. |
 | later updates | The Burning Crusade lists, then Wrath of the Lich King. |
@@ -297,7 +305,8 @@ python3 tools/gen.py         # writes the Lua files into JournalGearGuide/
   theorycrafted one.
 - **Crafted gear** comes from hand-picked items (Devilsaur, Truefaith Vestments, Hide of the Wild) and
   profession gear (Engineering goggles); other crafted gear isn't on the lists yet. Crafted gear that binds
-  on pickup (Truefaith Vestments, Robe of the Void) only shows for a crafter of that profession.
+  on pickup (Truefaith Vestments, Robe of the Void) only shows for a crafter of that profession. Crafted
+  gear whose recipe drops in a raid (Lionheart Helm) comes after the dungeon steps, as that raid's step.
 - **Consumables found only in the open world** (Winterfall Firewater) have a note in place of a source:
   only instance drops, quests, vendors and crafting are worked out.
 - **Random-enchant items** you wear ("of the Monkey") are read from their tooltip, in English.

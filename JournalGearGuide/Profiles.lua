@@ -3,8 +3,9 @@
 --   weights: per point of a stat, in the profile's own units (attack power for melee and hunters, spell power
 --            for casters and healers, stamina for tanks). Ratings are per rating point.
 --            dps / odps / rdps: per point of main hand / off hand / ranged weapon damage per second.
---   weapons: "dw" two one-handers, "2h" a two-hander, "caster" a one-hander and held item or shield, or a
---            staff, "tank" a one-hander and shield, "hunter" melee stat stick and a bow, gun or crossbow.
+--   weapons: "dw" two one-handers, "tg" a two-hander or one-hander in each hand (Titan's Grip), "2h" a
+--            two-hander, "caster" a one-hander and held item or shield, or a staff, "tank" a one-hander and
+--            shield, "hunter" melee stat stick and a bow, gun or crossbow.
 --   mh / oh: weapon subclasses allowed in that hand (4 mace, 7 sword, 13 fist, 15 dagger); none = any.
 --   ranged:  "ranged" bows, guns, crossbows and thrown; "wand"; "relic" (libram, idol or totem).
 --   speed:   per hand, { speed, worth per second away from it, "slow" or "fast" }: a weapon quicker ("fast":
@@ -20,6 +21,8 @@ G.profiles = {
 	WARRIOR_ARMS = { class = "WARRIOR", name = "Arms", role = "Melee damage", weapons = "2h", ranged = "ranged",
 		weights = { agi = 1, ap = 1, arp = 0.3, crit = 1.3, dps = 12, exp = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, rdps = 0.3, sta = 0.1, str = 2, wskill = 0.5 } },
 	WARRIOR_FURY = { class = "WARRIOR", name = "Fury", role = "Melee damage", weapons = "dw", ranged = "ranged",
+		weights = { agi = 1, ap = 1, arp = 0.3, crit = 1.3, dps = 10, exp = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, odps = 5, rdps = 0.3, sta = 0.1, str = 2, wskill = 0.5 } },
+	WARRIOR_FURY_TG = { class = "WARRIOR", name = "Fury (Titan's Grip)", role = "Melee damage", weapons = "tg", ranged = "ranged",
 		weights = { agi = 1, ap = 1, arp = 0.3, crit = 1.3, dps = 10, exp = 1, haste = 0.8, hit = 1.6, mcrit = 1.3, mhaste = 0.8, mhit = 1.6, odps = 5, rdps = 0.3, sta = 0.1, str = 2, wskill = 0.5 } },
 	WARRIOR_PROT = { class = "WARRIOR", name = "Protection", role = "Tank", weapons = "tank", ranged = "ranged",
 		weights = { agi = 0.6, ap = 0.1, armor = 0.06, block = 0.5, bv = 0.3, def = 1.2, dodge = 1, dps = 2, exp = 0.4, hit = 0.3, mhit = 0.3, parry = 0.9, rdps = 0.1, sta = 1, str = 0.4 } },

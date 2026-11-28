@@ -156,9 +156,13 @@ def fits(prof, it, slot):
     if slot == "MH":
         if kind == "2h":
             return inv == 17
+        if kind == "tg":
+            return inv in (13, 17, 21)
         ok = inv in (13, 21) or (inv == 17 and kind in ("caster", "hunter"))
         return ok and (prof.get("mh") is None or sub in prof["mh"] or inv == 17)
     if slot == "OH":
+        if kind == "tg":
+            return inv in (13, 17, 22)
         if kind == "dw" or kind == "hunter":
             return inv in (13, 22) and (prof.get("oh") is None or sub in prof["oh"])
         if kind == "tank":
@@ -263,6 +267,54 @@ from crafts import Crafts as _Crafts
 early_crafts = _Crafts(BUILD, lambda t: db[t].rows, items, SPELLS)
 
 
+def stage_of_rank(rank):
+    """The stage a profession reaches a skill at: Artisan (300) before 8, Master (375) before 13."""
+    return 0 if rank <= 300 else (8 if rank <= 375 else 13)
+
+
+def recipe_way(skill, rank, sid, recipe, label=None, bop=False):
+    """{ "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", the recipe's instance
+    (the one that opens first when it drops in more than one), 1 when it binds on pickup }."""
+    stage, where, inst = stage_of_rank(rank), "from a trainer", 0
+    srcs = sources.get(recipe, [])
+    drops = [s for s in srcs if s["k"] in ("D", "C")]
+    for s in srcs:
+        if s["k"] == "V":
+            stage = max(stage, s["st"])
+            where = "recipe sold by %s" % s["n"]
+            if s["rep"]:
+                where += " (%s)" % ["Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted"][s["rank"]]
+            break
+        if s["k"] in ("D", "C"):
+            # the way is through the soonest open, a dungeon before a raid; the text names each instance (soonest
+            # first, up to three) and, when every one has a boss to name (not a chest), up to two bosses in each
+            # ("Ragnaros in Molten Core or Onyxia in Onyxia's Lair"); otherwise the instances alone
+            key = lambda d: (INSTANCES[d["i"]][3], INSTANCES[d["i"]][1])
+            first = min(drops, key=key)
+            byinst = collections.OrderedDict()
+            for d in sorted(drops, key=key):
+                who = byinst.setdefault(d["i"], [])
+                if d["k"] == "D" and d.get("n") and d["n"] not in who:
+                    who.append(d["n"])
+            insts = list(byinst.items())[:3]
+            if all(who and len(who) <= 2 for _, who in insts):
+                where = "recipe drops from " + " or ".join("%s in %s" % (" or ".join(who), INSTANCES[k][0])
+                                                            for k, who in insts)
+            else:
+                where = "recipe drops in " + " or ".join(INSTANCES[k][0] for k, _ in insts)
+            stage, inst = max(stage, INSTANCES[first["i"]][3]), first["i"]
+            break
+        if s["k"] == "Q":
+            where = "recipe from the quest %s" % s["n"]
+            stage = max(stage, s["st"])
+            break
+    else:
+        if recipe:
+            where = "from a recipe"
+    return "{ \"X\", %s, %d, %d, %d, %s, %d%s }" % (lstr(label or ("Crafted: " + PROFESSIONS[skill])), skill, rank, stage,
+                                                   lstr(where), inst, ", 1" if bop else "")
+
+
 def src_lua(i, crafted=True):
     out = []
     per_inst = collections.defaultdict(list)
@@ -293,15 +345,15 @@ def src_lua(i, crafted=True):
             out.append("{ \"V\", %s, %d, %d, %d, %d }" % (lstr(name), s["price"] or 0, s["rep"] or 0, s["rank"] or 0, s["st"]))
     if items[i]["name"] in CRAFTED:
         way = next(iter(early_crafts.made_by(i)), None)
-        if way and items[i].get("bonding") == 1:
-            # Bind on Pickup: only a crafter with the skill can have it
-            out.append("{ \"X\", %s, %d, %d, 0, \"\", 0, 1 }" % (lstr(CRAFTED[items[i]["name"]]), way[0], way[1]))
+        if way:
+            # with where its recipe comes from; Bind on Pickup: only a crafter with the skill can have it
+            out.append(recipe_way(*way, label=CRAFTED[items[i]["name"]], bop=items[i].get("bonding") == 1))
         else:
             out.append("{ \"X\", %s }" % lstr(CRAFTED[items[i]["name"]]))
     elif crafted:
         for s in sources.get(i, []):
             if s["k"] == "X":
-                out.append("{ \"X\", %s, %d, %d }" % (lstr("Crafted: " + PROFESSIONS[s["skill"]]), s["skill"], s["rank"]))
+                out.append(recipe_way(s["skill"], s["rank"], s["spell"], s["recipe"]))
                 break
     return "{ " + ", ".join(out) + " }"
 
@@ -399,8 +451,9 @@ P.append("--")
 P.append("--   weights: per point of a stat, in the profile's own units (attack power for melee and hunters, spell power")
 P.append("--            for casters and healers, stamina for tanks). Ratings are per rating point.")
 P.append("--            dps / odps / rdps: per point of main hand / off hand / ranged weapon damage per second.")
-P.append("--   weapons: \"dw\" two one-handers, \"2h\" a two-hander, \"caster\" a one-hander and held item or shield, or a")
-P.append("--            staff, \"tank\" a one-hander and shield, \"hunter\" melee stat stick and a bow, gun or crossbow.")
+P.append("--   weapons: \"dw\" two one-handers, \"tg\" a two-hander or one-hander in each hand (Titan's Grip), \"2h\" a")
+P.append("--            two-hander, \"caster\" a one-hander and held item or shield, or a staff, \"tank\" a one-hander and")
+P.append("--            shield, \"hunter\" melee stat stick and a bow, gun or crossbow.")
 P.append("--   mh / oh: weapon subclasses allowed in that hand (4 mace, 7 sword, 13 fist, 15 dagger); none = any.")
 P.append("--   ranged:  \"ranged\" bows, guns, crossbows and thrown; \"wand\"; \"relic\" (libram, idol or totem).")
 P.append("--   speed:   per hand, { speed, worth per second away from it, \"slow\" or \"fast\" }: a weapon quicker (\"fast\":")
@@ -468,11 +521,6 @@ ARMOR_SLOTS = {1: "HEAD", 3: "SHOULDER", 5: "CHEST", 20: "CHEST", 6: "WAIST", 7:
 TWO_HAND, RANGED_GUNS = {1, 5, 6, 8, 10}, {2, 3, 18}
 
 
-def stage_of_rank(rank):
-    """The stage a profession reaches a skill at: Artisan (300) before 8, Master (375) before 13."""
-    return 0 if rank <= 300 else (8 if rank <= 375 else 13)
-
-
 def enchant_stats(e):
     """What an enchant gives, in the profile stat keys; 'proc' names a proc ENCHANT_PROCS can value."""
     r = ENCH.get(e)
@@ -522,30 +570,6 @@ def enchant_slots(sid):
             return {"TWOHAND"}
         return {"WEAPON"}
     return set()
-
-
-def recipe_way(skill, rank, sid, recipe, label=None):
-    """{ "X", "Crafted: Alchemy", profession, skill, stage, "where the recipe comes from", the recipe's instance }."""
-    stage, where, inst = stage_of_rank(rank), "from a trainer", 0
-    for s in sources.get(recipe, []):
-        if s["k"] == "V":
-            stage = max(stage, s["st"])
-            where = "recipe sold by %s" % s["n"]
-            if s["rep"]:
-                where += " (%s)" % ["Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted"][s["rank"]]
-            break
-        if s["k"] in ("D", "C"):
-            where = "recipe drops in %s" % INSTANCES[s["i"]][0]
-            stage, inst = max(stage, INSTANCES[s["i"]][3]), s["i"]
-            break
-        if s["k"] == "Q":
-            where = "recipe from the quest %s" % s["n"]
-            stage = max(stage, s["st"])
-            break
-    else:
-        if recipe:
-            where = "from a recipe"
-    return "{ \"X\", %s, %d, %d, %d, %s, %d }" % (lstr(label or ("Crafted: " + PROFESSIONS[skill])), skill, rank, stage, lstr(where), inst)
 
 
 extra_items = set()

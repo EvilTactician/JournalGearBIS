@@ -122,7 +122,7 @@ end
 G.DEFAULT_TREE = { ROGUE = 2 }
 
 -- Feral druids tank or fight in Cat Form from the same tree: Natural Reaction is a bear's talent only.
-G.ROLE_TALENT = { DRUID_CAT = { "Natural Reaction", "DRUID_BEAR" } }
+G.ROLE_TALENT = { DRUID_CAT = { "Natural Reaction", "DRUID_BEAR" }, WARRIOR_FURY = { "Titan's Grip", "WARRIOR_FURY_TG" } }
 
 -- The profile for a talent group (1 or 2): the tree with the most points.
 function G.TalentProfile(group)
@@ -245,6 +245,13 @@ G.player = P
 
 local function weaponPart(rowKey) return (rowKey == "OH" and "odps") or (rowKey == "RANGED" and "rdps") or "dps" end
 
+-- Titan's Grip: with a two-hander in either hand you do 10% less physical damage, so a two-hander is worth that
+-- much less to a "tg" list.
+local TITANS_GRIP_COST = 0.9
+local function gripCost(prof, twoHand)
+	return (prof.weapons == "tg" and twoHand) and TITANS_GRIP_COST or 1
+end
+
 -- Can the profile use the item there? (MH, OH, RANGED or an armor row)
 function G.Fits(prof, t, rowKey)
 	local inv, sub, kind = t.inv, t.subclass, prof.weapons
@@ -254,10 +261,12 @@ function G.Fits(prof, t, rowKey)
 		return (inv == 15 or inv == 25 or inv == 26) and t.class == 2 and sub ~= 19
 	elseif rowKey == "MH" then
 		if kind == "2h" then return inv == 17 end
+		if kind == "tg" then return inv == 13 or inv == 17 or inv == 21 end
 		if inv == 17 then return kind == "caster" or kind == "hunter" end
 		if inv ~= 13 and inv ~= 21 then return false end
 		return not prof.mh or prof.mh[sub] == true
 	elseif rowKey == "OH" then
+		if kind == "tg" then return inv == 13 or inv == 17 or inv == 22 end
 		if kind == "dw" or kind == "hunter" then
 			return (inv == 13 or inv == 22) and (not prof.oh or prof.oh[sub] == true)
 		end
@@ -422,6 +431,12 @@ local function readSource(s)
 		src.where = s[6] ~= "" and s[6] or nil
 		src.recipeInst = s[7] ~= 0 and s[7] or nil
 		src.bop = s[8] == 1
+		-- a recipe that drops in a raid (Lionheart Helm's plans: Onyxia, Ragnaros): the craft is that raid's step
+		local g = src.recipeInst and G.instances[src.recipeInst]
+		if g and G.IsRaid(g) then
+			src.inst, src.raid = src.recipeInst, true
+			src.tier = TIER_RAID + (G.RAID_ORDER[src.inst] or 0)
+		end
 	else
 		return nil
 	end
@@ -447,7 +462,7 @@ G.Rung = rung
 function G.Difficulty(src)
 	if src.kind == "Q" then return src.inst and 2 or 1 end
 	if src.kind == "V" then return (src.rank or 0) >= 6 and 3 or ((src.rank or 0) >= 5 and 2 or 1) end
-	if src.kind == "X" then return 2 end
+	if src.kind == "X" then return src.raid and 3 or 2 end
 	local c = src.chance or 0
 	-- a world drop: by how long it takes, at about two kills a minute (half an hour or less is easy)
 	if src.kind == "W" then
@@ -544,7 +559,7 @@ local function candidate(t, prof, rowKey, curated)
 		end
 	end
 	if #srcs == 0 then return nil end
-	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey))
+	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey)) * gripCost(prof, t.inv == 17)
 	local pick = curated[t.id]
 	if pick then
 		if type(pick) == "number" then value = math.max(value, pick) end
@@ -621,7 +636,7 @@ local function ownedFor(row, prof, curated)
 	for _, slot in ipairs(row.slots) do
 		local w = P.worn[slot]
 		if w then
-			local value = G.Score(w.stats, prof.weights, part)
+			local value = G.Score(w.stats, prof.weights, part) * gripCost(prof, w.twoHand)
 			-- valued as the same item would be in the list
 			local pick = curated[w.id]
 			if pick then
@@ -784,7 +799,7 @@ function G.BuildRow(row, prof, profileKey, ohRef, exclude)
 
 	return {
 		row = row, owned = owned, steps = shown, upgrades = upgrades, final = final,
-		best = final == nil, openSteps = #steps, candidates = cands,
+		best = final == nil, openSteps = #steps, candidates = cands, ohRef = row.key == "MH" and ohRef or nil,
 	}
 end
 
@@ -1023,6 +1038,18 @@ function G.Build(choice, stage)
 		end
 		if r then table.insert(rows, r) end
 	end
+	-- Titan's Grip: either hand takes either kind, so a hand whose steps mix them says which each is.
+	if prof.weapons == "tg" then
+		for _, r in ipairs(rows) do
+			if r.row.key == "MH" or r.row.key == "OH" then
+				local one, two = false, false
+				for _, c in ipairs(r.steps) do
+					if c.item.inv == 17 then two = true else one = true end
+				end
+				if one and two then r.mixedHands, r.eitherHand = true, true end
+			end
+		end
+	end
 	-- A caster or hunter with a two-hander as the main hand's goal has no use for the off-hand row.
 	if prof.weapons == "caster" or prof.weapons == "hunter" then
 		local mh, ohRow
@@ -1148,11 +1175,56 @@ local function upgradeRow(view, id, carried)
 	elseif owns(view, id) then
 		return nil
 	end
+	-- Weapons for a caster or hunter go as a pair, against the pair you wear (not the off-hand the list plans
+	-- with): a two-hander against your main hand and off-hand together; a one-hander or off-hand while you wear a
+	-- two-hander together with the best item for the other hand in your bags (or else the best you can get now).
+	local mhRow, ohRow
+	if view.profile.weapons == "caster" or view.profile.weapons == "hunter" then
+		for _, r in ipairs(view.rows) do
+			if r.row.key == "MH" then mhRow = r elseif r.row.key == "OH" then ohRow = r end
+		end
+	end
+	local pairOf
+	if mhRow then
+		local ohRef = mhRow.ohRef or 0
+		local main = view.worn[16]
+		local twoOn = main and main.twoHand
+		local ohWorn = ohRow and ohRow.owned.value or 0
+		local mhOwn = main and (twoOn and mhRow.owned.value or (mhRow.owned.value - ohRef)) or 0
+		local current = twoOn and mhOwn or (mhOwn + ohWorn)
+		local function bestCarried(row, own)
+			local best
+			for _, c in ipairs(row and row.candidates or {}) do
+				if view.bags[c.item.id] and (row ~= mhRow or c.item.inv ~= 17) then best = math.max(best or 0, own(c)) end
+			end
+			return best
+		end
+		local mhOnly = function (c) return c.value - ohRef end
+		local mhOpen
+		for _, c in ipairs(mhRow.candidates) do
+			if c.open and c.item.inv ~= 17 and not c.weak then mhOpen = math.max(mhOpen or 0, mhOnly(c)) end
+		end
+		pairOf = function (r, c)
+			if r == mhRow and c.item.inv == 17 then return c.value, current end
+			if r == mhRow then
+				local partner = twoOn and (bestCarried(ohRow, function (o) return o.value end) or ohRef) or ohWorn
+				return mhOnly(c) + partner, current
+			end
+			if r == ohRow and twoOn then
+				return c.value + (bestCarried(mhRow, mhOnly) or mhOpen or 0), current
+			end
+		end
+	end
 	for _, r in ipairs(view.rows) do
-		if not r.hidden then
+		if not r.hidden or (pairOf and r == ohRow) then
 			for _, c in ipairs(r.candidates) do
-				if c.item.id == id and c.item.req <= view.level + 2 and c.value >= r.owned.value * G.TOOLTIP_GAIN + 0.5 then
-					return r
+				if c.item.id == id and c.item.req <= view.level + 2 then
+					local value, base = c.value, r.owned.value
+					if pairOf then
+						local v, b = pairOf(r, c)
+						if v then value, base = v, b end
+					end
+					if value >= base * G.TOOLTIP_GAIN + 0.5 then return r end
 				end
 			end
 		end

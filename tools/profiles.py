@@ -15,7 +15,7 @@ def w(base, **extra):
     return d
 
 
-# weapons: "dw" dual wield, "2h" two-hander only, "caster" one-hand + held/shield or a staff, "tank" one-hand + shield,
+# weapons: "dw" dual wield, "tg" dual wield with two-handers too (Titan's Grip), "2h" two-hander only, "caster" one-hand + held/shield or a staff, "tank" one-hand + shield,
 # "hunter" melee stat stick + ranged.  mh/oh = weapon subclasses allowed there (None = any the class can use).
 # ranged: "ranged" bows/guns/crossbows/thrown, "wand", "relic".
 # speed: per hand, (speed, worth per second away from it, "slow" or "fast"): weapons slower ("fast": quicker) than
@@ -33,6 +33,9 @@ PROFILES = {
                          w=w(MELEE, str=2.0, agi=1.0, dps=12, rdps=0.3)),
     "WARRIOR_FURY": dict(cls="WARRIOR", name="Fury", role="Melee damage", weapons="dw", ranged="ranged",
                          w=w(MELEE, str=2.0, agi=1.0, dps=10, odps=5, rdps=0.3)),
+    # Fury with Titan's Grip (its 51st point): a two-hander or a one-hander in each hand (Engine's ROLE_TALENT)
+    "WARRIOR_FURY_TG": dict(cls="WARRIOR", name="Fury (Titan's Grip)", role="Melee damage", weapons="tg",
+                            ranged="ranged", w=w(MELEE, str=2.0, agi=1.0, dps=10, odps=5, rdps=0.3)),
     "WARRIOR_PROT": dict(cls="WARRIOR", name="Protection", role="Tank", weapons="tank", ranged="ranged",
                          w=w(TANK, str=0.4, agi=0.6, ap=0.1, dps=2, rdps=0.1)),
     "PALADIN_HOLY": dict(cls="PALADIN", name="Holy", role="Healer", weapons="caster", ranged="relic",

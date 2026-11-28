@@ -58,6 +58,51 @@ WARLOCK_COMMON = [
     "Staff of Dominance", "Wraith Blade", "Sapphiron's Left Eye", "Doomfinger",
     (22630, None),  # Atiesh, Greatstaff of the Guardian: the warlock one of the four sharing the name
 ]
+# Arms, Fury and Fury with Titan's Grip share this; each list's own hand rules pick from it.
+WARRIOR_DPS = [
+    # pre-raid
+    "Lionheart Helm", "Mask of the Unforgiven", "Mark of Fordring", "Truestrike Shoulders", "Cape of the Black Baron",
+    "Savage Gladiator Chain", "Vambraces of the Sadist", "Wristguards of Stability", "Devilsaur Gauntlets",
+    "Omokk's Girth Restrainer", "Brigam Girdle", "Devilsaur Leggings", "Battlechaser's Greaves", "Blackstone Ring",
+    "Painweaver Band", ("Hand of Justice", 40), "Blackhand's Breadth", ("Diamond Flask", 30),
+    "Dal'Rend's Sacred Charge", "Dal'Rend's Tribal Guardian", "Rivenspike", "Bone Slicing Hatchet", "Ironfoe",
+    "Arcanite Reaper", "Riphook",
+    # raids
+    "Helm of Endless Rage", "Conqueror's Crown", "Onyxia Tooth Pendant", "Prestor's Talisman of Connivery",
+    "Barbed Choker", "Drake Talon Pauldrons", "Conqueror's Spaulders", "Cloak of Draconic Might",
+    "Drape of Unyielding Strength", "Cloak of the Fallen God", "Shroud of Dominion", (21331, None),  # Conqueror's Breastplate
+    "Breastplate of Annihilation", "Ghoul Skin Tunic", "Hive Defiler Wristguards", "Flameguard Gauntlets",
+    "Gauntlets of Annihilation", "Onslaught Girdle", "Girdle of the Mentor", "Conqueror's Legguards",
+    "Titanic Leggings", "Legguards of the Fallen Crusader", "Chromatic Boots", "Boots of the Fallen Hero",
+    (21333, None),  # Conqueror's Greaves
+    "Quick Strike Ring", "Master Dragonslayer's Ring", "Circle of Applied Force", "Band of Unnatural Forces",
+    "Drake Fang Talisman", ("Badge of the Swarmguard", 45), ("Kiss of the Spider", 45), ("Slayer's Crest", 40),
+    ("Earthstrike", 40), ("Jom Gabbar", 40), (23206, None),  # Mark of the Champion, the melee one
+    "Brutality Blade", "Maladath, Runed Blade of the Black Flight", "Chromatically Tempered Sword",
+    "Crul'shorukh, Edge of Chaos", "Deathbringer", "Spineshatter", "Death's Sting", "Hatchet of Sundered Bone",
+    "Widow's Remorse", "The Hungering Cold", "Bonereaver's Edge", "Obsidian Edged Blade",
+    "Ashkandi, Greatsword of the Brotherhood", "Herald of Woe", "Dark Edge of Insanity", "Might of Menethil",
+    "Severance", "Striker's Mark", "Blastershot Launcher", "Nerubian Slavemaker",
+]
+WARRIOR_TANK = [
+    # pre-raid
+    "Lionheart Helm", "Helm of Valor", "Medallion of the Dawn", "Woven Ivy Necklace", "Stockade Pauldrons",
+    "Ebonsteel Spaulders", "Breastplate of the Chromatic Flight", "Breastplate of Valor", "Vigorsteel Vambraces",
+    "Bracers of Valor", "Stronghold Gauntlets", "Reiver Claws", "Brigam Girdle", "Cloudkeeper Legplates",
+    "Warmaster Legguards", "Boots of Avoidance", "Shalehusk Boots", ("Diamond Flask", 30), "Lifestone", "Hand of Justice", "Rune of the Guard Captain", "Mirah's Song",
+    "Ironfoe", "Draconian Deflector", "Riphook",
+    # raids
+    "Helm of Might", "Pauldrons of Might", "Breastplate of Might", "Legplates of Might", (16963, None),  # Helm of Wrath
+    "Pauldrons of Wrath", "Breastplate of Wrath", "Bracelets of Wrath", "Gauntlets of Wrath", "Waistband of Wrath",
+    "Legplates of Wrath", "Sabatons of Wrath", "Conqueror's Crown", "Conqueror's Spaulders", "Conqueror's Legguards",
+    (22418, None), "Dreadnaught Pauldrons", "Dreadnaught Breastplate", "Dreadnaught Bracers", (22421, None),  # helmet, gauntlets
+    "Dreadnaught Waistguard", (22417, None), "Dreadnaught Sabatons", "Ring of the Dreadnaught",  # legplates
+    "Onyxia Tooth Pendant", "Stoneskin Gargoyle Cape", "Band of Accuria", "Ring of Emperor Vek'lor",
+    "Mark of Resolution", ("Force of Will", 35), ("Styleen's Impeding Scarab", 30), ("Glyph of Deflection", 35),
+    ("Mark of Tyranny", 30), "Elementium Reinforced Bulwark", "Drillborer Disk", "Aegis of the Blood God",
+    "Brutality Blade", "Deathbringer",
+    "Chromatically Tempered Sword", "The Hungering Cold", "Blastershot Launcher", "Nerubian Slavemaker",
+]
 MAGE_COMMON = [
     # pre-raid
     "Crimson Felt Hat", "Spellweaver's Turban", "Diana's Pearl Necklace", "Boreal Mantle", "Felcloth Shoulders",
@@ -85,6 +130,10 @@ MAGE_COMMON = [
 ]
 
 CURATED = {
+    "WARRIOR_ARMS": WARRIOR_DPS,
+    "WARRIOR_FURY": WARRIOR_DPS,
+    "WARRIOR_FURY_TG": WARRIOR_DPS,
+    "WARRIOR_PROT": WARRIOR_TANK,
     "MAGE_ARCANE": MAGE_COMMON,
     "MAGE_FIRE": MAGE_COMMON,
     "MAGE_FROST": MAGE_COMMON,
@@ -206,7 +255,21 @@ ROGUE_MINOR = ["Glyph of Vanish", "Glyph of Safe Fall", "Glyph of Distract", "Gl
 PRIEST_MINOR = ["Glyph of Fortitude", "Glyph of Fading", "Glyph of Levitate", "Glyph of Shadow Protection"]
 WARLOCK_MINOR = ["Glyph of Drain Soul", "Glyph of Souls", "Glyph of Unending Breath", "Glyph of Enslave Demon"]
 MAGE_MINOR = ["Glyph of Arcane Intellect", "Glyph of Slow Fall", "Glyph of Fire Ward", "Glyph of Frost Ward"]
+WARRIOR_DPS_MINOR = ["Glyph of Bloodrage", "Glyph of Command", "Glyph of Battle"]
+# Wrath's picks need Inscription past 300 (Mortal Strike, Whirlwind, Taunt, Shield Wall, Last Stand); before that
+# Rending, Execution and Heroic Strike stand in, and for Protection Revenge and Sunder Armor.
+WARRIOR_GLYPHS = {
+    "WARRIOR_ARMS": {"major": ["Glyph of Rending", ("Glyph of Mortal Strike", "Mortal Strike"), "Glyph of Execution",
+                               "Glyph of Heroic Strike"], "minor": WARRIOR_DPS_MINOR},
+    "WARRIOR_FURY": {"major": ["Glyph of Whirlwind", "Glyph of Heroic Strike", "Glyph of Execution"],
+                     "minor": WARRIOR_DPS_MINOR},
+    "WARRIOR_PROT": {"major": ["Glyph of Taunt", "Glyph of Shield Wall", ("Glyph of Last Stand", "Last Stand"), "Glyph of Revenge",
+                               "Glyph of Sunder Armor"],
+                     "minor": ["Glyph of Bloodrage", "Glyph of Command", "Glyph of Thunder Clap"]},
+}
+WARRIOR_GLYPHS["WARRIOR_FURY_TG"] = WARRIOR_GLYPHS["WARRIOR_FURY"]
 GLYPHS = {
+    **WARRIOR_GLYPHS,
     # Wrath's picks need Inscription past 300 (Arcane Blast, Molten Armor, Fireball, Frostfire, Frostbolt, Living
     # Bomb); before that Arcane Missiles, Scorch, Eternal Water, Mana Gem and Evocation stand in.
     "MAGE_ARCANE": {
@@ -354,6 +417,10 @@ ROGUE_CONSUMABLES = ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops f
                      "Grilled Squid", "Thistle Tea", "Major Healing Potion"]
 WARLOCK_CONSUMABLES = [[("Brilliant Wizard Oil", "Put it on your weapon."), ("Wizard Oil", "Put it on your weapon.")], "Runn Tum Tuber Surprise", "Major Mana Potion"]
 MAGE_CONSUMABLES = WARLOCK_CONSUMABLES + [("Demonic Rune", "Costs some health.")]
+WARRIOR_DPS_CONSUMABLES = ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
+                           [("Elemental Sharpening Stone", "Put it on your weapon."),
+                            ("Dense Sharpening Stone", "Put it on your weapon; a mace takes a Dense Weightstone instead.")],
+                           "Grilled Squid", "Mighty Rage Potion"]
 # An entry in a list of alternatives is shown as its first that's open at your stage, so nobody at
 # Molten Core is told to bring what only Zul'Gurub's Zandalar sell (Mageblood Elixir, the brilliant oils).
 def consumable_options(entry):
@@ -382,6 +449,12 @@ CONSUMABLES = {
                       "Runn Tum Tuber Surprise", "Major Mana Potion", ("Demonic Rune", "Costs some health.")],
     "DRUID_CAT": ["Elixir of the Mongoose", ("Winterfall Firewater", "Drops from Winterfall furbolgs in Winterspring."),
                   "Grilled Squid", "Major Healing Potion"],
+    "WARRIOR_ARMS": WARRIOR_DPS_CONSUMABLES,
+    "WARRIOR_FURY": WARRIOR_DPS_CONSUMABLES,
+    "WARRIOR_FURY_TG": WARRIOR_DPS_CONSUMABLES,
+    "WARRIOR_PROT": ["Flask of the Titans", "Elixir of Superior Defense",
+                     ["Dirge's Kickin' Chimaerok Chops", "Spiced Chili Crab"], "Greater Stoneshield Potion",
+                     "Major Healing Potion", "Mighty Rage Potion"],
     "DRUID_BEAR": ["Flask of the Titans", "Elixir of the Mongoose", "Elixir of Superior Defense",
                    ["Dirge's Kickin' Chimaerok Chops", "Spiced Chili Crab"], "Major Healing Potion"],
     "DRUID_RESTO": ["Flask of Distilled Wisdom", ["Mageblood Elixir", "Elixir of Greater Intellect"], [("Brilliant Mana Oil", "Put it on your weapon."), ("Lesser Mana Oil", "Put it on your weapon.")],
