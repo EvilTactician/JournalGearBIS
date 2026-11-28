@@ -431,6 +431,12 @@ local function readSource(s)
 		src.where = s[6] ~= "" and s[6] or nil
 		src.recipeInst = s[7] ~= 0 and s[7] or nil
 		src.bop = s[8] == 1
+		-- a recipe that drops in a raid (Lionheart Helm's plans: Onyxia, Ragnaros): the craft is that raid's step
+		local g = src.recipeInst and G.instances[src.recipeInst]
+		if g and G.IsRaid(g) then
+			src.inst, src.raid = src.recipeInst, true
+			src.tier = TIER_RAID + (G.RAID_ORDER[src.inst] or 0)
+		end
 	else
 		return nil
 	end
@@ -456,7 +462,7 @@ G.Rung = rung
 function G.Difficulty(src)
 	if src.kind == "Q" then return src.inst and 2 or 1 end
 	if src.kind == "V" then return (src.rank or 0) >= 6 and 3 or ((src.rank or 0) >= 5 and 2 or 1) end
-	if src.kind == "X" then return 2 end
+	if src.kind == "X" then return src.raid and 3 or 2 end
 	local c = src.chance or 0
 	-- a world drop: by how long it takes, at about two kills a minute (half an hour or less is easy)
 	if src.kind == "W" then

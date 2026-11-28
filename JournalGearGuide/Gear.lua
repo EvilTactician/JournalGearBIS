@@ -157,7 +157,7 @@ function openSource(c, notInQuestsTab)
 	if src.kind == "Q" and not g then
 		-- One giver can be marked; with several (a trainer in every city) the Journal can't pick yours.
 		if (src.givers or 1) == 1 and J.Has(J.HELLO_MAP_PINS) and J.ShowOnMap then
-			DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal: Gear|r marked where " .. ((src.chain or 1) > 1 and "the quest chain" or "the quest")
+			DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Gear Guide:|r marked where " .. ((src.chain or 1) > 1 and "the quest chain" or "the quest")
 				.. " |cffffffff" .. src.startName .. "|r starts on your map.")
 			J.ShowOnMap("Q", src.start or src.quest)
 		end
