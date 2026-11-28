@@ -22,9 +22,10 @@ if not (G and G.IsUpgrade and G.Knows) then return end
 local ARROW = "Interface\\AddOns\\JournalGearGuide\\Textures\\UpgradeArrowSmall"
 
 -----------------------------------------
--- Pawn, for what the list can't judge: the item scores higher than what's in one of its slots in at least one
--- of your Pawn scales (the way DialogueUI asks Pawn); weapons as a pair (pawnWeapon). Newer Pawns answer the
--- question themselves for armour.
+-- Pawn, for what the list can't judge: the item scores higher than what's in one of its slots in your spec's
+-- Pawn scale when you have it ticked, otherwise in at least one of your ticked scales (the way DialogueUI asks
+-- Pawn); weapons as a pair (pawnWeapon). Newer Pawns answer the question themselves for armour when no spec
+-- scale is in use.
 
 local SLOTS = {
 	INVTYPE_HEAD = { 1 }, INVTYPE_NECK = { 2 }, INVTYPE_SHOULDER = { 3 }, INVTYPE_BODY = { 4 }, INVTYPE_CHEST = { 5 },
@@ -37,9 +38,46 @@ local SLOTS = {
 -- slots where cloth, leather, mail and plate don't mix
 local ARMOR_TYPE = { [1] = true, [3] = true, [5] = true, [6] = true, [7] = true, [8] = true, [9] = true, [10] = true }
 
+-- Pawn's own scales for each talent tree ("Wowhead":PriestHoly, shown as "Priest: holy"); a feral druid's by
+-- list, cat or bear. Death knights have two scales to a tree, so theirs aren't matched.
+local SPEC_SCALE = {
+	WARRIOR = { "WarriorArms", "WarriorFury", "WarriorTank" },
+	PALADIN = { "PaladinHoly", "PaladinTank", "PaladinRetribution" },
+	HUNTER = { "HunterBeastMastery", "HunterMarksman", "HunterSurvival" },
+	ROGUE = { "RogueAssassination", "RogueCombat", "RogueSubtlety" },
+	PRIEST = { "PriestDiscipline", "PriestHoly", "PriestShadow" },
+	SHAMAN = { "ShamanElemental", "ShamanEnhancement", "ShamanRestoration" },
+	MAGE = { "MageArcane", "MageFire", "MageFrost" },
+	WARLOCK = { "WarlockAffliction", "WarlockDemonology", "WarlockDestruction" },
+	DRUID = { "DruidBalance", "DruidFeralDps", "DruidRestoration" },
+}
+local LIST_SCALE = { DRUID_BEAR = "DruidFeralTank" }
+
+-- Your spec's Pawn scale, when you have talent points spent and that scale ticked; nil: use every ticked scale.
+-- Worked out once a frame: a bag update asks for many items at once.
+local scaleAt, scaleNow
+local function findSpecScale()
+	if not (G.TalentProfile and PawnCommon and PawnCommon.Scales and type(PawnIsScaleVisible) == "function") then return nil end
+	local _, class = UnitClass("player")
+	local key, treeName, tree = G.TalentProfile(GetActiveTalentGroup and GetActiveTalentGroup() or 1)
+	if not treeName then return nil end
+	local internal = LIST_SCALE[key] or (SPEC_SCALE[class] and SPEC_SCALE[class][tree])
+	local full = internal and ("\"Wowhead\":" .. internal)
+	if not (full and PawnCommon.Scales[full]) then return nil end
+	local ok, visible = pcall(PawnIsScaleVisible, full)
+	return ok and visible and full or nil
+end
+local function specScale()
+	local now = GetTime()
+	if now ~= scaleAt then scaleAt, scaleNow = now, findSpecScale() end
+	return scaleNow
+end
+
 local function pawnValues(item)
-	local values = {}
-	for _, entry in ipairs(item and item.Values or {}) do values[entry[1]] = entry[2] or 0 end
+	local values, only = {}, specScale()
+	for _, entry in ipairs(item and item.Values or {}) do
+		if not only or entry[1] == only then values[entry[1]] = entry[2] or 0 end
+	end
 	return values
 end
 
@@ -118,7 +156,7 @@ local function pawnUpgrade(link)
 		local new = pawnItem(link)
 		return next(new) ~= nil and pawnWeapon(link, equipLoc, new)
 	end
-	if type(PawnShouldItemLinkHaveUpgradeArrow) == "function" then
+	if type(PawnShouldItemLinkHaveUpgradeArrow) == "function" and not specScale() then
 		local ok, yes = pcall(PawnShouldItemLinkHaveUpgradeArrow, link)
 		return ok and yes and true or false
 	end
