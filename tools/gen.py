@@ -156,9 +156,13 @@ def fits(prof, it, slot):
     if slot == "MH":
         if kind == "2h":
             return inv == 17
+        if kind == "tg":
+            return inv in (13, 17, 21)
         ok = inv in (13, 21) or (inv == 17 and kind in ("caster", "hunter"))
         return ok and (prof.get("mh") is None or sub in prof["mh"] or inv == 17)
     if slot == "OH":
+        if kind == "tg":
+            return inv in (13, 17, 22)
         if kind == "dw" or kind == "hunter":
             return inv in (13, 22) and (prof.get("oh") is None or sub in prof["oh"])
         if kind == "tank":
@@ -399,8 +403,9 @@ P.append("--")
 P.append("--   weights: per point of a stat, in the profile's own units (attack power for melee and hunters, spell power")
 P.append("--            for casters and healers, stamina for tanks). Ratings are per rating point.")
 P.append("--            dps / odps / rdps: per point of main hand / off hand / ranged weapon damage per second.")
-P.append("--   weapons: \"dw\" two one-handers, \"2h\" a two-hander, \"caster\" a one-hander and held item or shield, or a")
-P.append("--            staff, \"tank\" a one-hander and shield, \"hunter\" melee stat stick and a bow, gun or crossbow.")
+P.append("--   weapons: \"dw\" two one-handers, \"tg\" a two-hander or one-hander in each hand (Titan's Grip), \"2h\" a")
+P.append("--            two-hander, \"caster\" a one-hander and held item or shield, or a staff, \"tank\" a one-hander and")
+P.append("--            shield, \"hunter\" melee stat stick and a bow, gun or crossbow.")
 P.append("--   mh / oh: weapon subclasses allowed in that hand (4 mace, 7 sword, 13 fist, 15 dagger); none = any.")
 P.append("--   ranged:  \"ranged\" bows, guns, crossbows and thrown; \"wand\"; \"relic\" (libram, idol or totem).")
 P.append("--   speed:   per hand, { speed, worth per second away from it, \"slow\" or \"fast\" }: a weapon quicker (\"fast\":")

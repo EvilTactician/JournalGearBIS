@@ -24,6 +24,9 @@ G.CAPS = {
 		have = function () return GetExpertise and GetExpertise() or 0 end },
 	{ keys = { "arp" }, roles = { ["Melee damage"] = true, ["Ranged damage"] = true }, rating = 25, cap = 100, per = 4.69,
 		have = function () return GetArmorPenetration and GetArmorPenetration() or 0 end },
+	-- Defense: 140 skill above the level 60 cap of 300 makes a tank immune to a boss's critical strikes. Bears
+	-- get that from Survival of the Fittest instead (notClass).
+	{ keys = { "def" }, roles = { Tank = true }, notClass = { DRUID = true }, rating = 2, cap = 140, per = 1.5 },
 }
 
 -- The school your spec's list values most (its biggest school damage weight), as a bit; nil for none.
@@ -62,8 +65,9 @@ end
 -- Rating points still worth having, by stat key (none for a stat with no cap).
 local function headroom()
 	local room = {}
+	local _, class = UnitClass("player")
 	for _, cap in ipairs(G.CAPS) do
-		if cap.roles[P.profile and P.profile.role or ""] then
+		if cap.roles[P.profile and P.profile.role or ""] and not (cap.notClass and cap.notClass[class]) then
 			local rating = GetCombatRating and GetCombatRating(cap.rating) or 0
 			local bonus = GetCombatRatingBonus and GetCombatRatingBonus(cap.rating) or 0
 			-- rating per point of bonus: yours when you have some, the level 60 one (scaled down below it) if not

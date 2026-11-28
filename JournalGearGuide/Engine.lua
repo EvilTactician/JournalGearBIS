@@ -122,7 +122,7 @@ end
 G.DEFAULT_TREE = { ROGUE = 2 }
 
 -- Feral druids tank or fight in Cat Form from the same tree: Natural Reaction is a bear's talent only.
-G.ROLE_TALENT = { DRUID_CAT = { "Natural Reaction", "DRUID_BEAR" } }
+G.ROLE_TALENT = { DRUID_CAT = { "Natural Reaction", "DRUID_BEAR" }, WARRIOR_FURY = { "Titan's Grip", "WARRIOR_FURY_TG" } }
 
 -- The profile for a talent group (1 or 2): the tree with the most points.
 function G.TalentProfile(group)
@@ -245,6 +245,13 @@ G.player = P
 
 local function weaponPart(rowKey) return (rowKey == "OH" and "odps") or (rowKey == "RANGED" and "rdps") or "dps" end
 
+-- Titan's Grip: with a two-hander in either hand you do 10% less physical damage, so a two-hander is worth that
+-- much less to a "tg" list.
+local TITANS_GRIP_COST = 0.9
+local function gripCost(prof, twoHand)
+	return (prof.weapons == "tg" and twoHand) and TITANS_GRIP_COST or 1
+end
+
 -- Can the profile use the item there? (MH, OH, RANGED or an armor row)
 function G.Fits(prof, t, rowKey)
 	local inv, sub, kind = t.inv, t.subclass, prof.weapons
@@ -254,10 +261,12 @@ function G.Fits(prof, t, rowKey)
 		return (inv == 15 or inv == 25 or inv == 26) and t.class == 2 and sub ~= 19
 	elseif rowKey == "MH" then
 		if kind == "2h" then return inv == 17 end
+		if kind == "tg" then return inv == 13 or inv == 17 or inv == 21 end
 		if inv == 17 then return kind == "caster" or kind == "hunter" end
 		if inv ~= 13 and inv ~= 21 then return false end
 		return not prof.mh or prof.mh[sub] == true
 	elseif rowKey == "OH" then
+		if kind == "tg" then return inv == 13 or inv == 17 or inv == 22 end
 		if kind == "dw" or kind == "hunter" then
 			return (inv == 13 or inv == 22) and (not prof.oh or prof.oh[sub] == true)
 		end
@@ -544,7 +553,7 @@ local function candidate(t, prof, rowKey, curated)
 		end
 	end
 	if #srcs == 0 then return nil end
-	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey))
+	local value = G.Score(t.stats, prof.weights, weaponPart(rowKey)) * gripCost(prof, t.inv == 17)
 	local pick = curated[t.id]
 	if pick then
 		if type(pick) == "number" then value = math.max(value, pick) end
@@ -621,7 +630,7 @@ local function ownedFor(row, prof, curated)
 	for _, slot in ipairs(row.slots) do
 		local w = P.worn[slot]
 		if w then
-			local value = G.Score(w.stats, prof.weights, part)
+			local value = G.Score(w.stats, prof.weights, part) * gripCost(prof, w.twoHand)
 			-- valued as the same item would be in the list
 			local pick = curated[w.id]
 			if pick then
@@ -1022,6 +1031,18 @@ function G.Build(choice, stage)
 			for _, c in ipairs(r.steps) do mhShown[c.item.id] = true end
 		end
 		if r then table.insert(rows, r) end
+	end
+	-- Titan's Grip: either hand takes either kind, so a hand whose steps mix them says which each is.
+	if prof.weapons == "tg" then
+		for _, r in ipairs(rows) do
+			if r.row.key == "MH" or r.row.key == "OH" then
+				local one, two = false, false
+				for _, c in ipairs(r.steps) do
+					if c.item.inv == 17 then two = true else one = true end
+				end
+				if one and two then r.mixedHands, r.eitherHand = true, true end
+			end
+		end
 	end
 	-- A caster or hunter with a two-hander as the main hand's goal has no use for the off-hand row.
 	if prof.weapons == "caster" or prof.weapons == "hunter" then

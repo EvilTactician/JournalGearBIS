@@ -1018,7 +1018,8 @@ local function build(panel)
 						local cmp = e.handsCompare
 						local wins = cmp and ((e.item.inv == 17) == cmp.twoWins)
 						local kind = e.item.inv == 17 and "two-hand" or "one-hand"
-						local tries = { (e.item.inv == 17 and "two-hand" or "one-hand, with an off-hand")
+						-- (Titan's Grip: either hand takes either, so a one-hander needs nothing with it)
+						local tries = { (e.item.inv == 17 and "two-hand" or (r.eitherHand and "one-hand" or "one-hand, with an off-hand"))
 								.. (wins and ": the better choice" or ""),
 							kind .. (wins and ": better" or ""), wins and "better" or kind }
 						for _, t in ipairs(tries) do

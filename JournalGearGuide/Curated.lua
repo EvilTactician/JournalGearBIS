@@ -6,6 +6,324 @@
 local G = JournalGearGuide
 
 G.curated = {
+	WARRIOR_ARMS = {
+		{ 12640 }, -- Lionheart Helm
+		{ 13404 }, -- Mask of the Unforgiven
+		{ 15411 }, -- Mark of Fordring
+		{ 12927 }, -- Truestrike Shoulders
+		{ 13340 }, -- Cape of the Black Baron
+		{ 11726 }, -- Savage Gladiator Chain
+		{ 13400 }, -- Vambraces of the Sadist
+		{ 19146 }, -- Wristguards of Stability
+		{ 15063 }, -- Devilsaur Gauntlets
+		{ 13959 }, -- Omokk's Girth Restrainer
+		{ 13142 }, -- Brigam Girdle
+		{ 15062 }, -- Devilsaur Leggings
+		{ 12555 }, -- Battlechaser's Greaves
+		{ 17713 }, -- Blackstone Ring
+		{ 13098 }, -- Painweaver Band
+		{ 11815, 40 }, -- Hand of Justice
+		{ 13965 }, -- Blackhand's Breadth
+		{ 20130, 30 }, -- Diamond Flask
+		{ 12940 }, -- Dal'Rend's Sacred Charge
+		{ 12939 }, -- Dal'Rend's Tribal Guardian
+		{ 13286 }, -- Rivenspike
+		{ 18737 }, -- Bone Slicing Hatchet
+		{ 11684 }, -- Ironfoe
+		{ 12784 }, -- Arcanite Reaper
+		{ 12653 }, -- Riphook
+		{ 19372 }, -- Helm of Endless Rage
+		{ 21329 }, -- Conqueror's Crown
+		{ 18404 }, -- Onyxia Tooth Pendant
+		{ 19377 }, -- Prestor's Talisman of Connivery
+		{ 21664 }, -- Barbed Choker
+		{ 19394 }, -- Drake Talon Pauldrons
+		{ 21330 }, -- Conqueror's Spaulders
+		{ 19436 }, -- Cloak of Draconic Might
+		{ 21394 }, -- Drape of Unyielding Strength
+		{ 21710 }, -- Cloak of the Fallen God
+		{ 23045 }, -- Shroud of Dominion
+		{ 21331 }, -- Conqueror's Breastplate
+		{ 21814 }, -- Breastplate of Annihilation
+		{ 23226 }, -- Ghoul Skin Tunic
+		{ 21618 }, -- Hive Defiler Wristguards
+		{ 19143 }, -- Flameguard Gauntlets
+		{ 21581 }, -- Gauntlets of Annihilation
+		{ 19137 }, -- Onslaught Girdle
+		{ 23219 }, -- Girdle of the Mentor
+		{ 21332 }, -- Conqueror's Legguards
+		{ 22385 }, -- Titanic Leggings
+		{ 19402 }, -- Legguards of the Fallen Crusader
+		{ 19387 }, -- Chromatic Boots
+		{ 21688 }, -- Boots of the Fallen Hero
+		{ 21333 }, -- Conqueror's Greaves
+		{ 18821 }, -- Quick Strike Ring
+		{ 19384 }, -- Master Dragonslayer's Ring
+		{ 19432 }, -- Circle of Applied Force
+		{ 23038 }, -- Band of Unnatural Forces
+		{ 19406 }, -- Drake Fang Talisman
+		{ 21670, 45 }, -- Badge of the Swarmguard
+		{ 22954, 45 }, -- Kiss of the Spider
+		{ 23041, 40 }, -- Slayer's Crest
+		{ 21180, 40 }, -- Earthstrike
+		{ 23570, 40 }, -- Jom Gabbar
+		{ 23206 }, -- Mark of the Champion
+		{ 18832 }, -- Brutality Blade
+		{ 19351 }, -- Maladath, Runed Blade of the Black Flight
+		{ 19352 }, -- Chromatically Tempered Sword
+		{ 19363 }, -- Crul'shorukh, Edge of Chaos
+		{ 17068 }, -- Deathbringer
+		{ 19335 }, -- Spineshatter
+		{ 21126 }, -- Death's Sting
+		{ 22816 }, -- Hatchet of Sundered Bone
+		{ 22806 }, -- Widow's Remorse
+		{ 23577 }, -- The Hungering Cold
+		{ 17076 }, -- Bonereaver's Edge
+		{ 18822 }, -- Obsidian Edged Blade
+		{ 19364 }, -- Ashkandi, Greatsword of the Brotherhood
+		{ 19357 }, -- Herald of Woe
+		{ 21134 }, -- Dark Edge of Insanity
+		{ 22798 }, -- Might of Menethil
+		{ 22815 }, -- Severance
+		{ 17069 }, -- Striker's Mark
+		{ 17072 }, -- Blastershot Launcher
+		{ 22812 }, -- Nerubian Slavemaker
+	},
+	WARRIOR_FURY = {
+		{ 12640 }, -- Lionheart Helm
+		{ 13404 }, -- Mask of the Unforgiven
+		{ 15411 }, -- Mark of Fordring
+		{ 12927 }, -- Truestrike Shoulders
+		{ 13340 }, -- Cape of the Black Baron
+		{ 11726 }, -- Savage Gladiator Chain
+		{ 13400 }, -- Vambraces of the Sadist
+		{ 19146 }, -- Wristguards of Stability
+		{ 15063 }, -- Devilsaur Gauntlets
+		{ 13959 }, -- Omokk's Girth Restrainer
+		{ 13142 }, -- Brigam Girdle
+		{ 15062 }, -- Devilsaur Leggings
+		{ 12555 }, -- Battlechaser's Greaves
+		{ 17713 }, -- Blackstone Ring
+		{ 13098 }, -- Painweaver Band
+		{ 11815, 40 }, -- Hand of Justice
+		{ 13965 }, -- Blackhand's Breadth
+		{ 20130, 30 }, -- Diamond Flask
+		{ 12940 }, -- Dal'Rend's Sacred Charge
+		{ 12939 }, -- Dal'Rend's Tribal Guardian
+		{ 13286 }, -- Rivenspike
+		{ 18737 }, -- Bone Slicing Hatchet
+		{ 11684 }, -- Ironfoe
+		{ 12784 }, -- Arcanite Reaper
+		{ 12653 }, -- Riphook
+		{ 19372 }, -- Helm of Endless Rage
+		{ 21329 }, -- Conqueror's Crown
+		{ 18404 }, -- Onyxia Tooth Pendant
+		{ 19377 }, -- Prestor's Talisman of Connivery
+		{ 21664 }, -- Barbed Choker
+		{ 19394 }, -- Drake Talon Pauldrons
+		{ 21330 }, -- Conqueror's Spaulders
+		{ 19436 }, -- Cloak of Draconic Might
+		{ 21394 }, -- Drape of Unyielding Strength
+		{ 21710 }, -- Cloak of the Fallen God
+		{ 23045 }, -- Shroud of Dominion
+		{ 21331 }, -- Conqueror's Breastplate
+		{ 21814 }, -- Breastplate of Annihilation
+		{ 23226 }, -- Ghoul Skin Tunic
+		{ 21618 }, -- Hive Defiler Wristguards
+		{ 19143 }, -- Flameguard Gauntlets
+		{ 21581 }, -- Gauntlets of Annihilation
+		{ 19137 }, -- Onslaught Girdle
+		{ 23219 }, -- Girdle of the Mentor
+		{ 21332 }, -- Conqueror's Legguards
+		{ 22385 }, -- Titanic Leggings
+		{ 19402 }, -- Legguards of the Fallen Crusader
+		{ 19387 }, -- Chromatic Boots
+		{ 21688 }, -- Boots of the Fallen Hero
+		{ 21333 }, -- Conqueror's Greaves
+		{ 18821 }, -- Quick Strike Ring
+		{ 19384 }, -- Master Dragonslayer's Ring
+		{ 19432 }, -- Circle of Applied Force
+		{ 23038 }, -- Band of Unnatural Forces
+		{ 19406 }, -- Drake Fang Talisman
+		{ 21670, 45 }, -- Badge of the Swarmguard
+		{ 22954, 45 }, -- Kiss of the Spider
+		{ 23041, 40 }, -- Slayer's Crest
+		{ 21180, 40 }, -- Earthstrike
+		{ 23570, 40 }, -- Jom Gabbar
+		{ 23206 }, -- Mark of the Champion
+		{ 18832 }, -- Brutality Blade
+		{ 19351 }, -- Maladath, Runed Blade of the Black Flight
+		{ 19352 }, -- Chromatically Tempered Sword
+		{ 19363 }, -- Crul'shorukh, Edge of Chaos
+		{ 17068 }, -- Deathbringer
+		{ 19335 }, -- Spineshatter
+		{ 21126 }, -- Death's Sting
+		{ 22816 }, -- Hatchet of Sundered Bone
+		{ 22806 }, -- Widow's Remorse
+		{ 23577 }, -- The Hungering Cold
+		{ 17076 }, -- Bonereaver's Edge
+		{ 18822 }, -- Obsidian Edged Blade
+		{ 19364 }, -- Ashkandi, Greatsword of the Brotherhood
+		{ 19357 }, -- Herald of Woe
+		{ 21134 }, -- Dark Edge of Insanity
+		{ 22798 }, -- Might of Menethil
+		{ 22815 }, -- Severance
+		{ 17069 }, -- Striker's Mark
+		{ 17072 }, -- Blastershot Launcher
+		{ 22812 }, -- Nerubian Slavemaker
+	},
+	WARRIOR_FURY_TG = {
+		{ 12640 }, -- Lionheart Helm
+		{ 13404 }, -- Mask of the Unforgiven
+		{ 15411 }, -- Mark of Fordring
+		{ 12927 }, -- Truestrike Shoulders
+		{ 13340 }, -- Cape of the Black Baron
+		{ 11726 }, -- Savage Gladiator Chain
+		{ 13400 }, -- Vambraces of the Sadist
+		{ 19146 }, -- Wristguards of Stability
+		{ 15063 }, -- Devilsaur Gauntlets
+		{ 13959 }, -- Omokk's Girth Restrainer
+		{ 13142 }, -- Brigam Girdle
+		{ 15062 }, -- Devilsaur Leggings
+		{ 12555 }, -- Battlechaser's Greaves
+		{ 17713 }, -- Blackstone Ring
+		{ 13098 }, -- Painweaver Band
+		{ 11815, 40 }, -- Hand of Justice
+		{ 13965 }, -- Blackhand's Breadth
+		{ 20130, 30 }, -- Diamond Flask
+		{ 12940 }, -- Dal'Rend's Sacred Charge
+		{ 12939 }, -- Dal'Rend's Tribal Guardian
+		{ 13286 }, -- Rivenspike
+		{ 18737 }, -- Bone Slicing Hatchet
+		{ 11684 }, -- Ironfoe
+		{ 12784 }, -- Arcanite Reaper
+		{ 12653 }, -- Riphook
+		{ 19372 }, -- Helm of Endless Rage
+		{ 21329 }, -- Conqueror's Crown
+		{ 18404 }, -- Onyxia Tooth Pendant
+		{ 19377 }, -- Prestor's Talisman of Connivery
+		{ 21664 }, -- Barbed Choker
+		{ 19394 }, -- Drake Talon Pauldrons
+		{ 21330 }, -- Conqueror's Spaulders
+		{ 19436 }, -- Cloak of Draconic Might
+		{ 21394 }, -- Drape of Unyielding Strength
+		{ 21710 }, -- Cloak of the Fallen God
+		{ 23045 }, -- Shroud of Dominion
+		{ 21331 }, -- Conqueror's Breastplate
+		{ 21814 }, -- Breastplate of Annihilation
+		{ 23226 }, -- Ghoul Skin Tunic
+		{ 21618 }, -- Hive Defiler Wristguards
+		{ 19143 }, -- Flameguard Gauntlets
+		{ 21581 }, -- Gauntlets of Annihilation
+		{ 19137 }, -- Onslaught Girdle
+		{ 23219 }, -- Girdle of the Mentor
+		{ 21332 }, -- Conqueror's Legguards
+		{ 22385 }, -- Titanic Leggings
+		{ 19402 }, -- Legguards of the Fallen Crusader
+		{ 19387 }, -- Chromatic Boots
+		{ 21688 }, -- Boots of the Fallen Hero
+		{ 21333 }, -- Conqueror's Greaves
+		{ 18821 }, -- Quick Strike Ring
+		{ 19384 }, -- Master Dragonslayer's Ring
+		{ 19432 }, -- Circle of Applied Force
+		{ 23038 }, -- Band of Unnatural Forces
+		{ 19406 }, -- Drake Fang Talisman
+		{ 21670, 45 }, -- Badge of the Swarmguard
+		{ 22954, 45 }, -- Kiss of the Spider
+		{ 23041, 40 }, -- Slayer's Crest
+		{ 21180, 40 }, -- Earthstrike
+		{ 23570, 40 }, -- Jom Gabbar
+		{ 23206 }, -- Mark of the Champion
+		{ 18832 }, -- Brutality Blade
+		{ 19351 }, -- Maladath, Runed Blade of the Black Flight
+		{ 19352 }, -- Chromatically Tempered Sword
+		{ 19363 }, -- Crul'shorukh, Edge of Chaos
+		{ 17068 }, -- Deathbringer
+		{ 19335 }, -- Spineshatter
+		{ 21126 }, -- Death's Sting
+		{ 22816 }, -- Hatchet of Sundered Bone
+		{ 22806 }, -- Widow's Remorse
+		{ 23577 }, -- The Hungering Cold
+		{ 17076 }, -- Bonereaver's Edge
+		{ 18822 }, -- Obsidian Edged Blade
+		{ 19364 }, -- Ashkandi, Greatsword of the Brotherhood
+		{ 19357 }, -- Herald of Woe
+		{ 21134 }, -- Dark Edge of Insanity
+		{ 22798 }, -- Might of Menethil
+		{ 22815 }, -- Severance
+		{ 17069 }, -- Striker's Mark
+		{ 17072 }, -- Blastershot Launcher
+		{ 22812 }, -- Nerubian Slavemaker
+	},
+	WARRIOR_PROT = {
+		{ 12640 }, -- Lionheart Helm
+		{ 16731 }, -- Helm of Valor
+		{ 22659 }, -- Medallion of the Dawn
+		{ 19159 }, -- Woven Ivy Necklace
+		{ 14552 }, -- Stockade Pauldrons
+		{ 12557 }, -- Ebonsteel Spaulders
+		{ 12895 }, -- Breastplate of the Chromatic Flight
+		{ 16730 }, -- Breastplate of Valor
+		{ 13951 }, -- Vigorsteel Vambraces
+		{ 16735 }, -- Bracers of Valor
+		{ 12639 }, -- Stronghold Gauntlets
+		{ 13162 }, -- Reiver Claws
+		{ 13142 }, -- Brigam Girdle
+		{ 14554 }, -- Cloudkeeper Legplates
+		{ 12935 }, -- Warmaster Legguards
+		{ 14549 }, -- Boots of Avoidance
+		{ 11787 }, -- Shalehusk Boots
+		{ 20130, 30 }, -- Diamond Flask
+		{ 833 }, -- Lifestone
+		{ 11815 }, -- Hand of Justice
+		{ 19120 }, -- Rune of the Guard Captain
+		{ 15806 }, -- Mirah's Song
+		{ 11684 }, -- Ironfoe
+		{ 12602 }, -- Draconian Deflector
+		{ 12653 }, -- Riphook
+		{ 16866 }, -- Helm of Might
+		{ 16868 }, -- Pauldrons of Might
+		{ 16865 }, -- Breastplate of Might
+		{ 16867 }, -- Legplates of Might
+		{ 16963 }, -- Helm of Wrath
+		{ 16961 }, -- Pauldrons of Wrath
+		{ 16966 }, -- Breastplate of Wrath
+		{ 16959 }, -- Bracelets of Wrath
+		{ 16964 }, -- Gauntlets of Wrath
+		{ 16960 }, -- Waistband of Wrath
+		{ 16962 }, -- Legplates of Wrath
+		{ 16965 }, -- Sabatons of Wrath
+		{ 21329 }, -- Conqueror's Crown
+		{ 21330 }, -- Conqueror's Spaulders
+		{ 21332 }, -- Conqueror's Legguards
+		{ 22418 }, -- Dreadnaught Helmet
+		{ 22419 }, -- Dreadnaught Pauldrons
+		{ 22416 }, -- Dreadnaught Breastplate
+		{ 22423 }, -- Dreadnaught Bracers
+		{ 22421 }, -- Dreadnaught Gauntlets
+		{ 22422 }, -- Dreadnaught Waistguard
+		{ 22417 }, -- Dreadnaught Legplates
+		{ 22420 }, -- Dreadnaught Sabatons
+		{ 23059 }, -- Ring of the Dreadnaught
+		{ 18404 }, -- Onyxia Tooth Pendant
+		{ 13397 }, -- Stoneskin Gargoyle Cape
+		{ 17063 }, -- Band of Accuria
+		{ 21601 }, -- Ring of Emperor Vek'lor
+		{ 17759 }, -- Mark of Resolution
+		{ 11810, 35 }, -- Force of Will
+		{ 19431, 30 }, -- Styleen's Impeding Scarab
+		{ 23040, 35 }, -- Glyph of Deflection
+		{ 13966, 30 }, -- Mark of Tyranny
+		{ 19349 }, -- Elementium Reinforced Bulwark
+		{ 17066 }, -- Drillborer Disk
+		{ 19862 }, -- Aegis of the Blood God
+		{ 18832 }, -- Brutality Blade
+		{ 17068 }, -- Deathbringer
+		{ 19352 }, -- Chromatically Tempered Sword
+		{ 23577 }, -- The Hungering Cold
+		{ 17072 }, -- Blastershot Launcher
+		{ 22812 }, -- Nerubian Slavemaker
+	},
 	MAGE_ARCANE = {
 		{ 18727 }, -- Crimson Felt Hat
 		{ 22267 }, -- Spellweaver's Turban

@@ -448,7 +448,8 @@ for q in quests.values():
     title = q.get("LogTitle") or ""
     if q["ID"] in SKIP_QUESTS or (q.get("QuestSortID") or 0) in (-364, -25, 2597, 3277, 3358):
         continue  # world events, the Darkmoon Faire, battlegrounds
-    if re.search(r"UNUSED|NYI|\[PH\]|<TXT>|<TEST>|DEPRECATED|OLD\b", title, re.I) or not title:
+    # placeholder markers as whole words ("NYI" inside "Unyielding", "old" ending "Gold" don't count)
+    if re.search(r"\bUNUSED\b|\bNYI\b|\[PH\]|<TXT>|<TEST>|\bDEPRECATED\b|\bOLD\b", title, re.I) or not title:
         continue
     via, stage = quest_via(q["ID"])
     if via is None and (q.get("QuestSortID") or 0) in QUEST_ZONE:

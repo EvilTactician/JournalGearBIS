@@ -565,6 +565,57 @@ G.enchantProcs = {
 }
 
 G.glyphs = {
+	WARRIOR_ARMS = {
+		major = {
+			{ 43423, 58385, 110, 0, 15, "", "Glyph of Rending" },
+			{ 43421, 58368, 385, 13, 40, "Mortal Strike", "Glyph of Mortal Strike" },
+			{ 43416, 58367, 285, 0, 24, "", "Glyph of Execution" },
+			{ 43418, 58357, 95, 0, 15, "", "Glyph of Heroic Strike" },
+		},
+		minor = {
+			{ 43396, 58096, 75, 0, 15, "", "Glyph of Bloodrage" },
+			{ 49084, 68164, 350, 8, 68, "", "Glyph of Command" },
+			{ 43395, 58095, 75, 0, 15, "", "Glyph of Battle" },
+		},
+	},
+	WARRIOR_FURY = {
+		major = {
+			{ 43432, 58370, 345, 8, 36, "", "Glyph of Whirlwind" },
+			{ 43418, 58357, 95, 0, 15, "", "Glyph of Heroic Strike" },
+			{ 43416, 58367, 285, 0, 24, "", "Glyph of Execution" },
+		},
+		minor = {
+			{ 43396, 58096, 75, 0, 15, "", "Glyph of Bloodrage" },
+			{ 49084, 68164, 350, 8, 68, "", "Glyph of Command" },
+			{ 43395, 58095, 75, 0, 15, "", "Glyph of Battle" },
+		},
+	},
+	WARRIOR_PROT = {
+		major = {
+			{ 43429, 58353, 385, 13, 15, "", "Glyph of Taunt" },
+			{ 45797, 63329, 425, 13, 28, "", "Glyph of Shield Wall" },
+			{ 43426, 58376, 385, 13, 20, "Last Stand", "Glyph of Last Stand" },
+			{ 43424, 58364, 190, 0, 15, "", "Glyph of Revenge" },
+			{ 43427, 58387, 140, 0, 15, "", "Glyph of Sunder Armor" },
+		},
+		minor = {
+			{ 43396, 58096, 75, 0, 15, "", "Glyph of Bloodrage" },
+			{ 49084, 68164, 350, 8, 68, "", "Glyph of Command" },
+			{ 43399, 58098, 75, 0, 15, "", "Glyph of Thunder Clap" },
+		},
+	},
+	WARRIOR_FURY_TG = {
+		major = {
+			{ 43432, 58370, 345, 8, 36, "", "Glyph of Whirlwind" },
+			{ 43418, 58357, 95, 0, 15, "", "Glyph of Heroic Strike" },
+			{ 43416, 58367, 285, 0, 24, "", "Glyph of Execution" },
+		},
+		minor = {
+			{ 43396, 58096, 75, 0, 15, "", "Glyph of Bloodrage" },
+			{ 49084, 68164, 350, 8, 68, "", "Glyph of Command" },
+			{ 43395, 58095, 75, 0, 15, "", "Glyph of Battle" },
+		},
+	},
 	MAGE_ARCANE = {
 		major = {
 			{ 44955, 62210, 315, 8, 64, "", "Glyph of Arcane Blast" },
@@ -877,6 +928,39 @@ G.consumables = {
 		{ 13928, "" }, -- Grilled Squid
 		{ 13446, "" }, -- Major Healing Potion
 	},
+	WARRIOR_ARMS = {
+		{ 13452, "" }, -- Elixir of the Mongoose
+		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 18262, "Put it on your weapon." }, -- Elemental Sharpening Stone
+		{ 12404, "Put it on your weapon; a mace takes a Dense Weightstone instead.", true }, -- Dense Sharpening Stone
+		{ 13928, "" }, -- Grilled Squid
+		{ 13442, "" }, -- Mighty Rage Potion
+	},
+	WARRIOR_FURY = {
+		{ 13452, "" }, -- Elixir of the Mongoose
+		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 18262, "Put it on your weapon." }, -- Elemental Sharpening Stone
+		{ 12404, "Put it on your weapon; a mace takes a Dense Weightstone instead.", true }, -- Dense Sharpening Stone
+		{ 13928, "" }, -- Grilled Squid
+		{ 13442, "" }, -- Mighty Rage Potion
+	},
+	WARRIOR_FURY_TG = {
+		{ 13452, "" }, -- Elixir of the Mongoose
+		{ 12820, "Drops from Winterfall furbolgs in Winterspring." }, -- Winterfall Firewater
+		{ 18262, "Put it on your weapon." }, -- Elemental Sharpening Stone
+		{ 12404, "Put it on your weapon; a mace takes a Dense Weightstone instead.", true }, -- Dense Sharpening Stone
+		{ 13928, "" }, -- Grilled Squid
+		{ 13442, "" }, -- Mighty Rage Potion
+	},
+	WARRIOR_PROT = {
+		{ 13510, "" }, -- Flask of the Titans
+		{ 13445, "" }, -- Elixir of Superior Defense
+		{ 21023, "" }, -- Dirge's Kickin' Chimaerok Chops
+		{ 12216, "", true }, -- Spiced Chili Crab
+		{ 13455, "" }, -- Greater Stoneshield Potion
+		{ 13446, "" }, -- Major Healing Potion
+		{ 13442, "" }, -- Mighty Rage Potion
+	},
 	DRUID_BEAR = {
 		{ 13510, "" }, -- Flask of the Titans
 		{ 13452, "" }, -- Elixir of the Mongoose
@@ -950,14 +1034,17 @@ G.extraItems = {
 	[11648] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[11649] = { "Lesser Arcanum of Voracity", 2, 0, { { "Q", 4484, "Libram of Voracity", 0, 0, 0, 55, 50, { 4484, "Libram of Voracity", 1, 0, 1 }, { 4484, "Libram of Voracity", 1, 0, 1 }, 0 } } },
 	[12216] = { "Spiced Chili Crab", 1, 40, { { "X", "Crafted: Cooking", 185, 225, 0, "recipe sold by Banalash", 0 } } },
+	[12404] = { "Dense Sharpening Stone", 1, 35, { { "X", "Crafted: Blacksmithing", 164, 250, 0, "from a trainer", 0 } } },
 	[12645] = { "Thorium Shield Spike", 2, 0, { { "X", "Crafted: Blacksmithing", 164, 275, 0, "from a recipe", 0 } } },
 	[12662] = { "Demonic Rune", 2, 0, { { "D", 229, 0.1, "Burning Felguard" }, { "D", 309, 0.163, "Mad Servant" }, { "D", 429, 0.52, "Wildspawn Trickster, Wildspawn Rogue, Wildspawn Shadowstalker and others" }, { "D", 329, 0.08, "Balnazzar" } } },
 	[12820] = { "Winterfall Firewater", 1, 45, {  } },
+	[13442] = { "Mighty Rage Potion", 1, 46, { { "X", "Crafted: Alchemy", 171, 255, 0, "from a recipe", 0 } } },
 	[13444] = { "Major Mana Potion", 1, 49, { { "D", 229, 1, "Quartermaster Zigris, Chromatic Dragonspawn, Spirestone Warlord and others" }, { "D", 309, 0.172, "Hakkari Witch Doctor, Gurubashi Headhunter, Hakkari Blood Priest and others" }, { "D", 289, 0.197, "Unstable Corpse, Reanimated Corpse, Scholomance Student and others" }, { "D", 329, 0.263, "Malor the Zealous, Crimson Monk, Stonespine and others" }, { "D", 409, 0.029, "Flamewaker Protector, Flamewaker Priest, Flamewaker" }, { "D", 429, 0.22, "Tsu'zee, Gordok Brute, Gordok Mage-Lord and others" }, { "D", 469, 0.123, "Death Talon Wyrmguard, Blackwing Technician, Death Talon Captain and others" }, { "D", 2291, 0.02, "Goraluk Anvilcrack, Jed Runewatcher" }, { "D", 249, 0.012, "Onyxian Warder" }, { "Q", 8278, "Noggle's Last Hope", 0, 4, 0, 57, 54, { 8277, "Deadly Desert Venom", 1, 0, 2 }, { 8277, "Deadly Desert Venom", 1, 0, 2 }, 0 }, { "Q", 8470, "Deadwood Ritual Totem", 0, 0, 0, 55, 45, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 8471, "Winterfall Ritual Totem", 0, 0, 0, 56, 50, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 9419, "Scouring the Desert", 0, 5, 1101, 60, 1, { 9415, "Report to Marshal Bluewall", 1, 0, 2 }, { 9419, "Scouring the Desert", 1, 0, 1 }, 0 }, { "Q", 9422, "Scouring the Desert", 0, 5, 0, 60, 55, { 9422, "Scouring the Desert", 1, 0, 1 }, { 9416, "Report to General Kirika", 1, 0, 2 }, 0 }, { "X", "Crafted: Alchemy", 171, 295, 0, "recipe drops in Scholomance", 289 } } },
 	[13445] = { "Elixir of Superior Defense", 1, 43, { { "X", "Crafted: Alchemy", 171, 265, 0, "recipe sold by Kor'geld", 0 } } },
 	[13446] = { "Major Healing Potion", 1, 45, { { "D", 229, 1, "Quartermaster Zigris, Chromatic Dragonspawn, Spirestone Warlord and others" }, { "D", 309, 0.32, "Hakkari Witch Doctor, Gurubashi Headhunter, Hakkari Blood Priest and others" }, { "D", 230, 0.426, "Ograbisi, Jaz, Shill Dinger and others" }, { "D", 289, 0.36, "Unstable Corpse, Reanimated Corpse, Scholomance Student and others" }, { "D", 329, 0.467, "Crimson Monk, Stonespine, Hearthsinger Forresten and others" }, { "D", 409, 0.059, "Flamewaker Protector, Flamewaker Priest, Flamewaker" }, { "D", 429, 0.434, "Tsu'zee, Gordok Brute, Gordok Mage-Lord and others" }, { "D", 469, 0.224, "Death Talon Wyrmguard, Blackwing Technician, Death Talon Captain and others" }, { "D", 2291, 0.04, "Goraluk Anvilcrack, Jed Runewatcher" }, { "D", 249, 0.017, "Onyxian Warder" }, { "Q", 8278, "Noggle's Last Hope", 0, 4, 0, 57, 54, { 8277, "Deadly Desert Venom", 1, 0, 2 }, { 8277, "Deadly Desert Venom", 1, 0, 2 }, 0 }, { "Q", 8470, "Deadwood Ritual Totem", 0, 0, 0, 55, 45, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, { 8470, "Deadwood Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 8471, "Winterfall Ritual Totem", 0, 0, 0, 56, 50, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, { 8471, "Winterfall Ritual Totem", 0, 0, 1 }, 0 }, { "Q", 9052, "Bloodpetal Poison", 0, 0, 0, 52, 50, { 9063, "Torwa Pathfinder", 9, 1, 2 }, { 9063, "Torwa Pathfinder", 9, 1, 2 }, 1024 }, { "Q", 9419, "Scouring the Desert", 0, 5, 1101, 60, 1, { 9415, "Report to Marshal Bluewall", 1, 0, 2 }, { 9419, "Scouring the Desert", 1, 0, 1 }, 0 }, { "Q", 9422, "Scouring the Desert", 0, 5, 0, 60, 55, { 9422, "Scouring the Desert", 1, 0, 1 }, { 9416, "Report to General Kirika", 1, 0, 2 }, 0 }, { "X", "Crafted: Alchemy", 171, 275, 0, "recipe sold by Evie Whirlbrew", 0 } } },
 	[13452] = { "Elixir of the Mongoose", 1, 46, { { "Q", 8282, "Noggle's Lost Satchel", 0, 4, 0, 58, 54, { 8277, "Deadly Desert Venom", 1, 0, 3 }, { 8277, "Deadly Desert Venom", 1, 0, 3 }, 0 }, { "X", "Crafted: Alchemy", 171, 280, 0, "from a recipe", 0 } } },
 	[13454] = { "Greater Arcane Elixir", 1, 47, { { "X", "Crafted: Alchemy", 171, 285, 0, "from a recipe", 0 } } },
+	[13455] = { "Greater Stoneshield Potion", 1, 46, { { "X", "Crafted: Alchemy", 171, 280, 0, "from a recipe", 0 } } },
 	[13510] = { "Flask of the Titans", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "from a recipe", 0 } } },
 	[13511] = { "Flask of Distilled Wisdom", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "from a recipe", 0 } } },
 	[13512] = { "Flask of Supreme Power", 1, 50, { { "X", "Crafted: Alchemy", 171, 300, 0, "recipe sold by Alurmi (Exalted)", 0 } } },
@@ -973,6 +1060,7 @@ G.extraItems = {
 	[18182] = { "Chromatic Mantle of the Dawn", 2, 0, { { "Q", 5517, "Chromatic Mantle of the Dawn", 0, 0, 0, 60, 55, { 5517, "Chromatic Mantle of the Dawn", 1, 0, 1 }, { 5517, "Chromatic Mantle of the Dawn", 1, 0, 1 }, 0 }, { "Q", 5521, "Chromatic Mantle of the Dawn", 0, 0, 0, 60, 55, { 5521, "Chromatic Mantle of the Dawn", 1, 0, 1 }, { 5521, "Chromatic Mantle of the Dawn", 1, 0, 1 }, 0 }, { "Q", 5524, "Chromatic Mantle of the Dawn", 0, 0, 0, 60, 55, { 5524, "Chromatic Mantle of the Dawn", 1, 0, 1 }, { 5524, "Chromatic Mantle of the Dawn", 1, 0, 1 }, 0 }, { "V", "Argent Quartermaster Hasana <The Argent Dawn>", 400000, 529, 7, 0 }, { "V", "Argent Quartermaster Lightspark <The Argent Dawn>", 400000, 529, 7, 0 }, { "V", "Quartermaster Miranda Breechlock <The Argent Dawn>", 400000, 529, 7, 0 } } },
 	[18251] = { "Core Armor Kit", 3, 50, { { "X", "Crafted: Leatherworking", 165, 300, 0, "recipe drops in Molten Core", 409 } } },
 	[18254] = { "Runn Tum Tuber Surprise", 1, 45, { { "X", "Crafted: Cooking", 185, 275, 0, "recipe drops in Dire Maul", 429 } } },
+	[18262] = { "Elemental Sharpening Stone", 2, 50, { { "X", "Crafted: Blacksmithing", 164, 300, 0, "recipe drops in Molten Core", 409 } } },
 	[18283] = { "Biznicks 247x128 Accurascope", 3, 50, { { "X", "Crafted: Engineering", 202, 300, 0, "recipe drops in Molten Core", 409 } } },
 	[18329] = { "Arcanum of Rapidity", 2, 0, { { "Q", 7483, "Libram of Rapidity", 429, 0, 0, 60, 57, { 7483, "Libram of Rapidity", 1, 0, 1 }, { 7483, "Libram of Rapidity", 1, 0, 1 }, 0 } } },
 	[18330] = { "Arcanum of Focus", 2, 0, { { "Q", 7484, "Libram of Focus", 429, 0, 0, 60, 57, { 7484, "Libram of Focus", 1, 0, 1 }, { 7484, "Libram of Focus", 1, 0, 1 }, 0 } } },
@@ -1068,6 +1156,21 @@ G.talentBuilds = {
 		{  },
 		{ { 1, 2, 3 }, { 1, 3, 3 }, { 1, 4, 1 }, { 2, 3, 3 }, { 3, 4, 3 } },
 		{ { 1, 3, 5 }, { 2, 1, 2 }, { 2, 2, 1 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 3, 5 }, { 4, 1, 2 }, { 4, 2, 2 }, { 5, 2, 3 }, { 5, 3, 1 }, { 6, 3, 5 }, { 7, 2, 1 }, { 7, 3, 3 }, { 7, 4, 3 }, { 8, 2, 5 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+	} },
+	["WARRIOR:1"] = { class = "WARRIOR", name = "Gear Guide: Arms", ranks = {
+		{ { 1, 1, 3 }, { 1, 3, 2 }, { 2, 1, 2 }, { 2, 3, 3 }, { 3, 1, 2 }, { 3, 2, 1 }, { 3, 3, 2 }, { 3, 4, 3 }, { 4, 2, 3 }, { 4, 3, 3 }, { 5, 1, 5 }, { 5, 2, 1 }, { 6, 1, 2 }, { 6, 4, 2 }, { 7, 2, 1 }, { 7, 3, 2 }, { 7, 4, 2 }, { 8, 1, 1 }, { 8, 2, 3 }, { 8, 3, 2 }, { 9, 1, 3 }, { 9, 2, 1 }, { 9, 3, 2 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{ { 1, 1, 3 }, { 1, 3, 5 }, { 2, 3, 3 }, { 3, 1, 3 } },
+		{  },
+	} },
+	["WARRIOR:2"] = { class = "WARRIOR", name = "Gear Guide: Fury", ranks = {
+		{ { 1, 1, 3 }, { 1, 3, 2 }, { 2, 2, 2 }, { 2, 3, 3 }, { 3, 2, 1 }, { 3, 3, 2 }, { 3, 4, 3 }, { 4, 2, 3 } },
+		{ { 1, 1, 3 }, { 1, 2, 2 }, { 1, 3, 5 }, { 3, 4, 5 }, { 4, 1, 5 }, { 4, 3, 1 }, { 5, 1, 3 }, { 5, 2, 1 }, { 6, 1, 1 }, { 6, 3, 5 }, { 7, 1, 3 }, { 7, 2, 1 }, { 7, 4, 2 }, { 8, 4, 5 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 5 }, { 11, 2, 1 } },
+		{  },
+	} },
+	["WARRIOR:3"] = { class = "WARRIOR", name = "Gear Guide: Protection", ranks = {
+		{ { 1, 1, 3 }, { 1, 2, 5 }, { 2, 1, 2 }, { 3, 3, 2 }, { 3, 4, 3 } },
+		{ { 1, 1, 3 } },
+		{ { 1, 2, 5 }, { 1, 3, 3 }, { 2, 2, 3 }, { 2, 3, 5 }, { 3, 1, 1 }, { 3, 2, 2 }, { 3, 3, 2 }, { 3, 4, 5 }, { 5, 1, 2 }, { 5, 2, 1 }, { 5, 3, 2 }, { 6, 3, 5 }, { 7, 1, 2 }, { 7, 2, 1 }, { 8, 2, 3 }, { 9, 1, 1 }, { 9, 2, 1 }, { 9, 3, 3 }, { 10, 2, 3 }, { 10, 3, 2 }, { 11, 2, 1 } },
 	} },
 	["MAGE_ARCANE"] = { class = "MAGE", name = "Gear Guide: Arcane", ranks = {
 		{ { 1, 1, 2 }, { 1, 2, 3 }, { 1, 3, 3 }, { 2, 3, 5 }, { 3, 2, 3 }, { 3, 3, 3 }, { 3, 4, 1 }, { 4, 3, 2 }, { 4, 4, 3 }, { 5, 2, 1 }, { 5, 4, 5 }, { 6, 2, 3 }, { 6, 3, 2 }, { 7, 1, 3 }, { 7, 2, 1 }, { 8, 2, 2 }, { 8, 3, 5 }, { 9, 3, 5 }, { 10, 2, 3 }, { 10, 3, 2 } },
